@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedWord = '';
     let guessedWord = [];
     let wrongGuesses = 0;
-    const maxWrongGuesses = 10; // Head, Body, 2 Arms, 2 Legs (UPDATED to match hangmanParts array length)
+    const maxWrongGuesses = 10; // Head, Body, 2 Arms, 2 Legs, Gallow Base, Upright, Arm, Rope
     let correctLettersCount = 0;
     let soundEnabled = true;
 
