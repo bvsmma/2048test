@@ -39,7 +39,7 @@
                     
                     <!-- Body Parts -->
                     <circle cx="150" cy="75" r="25" class="hangman-part" id="head"></circle>
-                    <line x1="150" y1="100" x2="150" y1="170" class="hangman-part" id="body"></line>
+                    <line x1="150" y1="100" x2="150" y2="170" class="hangman-part" id="body"></line>
                     <line x1="150" y1="120" x2="120" y2="150" class="hangman-part" id="arm-left"></line>
                     <line x1="150" y1="120" x2="180" y2="150" class="hangman-part" id="arm-right"></line>
                     <line x1="150" y1="170" x2="120" y2="200" class="hangman-part" id="leg-left"></line>
@@ -86,7 +86,7 @@
 
 
         <!-- Slide-out Profile menu -->
-        <div id="profile-menu" class="profile-menu fixed top-0 right-0 h-full w-64 bg-gray-800 text-white p-6 transform translate-x-full transition-transform duration-300 ease-in-out z-70 flex flex-col backdrop-blur-sm">
+        <div id="profile-menu" class="profile-menu fixed top-0 right-0 h-full w-64 bg-gray-800/70 text-white p-6 transform translate-x-full transition-transform duration-300 ease-in-out z-70 flex flex-col backdrop-blur-sm">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">My Profile</h2>
                 <button id="close-profile-menu-button" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
@@ -106,7 +106,7 @@
         </div>
 
         <!-- Slide-out settings menu -->
-        <div id="settings-menu" class="settings-menu fixed top-0 right-0 h-full w-64 bg-gray-800 text-white p-6 transform translate-x-full transition-transform duration-300 ease-in-out z-60 flex flex-col backdrop-blur-sm">
+        <div id="settings-menu" class="settings-menu fixed top-0 right-0 h-full w-64 bg-gray-800/70 text-white p-6 transform translate-x-full transition-transform duration-300 ease-in-out z-60 flex flex-col backdrop-blur-sm">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Settings</h2>
                 <button id="close-settings-menu-button" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
@@ -149,7 +149,7 @@
         </div>
 
         <!-- Slide-out Achievements Menu -->
-        <div id="achievements-menu" class="achievements-menu fixed top-0 right-0 h-full w-64 bg-gray-800 text-white p-6 transform translate-x-full transition-transform duration-300 ease-in-out z-55 flex flex-col backdrop-blur-sm">
+        <div id="achievements-menu" class="achievements-menu fixed top-0 right-0 h-full w-64 bg-gray-800/70 text-white p-6 transform translate-x-full transition-transform duration-300 ease-in-out z-55 flex flex-col backdrop-blur-sm">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Achievements</h2>
                 <button id="close-achievements-menu-button" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
@@ -162,7 +162,7 @@
 
     <!-- Modal for game information -->
     <div id="info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative backdrop-blur-sm">
+        <div class="bg-gray-800/70 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative backdrop-blur-sm">
             <h2 class="text-2xl font-bold mb-4 text-white">How to Play Hangman</h2>
             <p class="mb-2">Guess letters to reveal the hidden word. Each wrong guess brings you closer to defeat!</p>
             <p class="mb-4">Try to guess the word before the stick figure is fully drawn.</p>
