@@ -194,8 +194,16 @@
         console.log("--- Starting main script execution ---"); // Initial log
 
         try {
-            // Firebase configuration (provided by the environment)
-            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            // Firebase configuration (YOUR CONFIG HAS BEEN INSERTED HERE)
+            const firebaseConfig = {
+              apiKey: "AIzaSyDYKHgJbQasNpBL0vGrjCz80CjrnqSbTyI",
+              authDomain: "game-hub-a99b7.firebaseapp.com",
+              projectId: "game-hub-a99b7",
+              storageBucket: "game-hub-a99b7.firebasestorage.app",
+              messagingSenderId: "328776863852",
+              appId: "1:328776863852:web:1adcbbf755fa9854dfc849",
+              measurementId: "G-GMTYE5CHRM"
+            };
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
             console.log("Firebase config loaded:", firebaseConfig); // Log config
