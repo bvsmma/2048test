@@ -1,51 +1,24 @@
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* Ensure no scrollbars for background */
-    color: #e2e8f0; /* Default text color for the entire page */
-}
-
 body {
     font-family: 'Inter', sans-serif;
-    /* Background image directly on body */
+    background-color: #faf8ef;
     background-image: url('https://i.imgur.com/qmJKSRj.jpeg'); /* Your photo link */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-color: #0d1117; /* Fallback dark background */
-    display: flex; /* Make body a flex container */
-    flex-direction: column; /* Stack children vertically */
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    opacity: 0; /* Initially hidden for fade-in effect */
-    transition: opacity 0.5s ease-in-out; /* Fade-in transition */
-}
-
-body.fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Fade-out effect for page transitions */
-body.fade-out {
-    animation: fadeOut 0.5s ease-out forwards;
-    overflow: hidden; /* Prevent scrollbars during fade-out transition */
-}
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
+    margin: 0;
+    overflow: hidden;
+    color: #fff; /* Default text color for the body */
 }
 
 /* Main game window styling */
 .main-game-window {
-    background-color: rgba(31, 41, 55, 0.7); /* Dark gray with more transparency */
+    background-color: rgba(31, 41, 55, 0.9); /* Dark gray with transparency */
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
@@ -57,8 +30,6 @@ body.fade-out {
     min-height: 500px;
     position: relative;
     box-sizing: border-box; /* Include padding in width/height */
-    color: #e2e8f0; /* Ensure text inside game window is light */
-    /* Removed backdrop-filter from here as per user request */
 }
 
 /* Game Header */
@@ -74,7 +45,7 @@ body.fade-out {
     text-transform: uppercase;
     letter-spacing: 0.05em; /* Tailwind tracking-wider */
     text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Title shadow */
-    color: #fff; /* Ensure title is white */
+    color: #fff;
     margin-bottom: 1rem;
 }
 
@@ -101,18 +72,7 @@ body.fade-out {
 /* Word Display */
 #word-display {
     color: #fff;
-    /* Added styles for better visibility and layout */
-    border: 2px solid #4B5563; /* border-gray-600 */
-    padding: 1rem; /* p-4 */
-    border-radius: 0.5rem; /* rounded-lg */
-    text-align: center;
-    min-width: 280px; /* Ensure a minimum width */
-    height: 4.5rem; /* Ensure a consistent height */
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
-
 
 /* Alphabet Buttons */
 #alphabet-buttons button {
@@ -150,7 +110,6 @@ body.fade-out {
 /* Game Message Overlay (used for win/lose) */
 #game-message {
     border-radius: 0.75rem; /* rounded-lg */
-    /* Removed backdrop-filter as per user request */
 }
 
 #game-status {
@@ -172,9 +131,6 @@ body.fade-out {
 .profile-menu, .settings-menu, .achievements-menu {
     transition: transform 0.3s ease-in-out;
     z-index: 50; /* Ensure menus are on top */
-    background-color: #1f2937; /* Solid dark gray */
-    /* Removed backdrop-filter as per user request */
-    padding: 24px; /* Tailwind p-6 */
 }
 
 .profile-menu.open, .settings-menu.open, .achievements-menu.open {
@@ -256,12 +212,6 @@ body.fade-out {
 }
 
 /* Modal for game information */
-#info-modal > div { /* Target the inner modal content for padding/blur */
-    padding: 24px; /* Tailwind p-6 */
-    background-color: #1f2937; /* Solid dark gray */
-    /* Removed backdrop-filter as per user request */
-}
-
 #info-modal {
     z-index: 80; /* Higher than menus */
 }
