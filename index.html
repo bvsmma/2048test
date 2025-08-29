@@ -8,8 +8,71 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <!-- Styles for the homepage -->
-    <link rel="stylesheet" href="home.css">
+    <!-- Removed link to home.css as styles are now embedded or handled by Tailwind -->
+    
+    <!-- Custom Styles for animations and refined elements -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Darker base */
+            transition: opacity 0.5s ease-in-out; /* Global transition for fade */
+        }
+
+        /* Fade-in effect on page load */
+        body.fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Fade-out effect for page transitions */
+        body.fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Subtle dynamic background */
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #1f2937, #111827, #0d1117);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .game-card {
+            background-color: #1f2937; /* Darker card background */
+            border: 1px solid #374151; /* Subtle border */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .game-card:hover {
+            border-color: #6366f1; /* Indigo-500 on hover */
+        }
+        /* Title shadow for enhanced look */
+        .title-shadow {
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        .subtitle-shadow {
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+
     <!-- Tone.js for sound effects, loaded globally for all pages -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <!-- Font Awesome for icons -->
@@ -705,16 +768,11 @@
                 });
             });
 
-            // --- Smooth Page Transitions (Conceptual Implementation) ---
+            // --- Smooth Page Transitions ---
             console.log("Initializing Smooth Page Transitions.");
             document.querySelectorAll('a[href^="http"]:not([target="_blank"]), a[href^="game.html"], a[href^="tic_tac_toe.html"], a[href^="tic_tac_toe_ai.html"], a[href^="hangman.html"]').forEach(link => {
                 link.addEventListener('click', function(e) {
-                    // Only apply transition to internal links that are not game buttons
-                    if (this.classList.contains('play-button') || this.classList.contains('play-button-small') || this.classList.contains('coming-soon-button')) {
-                        // Let game buttons navigate normally after their click sound
-                        return;
-                    }
-
+                    // All internal links now trigger the fade-out for game transitions
                     e.preventDefault(); // Prevent default navigation immediately
                     const destination = this.href;
 
@@ -724,7 +782,7 @@
                     // Navigate after animation duration
                     setTimeout(() => {
                         window.location.href = destination;
-                    }, 300); // Match CSS transition duration
+                    }, 500); // Match CSS transition duration (0.5s)
                 });
             });
 
