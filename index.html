@@ -102,7 +102,7 @@
     </div>
 
     <!-- Footer now relative to the content-wrapper -->
-    <footer class="w-full p-4 text-center text-gray-400 text-sm flex-shrink-0">
+    <footer class="w-full p-4 text-center text-gray-300 text-sm flex-shrink-0">
         <p>
             Created by: Vladyslav Bieliaiev |
             <a href="https://instagram.com/mmacvv" target="_blank" class="text-blue-400 hover:underline">My Instagram</a>
@@ -116,7 +116,7 @@
 
     <!-- Game Information Modal -->
     <div id="game-info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative backdrop-blur-sm">
             <h2 id="modal-game-title" class="text-3xl font-bold mb-4 text-white">Game Title</h2>
             <p id="modal-game-description" class="mb-4 text-lg">Detailed description of the game.</p>
             <p id="modal-game-rules" class="mb-4">Rules: These are the rules for the game.</p>
@@ -127,7 +127,7 @@
 
     <!-- Authentication Modal -->
     <div id="auth-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative backdrop-blur-sm">
             <h2 id="auth-modal-title" class="text-2xl font-bold mb-4 text-white">Sign In</h2>
             <form id="auth-form" class="flex flex-col gap-4">
                 <input type="email" id="auth-email" placeholder="Email" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -150,7 +150,7 @@
 
     <!-- Profile Modal -->
     <div id="profile-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative backdrop-blur-sm">
             <h2 class="text-2xl font-bold mb-4 text-white">My Profile</h2>
             <p class="mb-2">Hello, <span id="profile-display-name" class="font-bold text-blue-400">Guest</span>!</p>
             <p class="mb-4">Email: <span id="profile-email" class="text-gray-400">Not signed in</span></p>
@@ -165,7 +165,7 @@
 
     <!-- Password Reset Success/Error Modal (Simple Notification) -->
     <div id="notification-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center backdrop-blur-sm">
             <h3 id="notification-title" class="text-xl font-bold mb-3 text-white">Notification</h3>
             <p id="notification-message" class="mb-4">Message goes here.</p>
             <button id="close-notification-modal" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">OK</button>
@@ -383,7 +383,7 @@
                     if (profileResult.success && profileResult.profile.displayName) {
                         userDisplayName = profileResult.profile.displayName;
                     }
-                    userDisplayName = userDisplayName || window.currentUser.email || "User"; // Fallback
+                    userDisplayName = userDisplayName || (window.currentUser.email ? window.currentUser.email.split('@')[0] : "User"); // Fallback to email part
 
                     console.log("DisplayName to use:", userDisplayName);
 
@@ -437,12 +437,12 @@
                         window.getUserProfile(window.currentUser.uid).then(profileResult => {
                             if (profileResult.success && profileResult.profile.displayName) {
                                 userDisplayName = profileResult.profile.displayName;
-                                authStatusElement.textContent = `Signed in as: ${userDisplayName || window.currentUser.email || "User"}`;
-                                profileDisplayNameElement.textContent = userDisplayName || window.currentUser.email || "Guest";
+                                authStatusElement.textContent = `Signed in as: ${userDisplayName || (window.currentUser.email ? window.currentUser.email.split('@')[0] : "User")}`;
+                                profileDisplayNameElement.textContent = userDisplayName || (window.currentUser.email ? window.currentUser.email.split('@')[0] : "Guest");
                             }
                         });
                     }
-                    userDisplayName = userDisplayName || window.currentUser.email || "User"; // Fallback for immediate display
+                    userDisplayName = userDisplayName || (window.currentUser.email ? window.currentUser.email.split('@')[0] : "User"); // Fallback for immediate display
 
                     console.log("DisplayName for updateUIForAuthStatus:", userDisplayName);
                     authStatusElement.textContent = `Signed in as: ${userDisplayName}`; 
@@ -781,7 +781,7 @@
                             displayNameToUse = profileResult.profile.displayName;
                         }
                     }
-                    document.getElementById('profile-display-name').textContent = displayNameToUse || window.currentUser.email || "Guest";
+                    document.getElementById('profile-display-name').textContent = displayNameToUse || (window.currentUser.email ? window.currentUser.email.split('@')[0] : "Guest");
                     
                     profileModal.classList.remove('hidden');
                 } else {
@@ -823,7 +823,7 @@
                 if (result.success) {
                     authModal.classList.add('hidden');
                     const userForNotification = window.currentUser; 
-                    const displayNameForNotification = userForNotification.displayName || userForNotification.email || "User";
+                    const displayNameForNotification = userForNotification.displayName || (userForNotification.email ? userForNotification.email.split('@')[0] : "User"); // Get display name or part of email
                     openNotificationModal("Google Sign-In", `Welcome, ${displayNameForNotification}!`);
                 } else {
                     authErrorMessage.textContent = result.error;
@@ -847,7 +847,7 @@
                     if (result.success) {
                         authModal.classList.add('hidden');
                         const userForNotification = window.currentUser; 
-                        const displayNameForNotification = userForNotification.displayName || userForNotification.email || "User";
+                        const displayNameForNotification = userForNotification.displayName || (userForNotification.email ? userForNotification.email.split('@')[0] : "User"); // Get display name or part of email
                         openNotificationModal("Sign In Successful", `Welcome back, ${displayNameForNotification}!`);
                     } else {
                         authErrorMessage.textContent = result.error;
