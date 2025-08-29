@@ -377,7 +377,14 @@
                     window.currentUser = auth.currentUser; 
                     console.log("User after reload in onAuthStateChanged:", window.currentUser.displayName, window.currentUser.email);
 
-                    const userDisplayName = window.currentUser.displayName || window.currentUser.email || "User";
+                    // Fetch user profile from Firestore to get custom display name
+                    const profileResult = await window.getUserProfile(window.currentUser.uid);
+                    let userDisplayName = window.currentUser.displayName;
+                    if (profileResult.success && profileResult.profile.displayName) {
+                        userDisplayName = profileResult.profile.displayName;
+                    }
+                    userDisplayName = userDisplayName || window.currentUser.email || "User"; // Fallback
+
                     console.log("DisplayName to use:", userDisplayName);
 
                     authStatusElement.textContent = `Signed in as: ${userDisplayName}`; 
@@ -424,7 +431,19 @@
                     authButton.textContent = "My Profile";
                     authButton.onclick = openProfileModal;
                     
-                    const userDisplayName = window.currentUser.displayName || window.currentUser.email || "User";
+                    let userDisplayName = window.currentUser.displayName;
+                    // Try to get from Firestore profile if not available directly from Auth
+                    if (!userDisplayName) {
+                        window.getUserProfile(window.currentUser.uid).then(profileResult => {
+                            if (profileResult.success && profileResult.profile.displayName) {
+                                userDisplayName = profileResult.profile.displayName;
+                                authStatusElement.textContent = `Signed in as: ${userDisplayName || window.currentUser.email || "User"}`;
+                                profileDisplayNameElement.textContent = userDisplayName || window.currentUser.email || "Guest";
+                            }
+                        });
+                    }
+                    userDisplayName = userDisplayName || window.currentUser.email || "User"; // Fallback for immediate display
+
                     console.log("DisplayName for updateUIForAuthStatus:", userDisplayName);
                     authStatusElement.textContent = `Signed in as: ${userDisplayName}`; 
                     profileDisplayNameElement.textContent = userDisplayName; 
