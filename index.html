@@ -267,6 +267,12 @@
                     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                     const user = userCredential.user;
 
+                    // Set displayName on the Firebase Auth user object
+                    if (displayName) {
+                        await user.updateProfile({ displayName: displayName });
+                        console.log("User display name updated in Auth:", displayName);
+                    }
+
                     // Send email verification
                     await user.sendEmailVerification();
                     console.log("Verification email sent to:", user.email);
@@ -318,20 +324,15 @@
                     const result = await auth.signInWithPopup(googleProvider);
                     const user = result.user;
 
-                    // Check if user profile exists in Firestore, if not, create it
-                    const profileCheck = await window.getUserProfile(user.uid);
-                    if (!profileCheck.success) {
-                        await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
-                            displayName: user.displayName,
-                            email: user.email,
-                            emailVerified: user.emailVerified,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        console.log("Google user profile created in Firestore.");
-                    } else {
-                        console.log("Google user profile already exists.");
-                    }
-                    console.log("User signed in with Google:", user);
+                    // ALWAYS update user profile in Firestore with latest info from Google
+                    // Use setDoc with { merge: true } to update existing fields without overwriting others
+                    await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
+                        displayName: user.displayName, // Ensure displayName from Google is used
+                        email: user.email,
+                        emailVerified: user.emailVerified,
+                    }, { merge: true }); // Important: merge ensures existing fields are not deleted
+
+                    console.log("User signed in with Google, profile updated/created:", user);
                     return { success: true, user: user };
                 } catch (error) {
                     console.error("Google Sign-In error:", error.message);
@@ -373,6 +374,23 @@
                 }
             };
 
+            // Function to get the correct display name for UI
+            async function getDisplayUserName(user) {
+                if (!user) return "Guest"; // If no user, return "Guest"
+
+                // First, try to get from Firestore profile
+                const profileResult = await window.getUserProfile(user.uid);
+                if (profileResult.success && profileResult.profile.displayName) {
+                    return profileResult.profile.displayName;
+                }
+                // Fallback to user.displayName from Firebase Auth object
+                if (user.displayName) {
+                    return user.displayName;
+                }
+                // Final fallback to user.email
+                return user.email;
+            }
+
             // Listen for auth state changes
             auth.onAuthStateChanged(async (user) => {
                 console.log("Firebase auth state changed listener triggered.");
@@ -385,9 +403,13 @@
 
 
                 if (user) {
-                    console.log("Auth state changed: User is signed in", user.uid, user.email, "Verified:", user.emailVerified);
+                    console.log("Auth state changed: User is signed in", user.uid, user.email, "Verified:", user.emailVerified, "DisplayName from Auth:", user.displayName);
                     window.currentUser = user;
-                    authStatusElement.textContent = `Signed in as: ${user.email}`;
+                    
+                    const userDisplayName = await getDisplayUserName(user);
+                    authStatusElement.textContent = `Signed in as: ${userDisplayName}`; // Now uses display name
+                    profileDisplayName.textContent = userDisplayName; // Also for profile modal
+
                     authButton.textContent = "My Profile";
                     authButton.onclick = () => openProfileModal();
 
@@ -398,16 +420,8 @@
                     } else {
                         sendVerificationEmailButton.classList.add('hidden');
                     }
-
-
-                    // Fetch user profile from Firestore
-                    const profileResult = await window.getUserProfile(user.uid);
-                    if (profileResult.success) {
-                        profileDisplayName.textContent = profileResult.profile.displayName || user.email;
-                    } else {
-                        profileDisplayName.textContent = user.email;
-                    }
-                    profileEmail.textContent = user.email;
+                    
+                    profileEmail.textContent = user.email; // Email always shows email
                 } else {
                     console.log("Auth state changed: User is signed out");
                     window.currentUser = null;
@@ -438,24 +452,20 @@
                     // User is logged in
                     authButton.textContent = "My Profile";
                     authButton.onclick = openProfileModal;
-                    authStatusElement.textContent = `Signed in as: ${window.currentUser.email}`;
-                    profileEmailElement.textContent = window.currentUser.email;
+                    
+                    getDisplayUserName(window.currentUser).then(displayName => {
+                        authStatusElement.textContent = `Signed in as: ${displayName}`; // Now uses display name
+                        profileDisplayNameElement.textContent = displayName;
+                    });
+                    
+                    profileEmailElement.textContent = window.currentUser.email; // Email always shows email
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
-                    if (!window.currentUser.emailVerified) {
+                    if (window.currentUser.email && !window.currentUser.emailVerified) { // Only show button if email exists and is not verified
                         sendVerificationEmailButton.classList.remove('hidden');
                     } else {
                         sendVerificationEmailButton.classList.add('hidden');
                     }
-
-
-                    // Fetch profile display name if available
-                    window.getUserProfile(window.currentUser.uid).then(result => {
-                        if (result.success) {
-                            profileDisplayNameElement.textContent = result.profile.displayName || window.currentUser.email;
-                        } else {
-                            profileDisplayNameElement.textContent = window.currentUser.email;
-                        }
-                    });
+                    
                     signOutButton.classList.remove('hidden');
                 } else {
                     // User is logged out
@@ -762,7 +772,7 @@
             window.openProfileModal = async () => {
                 console.log("Attempting to open Profile Modal.");
                 if (window.currentUser) {
-                    document.getElementById('profile-display-name').textContent = "Loading...";
+                    // Update elements directly, they are already defined by the Firebase script
                     document.getElementById('profile-email').textContent = window.currentUser.email;
 
                     // Refresh user data to get latest verification status
@@ -776,13 +786,10 @@
                         sendVerificationEmailButton.classList.add('hidden');
                     }
 
-
-                    const profileResult = await window.getUserProfile(window.currentUser.uid);
-                    if (profileResult.success) {
-                        document.getElementById('profile-display-name').textContent = profileResult.profile.displayName || window.currentUser.email;
-                    } else {
-                        document.getElementById('profile-display-name').textContent = window.currentUser.email;
-                    }
+                    // Get display name for profile modal
+                    const userDisplayName = await getDisplayUserName(window.currentUser);
+                    document.getElementById('profile-display-name').textContent = userDisplayName;
+                    
                     profileModal.classList.remove('hidden');
                 } else {
                     console.warn("No user signed in to open profile modal. Redirecting to sign in.");
@@ -824,7 +831,9 @@
                 const result = await window.signInWithGoogle();
                 if (result.success) {
                     authModal.classList.add('hidden');
-                    openNotificationModal("Google Sign-In", `Welcome, ${result.user.displayName || result.user.email}!`);
+                    // Notification message will now use the correct displayName from the updated currentUser
+                    const userDisplayName = await getDisplayUserName(window.currentUser);
+                    openNotificationModal("Google Sign-In", `Welcome, ${userDisplayName}!`);
                 } else {
                     authErrorMessage.textContent = result.error;
                     authErrorMessage.classList.remove('hidden');
@@ -846,7 +855,8 @@
                     const result = await window.signIn(email, password);
                     if (result.success) {
                         authModal.classList.add('hidden');
-                        openNotificationModal("Sign In Successful", `Welcome back, ${result.user.displayName || result.user.email}!`);
+                        const userDisplayName = await getDisplayUserName(window.currentUser);
+                        openNotificationModal("Sign In Successful", `Welcome back, ${userDisplayName}!`);
                     } else {
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
