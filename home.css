@@ -1,0 +1,120 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Ensure no scrollbars for background */
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-image: url('https://i.imgur.com/qmJKSRj.jpeg'); /* Your photo link */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: #0d1117; /* Fallback dark background */
+    display: flex; /* Make body a flex container */
+    flex-direction: column; /* Stack children vertically */
+    position: relative; /* Needed for z-index context of content-wrapper */
+    opacity: 0; /* Initially hide to prevent FOUC and enable fade-in */
+    transition: opacity 0.5s ease-in-out; /* Global transition for fade */
+}
+
+/* Fade-in effect on page load */
+body.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Fade-out effect for page transitions */
+body.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+    overflow: hidden; /* Prevent scrollbars during fade-out transition */
+}
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Subtle dynamic background overlay */
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #1f2937, #111827, #0d1117);
+    background-size: 400% 400%; /* Important for animation */
+    animation: gradientAnimation 15s ease infinite; /* Your animation here */
+    z-index: 0; /* Place overlay above body background image but below content */
+    opacity: 0.6; /* Make the gradient semi-transparent to allow image to show */
+    pointer-events: none; /* Allow clicks to pass through to elements below */
+}
+
+/* Keyframes for the gradient background animation */
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Ensure main content is above the overlay and handles its own scrolling */
+.content-wrapper {
+    position: relative;
+    z-index: 1; /* Ensure content is above the overlay */
+    background-color: transparent; /* Ensure it's transparent to see background */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center horizontally */
+    padding: 1rem; /* Tailwind p-4 */
+    flex-grow: 1; /* Allow content-wrapper to take available height */
+    overflow-y: auto; /* THIS IS WHERE THE MAIN SCROLL WILL BE */
+    /* Add padding-bottom to ensure content doesn't get hidden under the footer */
+    padding-bottom: 2rem;
+}
+
+/* Apply basic card styling universally to game cards */
+.game-card {
+    background-color: #1f2937; /* Darker card background */
+    border: 1px solid #374151; /* Subtle border */
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    display: flex; /* Use flex to center content */
+    flex-direction: column; /* Stack content vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    text-align: center; /* Ensure text is centered within the card */
+    padding: 1rem; /* Add padding to card content */
+}
+.game-card:hover {
+    border-color: #6366f1; /* Indigo-500 on hover */
+}
+
+/* The game-library itself no longer needs overflow-y or fixed max-height */
+.game-library {
+    overflow-y: visible; /* Content within game-library will now flow into content-wrapper's scroll */
+    width: 100%; /* Ensure it takes full width of its parent */
+    padding-bottom: 1rem; /* Add some padding at the bottom for scroll comfort */
+}
+
+/* Title shadow for enhanced look */
+.title-shadow {
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8); /* Stronger shadow */
+}
+.subtitle-shadow {
+    text-shadow: 0 2px 15px rgba(0, 0, 0, 0.6); /* Stronger shadow */
+}
+/* Increased contrast for auth status and profile details */
+#auth-status,
+#profile-display-name,
+#profile-email,
+#email-verification-status span {
+    color: #E2E8F0; /* Brighter gray for better contrast */
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.4); /* Add shadow for readability */
+}
+footer {
+    flex-shrink: 0; /* Prevent footer from shrinking and ensure it stays at the bottom */
+}
