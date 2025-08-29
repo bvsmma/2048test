@@ -125,3 +125,4 @@ body.fade-out {
 footer {
     flex-shrink: 0; /* Prevent footer from shrinking and ensure it stays at the bottom */
 }
+
