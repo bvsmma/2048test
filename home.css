@@ -122,5 +122,11 @@ body.fade-out {
 }
 footer {
     flex-shrink: 0; /* Prevent footer from shrinking and ensure it stays at the bottom */
-    color: #9ca3af; /* Footer text color */
+    color: #cbd5e0; /* Changed to a lighter gray for better visibility */
+}
+
+/* Add backdrop-blur for modals */
+.backdrop-blur-sm {
+    backdrop-filter: blur(4px); /* Tailwind's backdrop-blur-sm */
+    -webkit-backdrop-filter: blur(4px); /* For Safari support */
 }
