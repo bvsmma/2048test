@@ -30,12 +30,14 @@
             position: relative; /* Needed for z-index context of content-container */
             opacity: 0; /* Initially hide to prevent FOUC and enable fade-in */
             transition: opacity 0.5s ease-in-out; /* Global transition for fade */
-            background-color: transparent; /* Ensure body itself is transparent to show image below overlay */
+            background-color: #0d1117; /* Fallback background color, for consistency */
+            overflow: hidden; /* Temporarily hide overflow to manage transitions cleanly */
         }
 
         /* Fade-in effect on page load */
         body.fade-in {
             animation: fadeIn 0.5s ease-out forwards;
+            overflow-y: auto; /* Enable scroll after fade-in completes */
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -75,23 +77,24 @@
         }
 
         /* Ensure main content is above the overlay */
-        .content-container {
+        .content-wrapper {
             position: relative;
             z-index: 1; /* Ensure content is above the overlay */
             background-color: transparent; /* Ensure it's transparent to see background */
-            height: 100vh; /* Make it take full viewport height */
-            overflow-y: auto; /* Enable scrolling for content if needed */
+            min-height: 100vh; /* Make content wrapper take full viewport height */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center horizontally */
+            padding: 1rem; /* Tailwind p-4 */
         }
 
-        .game-card {
-            background-color: #1f2937; /* Darker card background */
-            border: 1px solid #374151; /* Subtle border */
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        /* The main game library area needs to be flexible to take up space and scroll */
+        .game-library {
+            flex-grow: 1; /* Allow the game library to grow and take available space */
+            overflow-y: auto; /* Enable vertical scrolling for the game cards */
+            max-height: calc(100vh - 250px); /* Adjust based on header/footer height */
         }
-        .game-card:hover {
-            border-color: #6366f1; /* Indigo-500 on hover */
-        }
+        
         /* Title shadow for enhanced look */
         .title-shadow {
             text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8); /* Stronger shadow */
@@ -123,8 +126,8 @@
 
     <div class="background-overlay"></div>
 
-    <!-- The content-container now takes up the full viewport height -->
-    <div class="content-container flex flex-col items-center p-4 min-h-screen">
+    <!-- The content-wrapper now takes up the full viewport height and handles scrolling -->
+    <div class="content-wrapper">
         <header class="text-center">
             <h1 class="text-5xl md:text-7xl font-black uppercase tracking-wider title-shadow">
                 Game Hub
@@ -153,7 +156,7 @@
         <!-- Main content area for game cards. Using a responsive grid layout to ensure 3 columns on larger screens. -->
         <!-- Added horizontal padding (px-4) to provide space for hover effects. -->
         <!-- Using a responsive grid: 1 column on small screens, 2 on medium, 3 on large. -->
-        <main class="game-library mt-12 w-full max-w-screen-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4 overflow-y-auto flex-grow px-4">
+        <main class="game-library mt-12 w-full max-w-screen-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4 px-4">
             <!-- Game Card: 2048 -->
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
                 <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
@@ -231,11 +234,45 @@
                     </a>
                 </div>
             </div>
+             <!-- More dummy cards to ensure scroll functionality -->
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame4">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                    <div class="game-card-title text-xl">New Game 4</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Yet another game!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame5">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                    <div class="game-card-title text-xl">New Game 5</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        The fun never stops!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame6">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                    <div class="game-card-title text-xl">New Game 6</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        So many games!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
         </main>
     </div>
 
-    <!-- Footer now relative to the content-container, allowing main to scroll above it -->
-    <footer class="w-full p-4 text-center text-gray-400 text-sm">
+    <!-- Footer now relative to the content-wrapper -->
+    <footer class="w-full p-4 text-center text-gray-400 text-sm flex-shrink-0">
         <p>
             Created by: Vladyslav Bieliaiev |
             <a href="https://instagram.com/mmacvv" target="_blank" class="text-blue-400 hover:underline">My Instagram</a>
@@ -365,6 +402,12 @@
                     console.log("Attempting to sign up user:", email, "with display name:", displayName);
                     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                     const user = userCredential.user;
+
+                    // Set displayName on the Firebase Auth user object
+                    if (displayName) {
+                        await user.updateProfile({ displayName: displayName });
+                        console.log("User display name updated in Auth:", displayName);
+                    }
 
                     // Send email verification
                     await user.sendEmailVerification();
@@ -498,23 +541,21 @@
 
 
                 if (user) {
-                    // Update window.currentUser immediately
+                    console.log("User initially in onAuthStateChanged:", user.displayName, user.email);
                     window.currentUser = user; 
-                    // Reload the user to get the absolute latest data, including displayName
                     await user.reload(); 
-                    window.currentUser = auth.currentUser; // Ensure window.currentUser is the latest after reload
+                    window.currentUser = auth.currentUser; 
+                    console.log("User after reload in onAuthStateChanged:", window.currentUser.displayName, window.currentUser.email);
 
-                    console.log("Auth state changed: User is signed in", window.currentUser.uid, window.currentUser.email, "Verified:", window.currentUser.emailVerified, "DisplayName from Auth:", window.currentUser.displayName);
-                    
-                    // Directly use the updated displayName from window.currentUser
                     const userDisplayName = window.currentUser.displayName || window.currentUser.email || "User";
+                    console.log("DisplayName to use:", userDisplayName);
+
                     authStatusElement.textContent = `Signed in as: ${userDisplayName}`; 
                     profileDisplayName.textContent = userDisplayName; 
 
                     authButton.textContent = "My Profile";
                     authButton.onclick = () => openProfileModal();
 
-                    // Update email verification status
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
                     if (!window.currentUser.emailVerified) {
                         sendVerificationEmailButton.classList.remove('hidden');
@@ -522,19 +563,19 @@
                         sendVerificationEmailButton.classList.add('hidden');
                     }
                     
-                    profileEmail.textContent = window.currentUser.email; // Email always shows email
+                    profileEmail.textContent = window.currentUser.email; 
                 } else {
                     console.log("Auth state changed: User is signed out");
                     window.currentUser = null;
                     authStatusElement.textContent = "Signed out";
                     authButton.textContent = "Sign In / Register";
-                    authButton.onclick = () => openAuthModal('signIn'); // Default to sign in
+                    authButton.onclick = () => openAuthModal('signIn'); 
                     profileDisplayName.textContent = "Guest";
                     profileEmail.textContent = "Not signed in";
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold text-gray-400">N/A</span>`;
                     sendVerificationEmailButton.classList.add('hidden');
                 }
-                updateUIForAuthStatus(); // Update other UI elements
+                updateUIForAuthStatus(); 
             });
 
             // Function to update UI elements based on auth status
@@ -550,19 +591,17 @@
 
 
                 if (window.currentUser) {
-                    // User is logged in
                     authButton.textContent = "My Profile";
                     authButton.onclick = openProfileModal;
                     
-                    // Immediately try to get display name from currentUser, then update if Firestore has it
-                    // Directly use the updated displayName from window.currentUser
                     const userDisplayName = window.currentUser.displayName || window.currentUser.email || "User";
+                    console.log("DisplayName for updateUIForAuthStatus:", userDisplayName);
                     authStatusElement.textContent = `Signed in as: ${userDisplayName}`; 
                     profileDisplayNameElement.textContent = userDisplayName; 
                     
-                    profileEmailElement.textContent = window.currentUser.email; // Email always shows email
+                    profileEmailElement.textContent = window.currentUser.email; 
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
-                    if (window.currentUser.email && !window.currentUser.emailVerified) { // Only show button if email exists and is not verified
+                    if (window.currentUser.email && !window.currentUser.emailVerified) { 
                         sendVerificationEmailButton.classList.remove('hidden');
                     } else {
                         sendVerificationEmailButton.classList.add('hidden');
@@ -570,7 +609,6 @@
                     
                     signOutButton.classList.remove('hidden');
                 } else {
-                    // User is logged out
                     authButton.textContent = "Sign In / Register";
                     authButton.onclick = () => openAuthModal('signIn');
                     authStatusElement.textContent = "Signed out";
@@ -837,7 +875,10 @@
                 if (event.persisted) { // If page is loaded from cache (e.g., via back button)
                     console.log("pageshow event (persisted) fired. Ensuring fade-in and resetting body classes.");
                     document.body.classList.remove('fade-out'); // Remove fade-out class if present
-                    document.body.classList.add('fade-in'); // Ensure fade-in animation plays
+                    // Small delay to ensure browser fully renders before fade-in
+                    setTimeout(() => {
+                        document.body.classList.add('fade-in'); // Ensure fade-in animation plays
+                    }, 10); 
                 }
             });
 
@@ -886,22 +927,19 @@
             window.openProfileModal = async () => {
                 console.log("Attempting to open Profile Modal.");
                 if (window.currentUser) {
-                    // Set loading state for display name
-                    document.getElementById('profile-display-name').textContent = "Loading...";
+                    document.getElementById('profile-display-name').textContent = "Загрузка..."; // Set loading state
                     document.getElementById('profile-email').textContent = window.currentUser.email;
 
-                    // Refresh user data to get latest verification status
                     await window.currentUser.reload();
-                    window.currentUser = auth.currentUser; // Update window.currentUser with fresh data
+                    window.currentUser = auth.currentUser; 
 
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
-                    if (window.currentUser.email && !window.currentUser.emailVerified) { // Only show button if email exists and is not verified
+                    if (window.currentUser.email && !window.currentUser.emailVerified) { 
                         sendVerificationEmailButton.classList.remove('hidden');
                     } else {
                         sendVerificationEmailButton.classList.add('hidden');
                     }
 
-                    // Get display name from Firebase Auth first, then try Firestore if Auth displayName is null
                     let displayNameToUse = window.currentUser.displayName;
                     if (!displayNameToUse) {
                         const profileResult = await window.getUserProfile(window.currentUser.uid);
@@ -909,12 +947,12 @@
                             displayNameToUse = profileResult.profile.displayName;
                         }
                     }
-                    document.getElementById('profile-display-name').textContent = displayNameToUse || window.currentUser.email || "Guest";
+                    document.getElementById('profile-display-name').textContent = displayNameToUse || window.currentUser.email || "Гость";
                     
                     profileModal.classList.remove('hidden');
                 } else {
                     console.warn("No user signed in to open profile modal. Redirecting to sign in.");
-                    openAuthModal('signIn'); // Redirect to sign in if no user
+                    openAuthModal('signIn'); 
                 }
             };
 
@@ -929,33 +967,30 @@
                 openAuthModal(isSignInMode ? 'signIn' : 'register');
             });
 
-            // Handle Forgot Password
             forgotPasswordButton.addEventListener('click', async () => {
                 const email = authEmailInput.value;
                 if (!email) {
-                    authErrorMessage.textContent = "Please enter your email to reset password.";
+                    authErrorMessage.textContent = "Пожалуйста, введите ваш email для сброса пароля.";
                     authErrorMessage.classList.remove('hidden');
                     return;
                 }
                 const result = await window.sendPasswordReset(email);
                 if (result.success) {
-                    openNotificationModal("Password Reset", result.message);
-                    authModal.classList.add('hidden'); // Close auth modal after sending reset
+                    openNotificationModal("Сброс пароля", result.message);
+                    authModal.classList.add('hidden'); 
                 } else {
                     authErrorMessage.textContent = result.error;
                     authErrorMessage.classList.remove('hidden');
                 }
             });
 
-            // Handle Google Sign-In
             googleSignInButton.addEventListener('click', async () => {
                 const result = await window.signInWithGoogle();
                 if (result.success) {
                     authModal.classList.add('hidden');
-                    // Notification message will now use the correct displayName from the updated currentUser
-                    const userForNotification = window.currentUser; // Use window.currentUser after reload in onAuthStateChanged
-                    const displayNameForNotification = userForNotification.displayName || userForNotification.email || "User";
-                    openNotificationModal("Google Sign-In", `Welcome, ${displayNameForNotification}!`);
+                    const userForNotification = window.currentUser; 
+                    const displayNameForNotification = userForNotification.displayName || userForNotification.email || "Пользователь";
+                    openNotificationModal("Вход через Google", `Добро пожаловать, ${displayNameForNotification}!`);
                 } else {
                     authErrorMessage.textContent = result.error;
                     authErrorMessage.classList.remove('hidden');
@@ -966,7 +1001,7 @@
             authForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 console.log("Auth form submitted.");
-                authErrorMessage.classList.add('hidden'); // Hide previous error
+                authErrorMessage.classList.add('hidden'); 
 
                 const email = authEmailInput.value;
                 const password = authPasswordInput.value;
@@ -977,9 +1012,9 @@
                     const result = await window.signIn(email, password);
                     if (result.success) {
                         authModal.classList.add('hidden');
-                        const userForNotification = window.currentUser; // Use window.currentUser after reload in onAuthStateChanged
-                        const displayNameForNotification = userForNotification.displayName || userForNotification.email || "User";
-                        openNotificationModal("Sign In Successful", `Welcome back, ${displayNameForNotification}!`);
+                        const userForNotification = window.currentUser; 
+                        const displayNameForNotification = userForNotification.displayName || userForNotification.email || "Пользователь";
+                        openNotificationModal("Вход выполнен успешно", `С возвращением, ${displayNameForNotification}!`);
                     } else {
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
@@ -989,7 +1024,7 @@
                     const result = await window.signUp(email, password, displayName);
                     if (result.success) {
                         authModal.classList.add('hidden');
-                        openNotificationModal("Registration Successful!", `A verification email has been sent to ${result.user.email}. Please verify your email to fully activate your account.`);
+                        openNotificationModal("Регистрация успешна!", `Письмо для подтверждения отправлено на ${result.user.email}. Пожалуйста, подтвердите ваш email для полной активации аккаунта.`);
                     } else {
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
@@ -1008,16 +1043,16 @@
                 if (result.success) {
                     console.log("Sign out successful, closing profile modal.");
                     profileModal.classList.add('hidden');
-                    openNotificationModal("Signed Out", "You have been successfully signed out.");
+                    openNotificationModal("Выход выполнен", "Вы успешно вышли из аккаунта.");
                 }
             });
 
             sendVerificationEmailButton.addEventListener('click', async () => {
                 const result = await window.sendVerificationEmail();
                 if (result.success) {
-                    openNotificationModal("Verification Sent", result.message);
+                    openNotificationModal("Подтверждение отправлено", result.message);
                 } else {
-                    openNotificationModal("Error", result.error, "red");
+                    openNotificationModal("Ошибка", result.error, "red");
                 }
             });
 
@@ -1047,7 +1082,7 @@
             function openNotificationModal(title, message, type = "blue") {
                 notificationTitle.textContent = title;
                 notificationMessage.textContent = message;
-                notificationTitle.className = `text-xl font-bold mb-3 text-${type}-400`; // Update title color based on type
+                notificationTitle.className = `text-xl font-bold mb-3 text-${type}-400`; 
                 notificationModal.classList.remove('hidden');
             }
 
@@ -1056,7 +1091,7 @@
             console.error("Critical error in main script block:", e);
             document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Ошибка загрузки страницы: ${e.message}. Пожалуйста, проверьте консоль разработчика для получения подробной информации.</div>`;
         }
-        console.log("--- Main script execution finished ---"); // Final log
+        console.log("--- Main script execution finished ---"); 
     </script>
 </body>
 </html>
