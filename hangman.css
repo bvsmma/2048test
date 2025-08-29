@@ -58,8 +58,7 @@ body.fade-out {
     position: relative;
     box-sizing: border-box; /* Include padding in width/height */
     color: #e2e8f0; /* Ensure text inside game window is light */
-    backdrop-filter: blur(8px); /* Add blur effect */
-    -webkit-backdrop-filter: blur(8px); /* For Safari support */
+    /* Removed backdrop-filter from here as per user request */
 }
 
 /* Game Header */
@@ -102,7 +101,18 @@ body.fade-out {
 /* Word Display */
 #word-display {
     color: #fff;
+    /* Added styles for better visibility and layout */
+    border: 2px solid #4B5563; /* border-gray-600 */
+    padding: 1rem; /* p-4 */
+    border-radius: 0.5rem; /* rounded-lg */
+    text-align: center;
+    min-width: 280px; /* Ensure a minimum width */
+    height: 4.5rem; /* Ensure a consistent height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 
 /* Alphabet Buttons */
 #alphabet-buttons button {
@@ -140,6 +150,7 @@ body.fade-out {
 /* Game Message Overlay (used for win/lose) */
 #game-message {
     border-radius: 0.75rem; /* rounded-lg */
+    /* Removed backdrop-filter as per user request */
 }
 
 #game-status {
@@ -161,9 +172,8 @@ body.fade-out {
 .profile-menu, .settings-menu, .achievements-menu {
     transition: transform 0.3s ease-in-out;
     z-index: 50; /* Ensure menus are on top */
-    background-color: rgba(31, 41, 55, 0.7); /* Dark gray with transparency */
-    backdrop-filter: blur(8px); /* Add blur effect */
-    -webkit-backdrop-filter: blur(8px); /* For Safari support */
+    background-color: #1f2937; /* Solid dark gray */
+    /* Removed backdrop-filter as per user request */
     padding: 24px; /* Tailwind p-6 */
 }
 
@@ -248,9 +258,8 @@ body.fade-out {
 /* Modal for game information */
 #info-modal > div { /* Target the inner modal content for padding/blur */
     padding: 24px; /* Tailwind p-6 */
-    background-color: rgba(31, 41, 55, 0.7); /* Dark gray with transparency */
-    backdrop-filter: blur(8px); /* Add blur effect */
-    -webkit-backdrop-filter: blur(8px); /* For Safari support */
+    background-color: #1f2937; /* Solid dark gray */
+    /* Removed backdrop-filter as per user request */
 }
 
 #info-modal {
