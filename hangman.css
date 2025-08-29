@@ -45,7 +45,7 @@ body.fade-out {
 
 /* Main game window styling */
 .main-game-window {
-    background-color: rgba(31, 41, 55, 0.9); /* Dark gray with transparency */
+    background-color: rgba(31, 41, 55, 0.7); /* Dark gray with more transparency */
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
@@ -58,6 +58,8 @@ body.fade-out {
     position: relative;
     box-sizing: border-box; /* Include padding in width/height */
     color: #e2e8f0; /* Ensure text inside game window is light */
+    backdrop-filter: blur(8px); /* Add blur effect */
+    -webkit-backdrop-filter: blur(8px); /* For Safari support */
 }
 
 /* Game Header */
@@ -159,6 +161,10 @@ body.fade-out {
 .profile-menu, .settings-menu, .achievements-menu {
     transition: transform 0.3s ease-in-out;
     z-index: 50; /* Ensure menus are on top */
+    background-color: rgba(31, 41, 55, 0.7); /* Dark gray with transparency */
+    backdrop-filter: blur(8px); /* Add blur effect */
+    -webkit-backdrop-filter: blur(8px); /* For Safari support */
+    padding: 24px; /* Tailwind p-6 */
 }
 
 .profile-menu.open, .settings-menu.open, .achievements-menu.open {
@@ -240,6 +246,12 @@ body.fade-out {
 }
 
 /* Modal for game information */
+#info-modal > div { /* Target the inner modal content for padding/blur */
+    padding: 24px; /* Tailwind p-6 */
+    backdrop-filter: blur(8px); /* Add blur effect */
+    -webkit-backdrop-filter: blur(8px); /* For Safari support */
+}
+
 #info-modal {
     z-index: 80; /* Higher than menus */
 }
