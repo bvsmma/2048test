@@ -378,15 +378,17 @@
             async function getDisplayUserName(user) {
                 if (!user) return "Guest"; // If no user, return "Guest"
 
-                // First, try to get from Firestore profile
+                // First, try to get from Firebase Auth user object directly (most up-to-date after reload)
+                if (user.displayName) {
+                    return user.displayName;
+                }
+
+                // Fallback: try to get from Firestore profile
                 const profileResult = await window.getUserProfile(user.uid);
                 if (profileResult.success && profileResult.profile.displayName) {
                     return profileResult.profile.displayName;
                 }
-                // Fallback to user.displayName from Firebase Auth object
-                if (user.displayName) {
-                    return user.displayName;
-                }
+                
                 // Final fallback to user.email
                 return user.email;
             }
@@ -403,6 +405,10 @@
 
 
                 if (user) {
+                    // !!! IMPORTANT: Reload user to get the latest displayName from Firebase Auth !!!
+                    await user.reload(); 
+                    user = auth.currentUser; // Update user object after reload
+
                     console.log("Auth state changed: User is signed in", user.uid, user.email, "Verified:", user.emailVerified, "DisplayName from Auth:", user.displayName);
                     window.currentUser = user;
                     
@@ -931,7 +937,7 @@
 
         } catch (e) {
             console.error("Critical error in main script block:", e);
-            document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Ошибка загрузки страницы: ${e.message}. Пожалуйста, проверьте консоль разработчика для получения подробной информации.</div>`;
+            document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Error loading page: ${e.message}. Please check the developer console for details.</div>`;
         }
         console.log("--- Main script execution finished ---"); // Final log
     </script>
