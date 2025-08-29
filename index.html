@@ -4,28 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Hub</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Custom Styles for Home page -->
     <link rel="stylesheet" href="home.css">
-
-    <!-- Tone.js for sound effects, loaded globally for all pages -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <!-- Firebase SDKs (UPDATED: Using standard scripts for GitHub Pages compatibility) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
-<body>
+<body class="bg-gray-900 text-white">
+
     <div class="background-overlay"></div>
 
-    <div class="content-wrapper">
+    <div class="content-container flex flex-col items-center p-4 min-h-screen">
         <header class="text-center">
             <h1 class="text-5xl md:text-7xl font-black uppercase tracking-wider title-shadow">
                 Game Hub
@@ -35,7 +28,6 @@
             </p>
         </header>
 
-        <!-- Auth Status and Button -->
         <div class="flex items-center gap-4 mt-6">
             <span id="auth-status" class="text-gray-300 text-lg">Signed out</span>
             <button id="auth-button" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
@@ -43,7 +35,6 @@
             </button>
         </div>
 
-        <!-- Search Bar -->
         <div class="search-bar mt-8 w-full max-w-md flex items-center justify-center gap-2">
             <input type="text" id="game-search" placeholder="Search for games..." class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
             <button id="search-button" class="px-4 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
@@ -51,15 +42,11 @@
             </button>
         </div>
 
-        <!-- Main content area for game cards. Using a responsive grid layout to ensure 3 columns on larger screens. -->
-        <!-- Added horizontal padding (px-4) to provide space for hover effects. -->
-        <!-- Using a responsive grid: 1 column on small screens, 2 on medium, 3 on large. -->
-        <main class="game-library mt-12 w-full max-w-screen-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4 px-4">
-            <!-- Game Card: 2048 -->
+        <main class="game-library mt-12 w-full max-w-screen-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4 overflow-y-auto flex-grow px-4">
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
-                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center gap-4">
                     <div class="game-card-title text-xl">2048</div>
-                    <p class="game-card-description text-xs text-gray-400">
+                    <p class="game-card-description text-xs text-gray-300">
                         Join numbers to get 2048 tile.
                     </p>
                     <a href="game.html" class="play-button px-3 py-1 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 text-sm transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
@@ -68,11 +55,10 @@
                 </div>
             </div>
 
-            <!-- Game Card: Tic-Tac-Toe -->
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="ticTacToe">
-                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center gap-2">
                     <div class="game-card-title text-xl">Tic-Tac-Toe</div>
-                    <p class="game-card-description text-xs text-gray-400">
+                    <p class="game-card-description text-xs text-gray-300">
                         Classic game vs friend or AI.
                     </p>
                     <div class="flex justify-center gap-2 w-full">
@@ -86,11 +72,10 @@
                 </div>
             </div>
 
-            <!-- Game Card: Hangman -->
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="hangman">
-                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center gap-4">
                     <div class="game-card-title text-xl">Hangman</div>
-                    <p class="game-card-description text-xs text-gray-400">
+                    <p class="game-card-description text-xs text-gray-300">
                         Guess letters, save the figure!
                     </p>
                     <a href="hangman.html" class="play-button px-3 py-1 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 text-sm transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
@@ -98,36 +83,64 @@
                     </a>
                 </div>
             </div>
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame1">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center gap-4">
+                    <div class="game-card-title text-xl">New Game 1</div>
+                    <p class="game-card-description text-xs text-gray-300">
+                        Placeholder for exciting game!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame2">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center gap-4">
+                    <div class="game-card-title text-xl">New Game 2</div>
+                    <p class="game-card-description text-xs text-gray-300">
+                        More fun with this upcoming game!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame3">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center gap-4">
+                    <div class="game-card-title text-xl">New Game 3</div>
+                    <p class="game-card-description text-xs text-gray-300">
+                        Another awesome game is on its way!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
         </main>
     </div>
 
-    <!-- Footer now relative to the content-wrapper -->
-    <footer class="w-full p-4 text-center text-gray-300 text-sm flex-shrink-0">
+    <footer class="w-full p-4 text-center text-gray-200 text-sm">
         <p>
             Created by: Vladyslav Bieliaiev |
             <a href="https://instagram.com/mmacvv" target="_blank" class="text-blue-400 hover:underline">My Instagram</a>
         </p>
     </footer>
 
-    <!-- Mute/Unmute Button -->
     <button id="toggle-all-sound-button" class="fixed top-4 right-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200">
         <i class="fas fa-volume-up" id="all-sound-icon"></i>
     </button>
 
-    <!-- Game Information Modal -->
     <div id="game-info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800/70 text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative backdrop-blur-sm">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative">
             <h2 id="modal-game-title" class="text-3xl font-bold mb-4 text-white">Game Title</h2>
             <p id="modal-game-description" class="mb-4 text-lg">Detailed description of the game.</p>
             <p id="modal-game-rules" class="mb-4">Rules: These are the rules for the game.</p>
-            <!-- Add more game-specific info here -->
             <button id="close-game-info-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
 
-    <!-- Authentication Modal -->
     <div id="auth-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800/70 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative backdrop-blur-sm">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
             <h2 id="auth-modal-title" class="text-2xl font-bold mb-4 text-white">Sign In</h2>
             <form id="auth-form" class="flex flex-col gap-4">
                 <input type="email" id="auth-email" placeholder="Email" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -140,7 +153,6 @@
             <button id="toggle-auth-mode" class="mt-4 text-blue-400 hover:underline text-sm" data-click-sound="buttonClick">
                 Don't have an account? Register
             </button>
-            <!-- Google Sign-In Button -->
             <button id="google-sign-in-button" class="mt-4 flex items-center justify-center gap-2 w-full px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
                 <i class="fab fa-google"></i> Sign In with Google
             </button>
@@ -148,24 +160,21 @@
         </div>
     </div>
 
-    <!-- Profile Modal -->
     <div id="profile-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800/70 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative backdrop-blur-sm">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
             <h2 class="text-2xl font-bold mb-4 text-white">My Profile</h2>
             <p class="mb-2">Hello, <span id="profile-display-name" class="font-bold text-blue-400">Guest</span>!</p>
             <p class="mb-4">Email: <span id="profile-email" class="text-gray-400">Not signed in</span></p>
             <p class="mb-4" id="email-verification-status">Email Verified: <span class="font-bold text-yellow-400">No</span></p>
             <button id="send-verification-email-button" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 text-sm mt-2 hidden" data-click-sound="buttonClick">Send Verification Email</button>
 
-            <!-- Add more profile info here like wins/losses from Firestore -->
             <button id="profile-sign-out-button" class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4" data-click-sound="buttonClick">Sign Out</button>
             <button id="close-profile-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
 
-    <!-- Password Reset Success/Error Modal (Simple Notification) -->
     <div id="notification-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800/70 text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center backdrop-blur-sm">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
             <h3 id="notification-title" class="text-xl font-bold mb-3 text-white">Notification</h3>
             <p id="notification-message" class="mb-4">Message goes here.</p>
             <button id="close-notification-modal" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">OK</button>
@@ -233,12 +242,6 @@
                     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                     const user = userCredential.user;
 
-                    // Set displayName on the Firebase Auth user object
-                    if (displayName) {
-                        await user.updateProfile({ displayName: displayName });
-                        console.log("User display name updated in Auth:", displayName);
-                    }
-
                     // Send email verification
                     await user.sendEmailVerification();
                     console.log("Verification email sent to:", user.email);
@@ -290,17 +293,20 @@
                     const result = await auth.signInWithPopup(googleProvider);
                     const user = result.user;
 
-                    // ALWAYS update user profile in Firestore with latest info from Google
-                    // Use setDoc with { merge: true } to update existing fields without overwriting others
-                    await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
-                        displayName: user.displayName,
-                        email: user.email, // Keep email updated, though it won't change for Google
-                        emailVerified: user.emailVerified,
-                        // Do NOT overwrite createdAt if it already exists by not including it here
-                        // If it's a new user, it will be added, if existing, it will be merged
-                    }, { merge: true }); // Important: merge ensures existing fields are not deleted
-
-                    console.log("User signed in with Google, profile updated/created:", user);
+                    // Check if user profile exists in Firestore, if not, create it
+                    const profileCheck = await window.getUserProfile(user.uid);
+                    if (!profileCheck.success) {
+                        await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
+                            displayName: user.displayName,
+                            email: user.email,
+                            emailVerified: user.emailVerified,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        console.log("Google user profile created in Firestore.");
+                    } else {
+                        console.log("Google user profile already exists.");
+                    }
+                    console.log("User signed in with Google:", user);
                     return { success: true, user: user };
                 } catch (error) {
                     console.error("Google Sign-In error:", error.message);
@@ -342,30 +348,6 @@
                 }
             };
 
-            // Helper function to get the display name, prioritizing Auth then Firestore, then email part
-            async function getDisplayNameOrDefault(user) {
-                if (!user) return "Guest";
-
-                // 1. Prioritize Firebase Auth's displayName
-                if (user.displayName) {
-                    return user.displayName;
-                }
-
-                // 2. Try to get from Firestore profile
-                const profileResult = await window.getUserProfile(user.uid);
-                if (profileResult.success && profileResult.profile.displayName) {
-                    return profileResult.profile.displayName;
-                }
-                
-                // 3. Fallback to email part
-                if (user.email) {
-                    return user.email.split('@')[0];
-                }
-
-                return "User"; // Final fallback
-            }
-
-
             // Listen for auth state changes
             auth.onAuthStateChanged(async (user) => {
                 console.log("Firebase auth state changed listener triggered.");
@@ -378,45 +360,45 @@
 
 
                 if (user) {
-                    console.log("User initially in onAuthStateChanged:", user.displayName, user.email);
-                    window.currentUser = user; 
-                    await user.reload(); 
-                    window.currentUser = auth.currentUser; 
-                    console.log("User after reload in onAuthStateChanged:", window.currentUser.displayName, window.currentUser.email);
-
-                    const userDisplayName = await getDisplayNameOrDefault(window.currentUser);
-                    console.log("DisplayName to use:", userDisplayName);
-
-                    authStatusElement.textContent = `Signed in as: ${userDisplayName}`; 
-                    profileDisplayName.textContent = userDisplayName; 
-
+                    console.log("Auth state changed: User is signed in", user.uid, user.email, "Verified:", user.emailVerified);
+                    window.currentUser = user;
+                    authStatusElement.textContent = `Signed in as: ${user.email}`;
                     authButton.textContent = "My Profile";
                     authButton.onclick = () => openProfileModal();
 
-                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
-                    if (!window.currentUser.emailVerified) {
+                    // Update email verification status
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${user.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${user.emailVerified ? 'Yes' : 'No'}</span>`;
+                    if (!user.emailVerified) {
                         sendVerificationEmailButton.classList.remove('hidden');
                     } else {
                         sendVerificationEmailButton.classList.add('hidden');
                     }
-                    
-                    profileEmail.textContent = window.currentUser.email; 
+
+
+                    // Fetch user profile from Firestore
+                    const profileResult = await window.getUserProfile(user.uid);
+                    if (profileResult.success) {
+                        profileDisplayName.textContent = profileResult.profile.displayName || user.email;
+                    } else {
+                        profileDisplayName.textContent = user.email;
+                    }
+                    profileEmail.textContent = user.email;
                 } else {
                     console.log("Auth state changed: User is signed out");
                     window.currentUser = null;
                     authStatusElement.textContent = "Signed out";
                     authButton.textContent = "Sign In / Register";
-                    authButton.onclick = () => openAuthModal('signIn'); 
+                    authButton.onclick = () => openAuthModal('signIn'); // Default to sign in
                     profileDisplayName.textContent = "Guest";
                     profileEmail.textContent = "Not signed in";
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold text-gray-400">N/A</span>`;
                     sendVerificationEmailButton.classList.add('hidden');
                 }
-                updateUIForAuthStatus(); 
+                updateUIForAuthStatus(); // Update other UI elements
             });
 
             // Function to update UI elements based on auth status
-            async function updateUIForAuthStatus() { // Made async to use await
+            function updateUIForAuthStatus() {
                 console.log("Updating UI for auth status.");
                 const authButton = document.getElementById('auth-button');
                 const authStatusElement = document.getElementById('auth-status');
@@ -428,24 +410,30 @@
 
 
                 if (window.currentUser) {
+                    // User is logged in
                     authButton.textContent = "My Profile";
                     authButton.onclick = openProfileModal;
-                    
-                    const userDisplayName = await getDisplayNameOrDefault(window.currentUser);
-                    console.log("DisplayName for updateUIForAuthStatus:", userDisplayName);
-                    authStatusElement.textContent = `Signed in as: ${userDisplayName}`; 
-                    profileDisplayNameElement.textContent = userDisplayName; 
-                    
-                    profileEmailElement.textContent = window.currentUser.email; 
+                    authStatusElement.textContent = `Signed in as: ${window.currentUser.email}`;
+                    profileEmailElement.textContent = window.currentUser.email;
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
-                    if (window.currentUser.email && !window.currentUser.emailVerified) { 
+                    if (!window.currentUser.emailVerified) {
                         sendVerificationEmailButton.classList.remove('hidden');
                     } else {
                         sendVerificationEmailButton.classList.add('hidden');
                     }
-                    
+
+
+                    // Fetch profile display name if available
+                    window.getUserProfile(window.currentUser.uid).then(result => {
+                        if (result.success) {
+                            profileDisplayNameElement.textContent = result.profile.displayName || window.currentUser.email;
+                        } else {
+                            profileDisplayNameElement.textContent = window.currentUser.email;
+                        }
+                    });
                     signOutButton.classList.remove('hidden');
                 } else {
+                    // User is logged out
                     authButton.textContent = "Sign In / Register";
                     authButton.onclick = () => openAuthModal('signIn');
                     authStatusElement.textContent = "Signed out";
@@ -602,6 +590,21 @@
                     title: "Hangman",
                     description: "Guess the hidden word one letter at a time to save the stick figure from being hanged. Each wrong guess adds another part to the gallows! Be careful with your guesses!",
                     rules: "Guess letters. For each incorrect guess, a part of the hangman is drawn. You lose if the hangman is complete before you guess the word."
+                },
+                "newGame1": {
+                    title: "New Game 1",
+                    description: "This is a placeholder for another exciting game to come! Stay tuned for updates and get ready for new challenges.",
+                    rules: "Rules for New Game 1 will be revealed soon!"
+                },
+                "newGame2": {
+                    title: "New Game 2",
+                    description: "Get ready for more fun with this upcoming game! It promises unique gameplay and endless entertainment.",
+                    rules: "Rules for New Game 2 will be revealed soon!"
+                },
+                "newGame3": {
+                    title: "New Game 3",
+                    description: "Another awesome game is on its way! Prepare for an unforgettable adventure and new gaming experiences.",
+                    rules: "Rules for New Game 3 will be revealed soon!"
                 }
             };
 
@@ -661,15 +664,14 @@
                 });
             });
 
-            // --- Smooth Page Transitions ---
+            // --- Smooth Page Transitions (Conceptual Implementation) ---
             console.log("Initializing Smooth Page Transitions.");
             document.querySelectorAll('a[href^="http"]:not([target="_blank"]), a[href^="game.html"], a[href^="tic_tac_toe.html"], a[href^="tic_tac_toe_ai.html"], a[href^="hangman.html"]').forEach(link => {
                 link.addEventListener('click', function(e) {
-                    // All internal links that are not game buttons should trigger fade-out
-                    // The 'play-button' and 'play-button-small' now have their own click handlers.
-                    // This listener is for other navigation links that should fade out.
+                    // Only apply transition to internal links that are not game buttons
                     if (this.classList.contains('play-button') || this.classList.contains('play-button-small') || this.classList.contains('coming-soon-button')) {
-                        return; // Let their specific handlers take over
+                        // Let game buttons navigate normally after their click sound
+                        return;
                     }
 
                     e.preventDefault(); // Prevent default navigation immediately
@@ -681,29 +683,15 @@
                     // Navigate after animation duration
                     setTimeout(() => {
                         window.location.href = destination;
-                    }, 500); // Match CSS transition duration (0.5s)
+                    }, 300); // Match CSS transition duration
                 });
             });
 
             // Add fade-in on page load
             document.addEventListener('DOMContentLoaded', () => {
                 console.log("DOMContentLoaded event fired. Adding fade-in class.");
-                // Set initial opacity to 0 in CSS, then fade in on load
                 document.body.classList.add('fade-in');
             });
-
-            // Handle browser back/forward buttons to ensure proper fade-in
-            window.addEventListener('pageshow', (event) => {
-                if (event.persisted) { // If page is loaded from cache (e.g., via back button)
-                    console.log("pageshow event (persisted) fired. Ensuring fade-in and resetting body classes.");
-                    document.body.classList.remove('fade-out'); // Remove fade-out class if present
-                    // Small delay to ensure browser fully renders before fade-in
-                    setTimeout(() => {
-                        document.body.classList.add('fade-in'); // Ensure fade-in animation plays
-                    }, 10); 
-                }
-            });
-
 
             // --- Authentication Modals Logic ---
             console.log("Initializing Authentication Modals Logic.");
@@ -749,26 +737,31 @@
             window.openProfileModal = async () => {
                 console.log("Attempting to open Profile Modal.");
                 if (window.currentUser) {
-                    document.getElementById('profile-display-name').textContent = "Loading..."; // Set loading state
+                    document.getElementById('profile-display-name').textContent = "Loading...";
                     document.getElementById('profile-email').textContent = window.currentUser.email;
 
+                    // Refresh user data to get latest verification status
                     await window.currentUser.reload();
-                    window.currentUser = auth.currentUser; 
+                    window.currentUser = auth.currentUser; // Update window.currentUser with fresh data
 
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
-                    if (window.currentUser.email && !window.currentUser.emailVerified) { 
+                    if (window.currentUser.email && !window.currentUser.emailVerified) { // Only show button if email exists and is not verified
                         sendVerificationEmailButton.classList.remove('hidden');
                     } else {
                         sendVerificationEmailButton.classList.add('hidden');
                     }
 
-                    const displayNameToUse = await getDisplayNameOrDefault(window.currentUser);
-                    document.getElementById('profile-display-name').textContent = displayNameToUse;
-                    
+
+                    const profileResult = await window.getUserProfile(window.currentUser.uid);
+                    if (profileResult.success) {
+                        document.getElementById('profile-display-name').textContent = profileResult.profile.displayName || window.currentUser.email;
+                    } else {
+                        document.getElementById('profile-display-name').textContent = window.currentUser.email;
+                    }
                     profileModal.classList.remove('hidden');
                 } else {
                     console.warn("No user signed in to open profile modal. Redirecting to sign in.");
-                    openAuthModal('signIn'); 
+                    openAuthModal('signIn'); // Redirect to sign in if no user
                 }
             };
 
@@ -783,6 +776,7 @@
                 openAuthModal(isSignInMode ? 'signIn' : 'register');
             });
 
+            // Handle Forgot Password
             forgotPasswordButton.addEventListener('click', async () => {
                 const email = authEmailInput.value;
                 if (!email) {
@@ -793,19 +787,19 @@
                 const result = await window.sendPasswordReset(email);
                 if (result.success) {
                     openNotificationModal("Password Reset", result.message);
-                    authModal.classList.add('hidden'); 
+                    authModal.classList.add('hidden'); // Close auth modal after sending reset
                 } else {
                     authErrorMessage.textContent = result.error;
                     authErrorMessage.classList.remove('hidden');
                 }
             });
 
+            // Handle Google Sign-In
             googleSignInButton.addEventListener('click', async () => {
                 const result = await window.signInWithGoogle();
                 if (result.success) {
                     authModal.classList.add('hidden');
-                    const userDisplayName = await getDisplayNameOrDefault(window.currentUser);
-                    openNotificationModal("Google Sign-In", `Welcome, ${userDisplayName}!`);
+                    openNotificationModal("Google Sign-In", `Welcome, ${result.user.displayName || result.user.email}!`);
                 } else {
                     authErrorMessage.textContent = result.error;
                     authErrorMessage.classList.remove('hidden');
@@ -816,7 +810,7 @@
             authForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 console.log("Auth form submitted.");
-                authErrorMessage.classList.add('hidden'); 
+                authErrorMessage.classList.add('hidden'); // Hide previous error
 
                 const email = authEmailInput.value;
                 const password = authPasswordInput.value;
@@ -827,8 +821,7 @@
                     const result = await window.signIn(email, password);
                     if (result.success) {
                         authModal.classList.add('hidden');
-                        const userDisplayName = await getDisplayNameOrDefault(window.currentUser);
-                        openNotificationModal("Sign In Successful", `Welcome back, ${userDisplayName}!`);
+                        openNotificationModal("Sign In Successful", `Welcome back, ${result.user.displayName || result.user.email}!`);
                     } else {
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
@@ -893,19 +886,19 @@
             });
 
             // Helper function to open generic notification modal
-            async function openNotificationModal(title, message, type = "blue") { // Made async
+            function openNotificationModal(title, message, type = "blue") {
                 notificationTitle.textContent = title;
                 notificationMessage.textContent = message;
-                notificationTitle.className = `text-xl font-bold mb-3 text-${type}-400`; 
+                notificationTitle.className = `text-xl font-bold mb-3 text-${type}-400`; // Update title color based on type
                 notificationModal.classList.remove('hidden');
             }
 
 
         } catch (e) {
             console.error("Critical error in main script block:", e);
-            document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Error loading page: ${e.message}. Please check the developer console for details.</div>`;
+            document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Ошибка загрузки страницы: ${e.message}. Пожалуйста, проверьте консоль разработчика для получения подробной информации.</div>`;
         }
-        console.log("--- Main script execution finished ---"); 
+        console.log("--- Main script execution finished ---"); // Final log
     </script>
 </body>
 </html>
