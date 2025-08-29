@@ -12,16 +12,27 @@
     
     <!-- Custom Styles for animations and refined elements -->
     <style>
-        body {
+        /* Base styles for HTML and Body */
+        html, body {
+            height: 100%; /* Ensure html and body take full viewport height */
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrollbars from background movement */
             font-family: 'Inter', sans-serif;
-            /* Removed background-color from body to reveal the background-image */
+            color: #fff; /* Default text color */
+        }
+
+        body {
+            /* Fallback background color, mostly for content that isn't fully transparent */
+            background-color: #0d1117; 
             transition: opacity 0.5s ease-in-out; /* Global transition for fade */
-            /* Added background image directly to the body */
+            /* Background image now directly on body to interact with overlay */
             background-image: url('https://i.imgur.com/qmJKSRj.jpeg'); /* Your photo link */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
+            position: relative; /* Needed for z-index context of overlay */
         }
 
         /* Fade-in effect on page load */
@@ -52,15 +63,22 @@
             background: linear-gradient(45deg, #1f2937, #111827, #0d1117);
             background-size: 400% 400%;
             animation: gradientAnimation 15s ease infinite;
-            /* Changed z-index to 0 to place it above body background but below content */
-            z-index: 0; 
+            z-index: -1; /* Place overlay behind body content but over body's background image */
             opacity: 0.7; /* Make the gradient semi-transparent to allow image to show */
+            pointer-events: none; /* Allow clicks to pass through to elements below */
         }
 
         @keyframes gradientAnimation {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+
+        /* Ensure main content is above the overlay */
+        .content-container {
+            position: relative;
+            z-index: 1; /* Ensure content is above the overlay */
+            background-color: transparent; /* Ensure it's transparent to see background */
         }
 
         .game-card {
@@ -447,21 +465,19 @@
 
             // Function to get the correct display name for UI
             async function getDisplayUserName(user) {
-                if (!user) return "Guest"; // If no user, return "Guest"
+                if (!user) return "Guest";
 
-                // First, try to get from Firebase Auth user object directly (most up-to-date after reload)
+                // Prioritize Firebase Auth's displayName after reload
                 if (user.displayName) {
                     return user.displayName;
                 }
-
-                // Fallback: try to get from Firestore profile
-                const profileResult = await window.getUserProfile(user.uid);
-                if (profileResult.success && profileResult.profile.displayName) {
-                    return profileResult.profile.displayName;
-                }
                 
-                // Final fallback to user.email
-                return user.email;
+                // Fallback to email if displayName is not available
+                if (user.email) {
+                    return user.email;
+                }
+
+                return "Guest"; // Final fallback
             }
 
             // Listen for auth state changes
