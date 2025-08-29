@@ -3,7 +3,6 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden; /* Ensure no scrollbars for background */
-    color: #e2e8f0; /* Default text color for the entire page */
 }
 
 body {
@@ -73,14 +72,16 @@ body.fade-out {
     padding: 1rem; /* Tailwind p-4 */
     flex-grow: 1; /* Allow content-wrapper to take available height */
     overflow-y: auto; /* THIS IS WHERE THE MAIN SCROLL WILL BE */
-    padding-bottom: 2rem; /* Add sufficient padding at the bottom */
-    width: 100%; /* Ensure it takes full width */
+    /* Add padding-bottom to ensure content doesn't get hidden under the footer */
+    padding-bottom: 2rem;
 }
 
-/* Apply basic card styling universally to game cards */
+/* Apply blurred glass effect to game cards */
 .game-card {
-    background-color: #1f2937; /* Darker card background */
-    border: 1px solid #374151; /* Subtle border */
+    background-color: rgba(31, 41, 55, 0.6); /* Darker card background with transparency */
+    backdrop-filter: blur(10px); /* Blur effect */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Lighter, subtle border */
     border-radius: 0.75rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
     display: flex; /* Use flex to center content */
@@ -89,11 +90,12 @@ body.fade-out {
     align-items: center; /* Center horizontally */
     text-align: center; /* Ensure text is centered within the card */
     padding: 1rem; /* Add padding to card content */
-    color: #e2e8f0; /* Ensure text inside card is light */
 }
+
 .game-card:hover {
-    border-color: #6366f1; /* Indigo-500 on hover */
+    border-color: rgba(99, 102, 241, 0.8); /* Indigo-500 on hover with transparency */
 }
+
 
 /* The game-library itself no longer needs overflow-y or fixed max-height */
 .game-library {
@@ -105,13 +107,10 @@ body.fade-out {
 /* Title shadow for enhanced look */
 .title-shadow {
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8); /* Stronger shadow */
-    color: #fff; /* Ensure title is white */
 }
 .subtitle-shadow {
     text-shadow: 0 2px 15px rgba(0, 0, 0, 0.6); /* Stronger shadow */
-    color: #cbd5e0; /* Ensure subtitle is light grey */
 }
-
 /* Increased contrast for auth status and profile details */
 #auth-status,
 #profile-display-name,
@@ -122,11 +121,4 @@ body.fade-out {
 }
 footer {
     flex-shrink: 0; /* Prevent footer from shrinking and ensure it stays at the bottom */
-    color: #cbd5e0; /* Changed to a lighter gray for better visibility */
-}
-
-/* Add backdrop-blur for modals */
-.backdrop-blur-sm {
-    backdrop-filter: blur(4px); /* Tailwind's backdrop-blur-sm */
-    -webkit-backdrop-filter: blur(4px); /* For Safari support */
 }
