@@ -1,0 +1,217 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #faf8ef;
+    background-image: url('https://i.imgur.com/qmJKSRj.jpeg'); /* Your photo link */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    color: #fff; /* Default text color for the body */
+}
+
+/* Main game window styling */
+.main-game-window {
+    background-color: rgba(31, 41, 55, 0.9); /* Dark gray with transparency */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 95%; /* Responsive width */
+    max-width: 800px;
+    min-height: 500px;
+    position: relative;
+    box-sizing: border-box; /* Include padding in width/height */
+}
+
+/* Game Header */
+.game-header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.game-title {
+    font-size: 3rem; /* Tailwind text-5xl */
+    font-weight: 900; /* Tailwind font-black */
+    text-transform: uppercase;
+    letter-spacing: 0.05em; /* Tailwind tracking-wider */
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Title shadow */
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+/* Hangman Drawing Area */
+#hangman-drawing-area {
+    background-color: #374151; /* bg-gray-700 */
+    border: 2px solid #4B5563; /* border-gray-600 */
+}
+
+#hangman-svg {
+    stroke: #D1D5DB; /* Light gray for hangman parts */
+}
+
+/* Initially hide all hangman parts */
+.hangman-part {
+    display: none;
+}
+
+/* Game Controls Wrapper */
+.game-controls-wrapper {
+    min-width: 280px;
+}
+
+/* Word Display */
+#word-display {
+    color: #fff;
+}
+
+/* Alphabet Buttons */
+#alphabet-buttons button {
+    background-color: #4F46E5; /* Indigo-600 */
+    color: white;
+    font-weight: bold;
+    border-radius: 0.5rem; /* rounded-lg */
+    padding: 0.75rem 0.5rem; /* py-3 px-2 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+#alphabet-buttons button:hover:not(:disabled) {
+    background-color: #4338CA; /* Indigo-700 */
+    transform: scale(1.05);
+}
+
+#alphabet-buttons button:disabled {
+    background-color: #6B7280; /* Gray-500 */
+    color: #D1D5DB; /* Gray-300 */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+#alphabet-buttons button.correct {
+    background-color: #10B981; /* Green-500 */
+    color: white;
+}
+
+#alphabet-buttons button.wrong {
+    background-color: #EF4444; /* Red-500 */
+    color: white;
+}
+
+/* Game Message Overlay (used for win/lose) */
+#game-message {
+    border-radius: 0.75rem; /* rounded-lg */
+}
+
+#game-status {
+    color: white;
+}
+
+/* Fixed position buttons (settings, achievements, profile) */
+.fixed {
+    z-index: 40; /* Above game message */
+}
+
+.button-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Slide-out menus (profile, settings, achievements) */
+.profile-menu, .settings-menu, .achievements-menu {
+    transition: transform 0.3s ease-in-out;
+    z-index: 50; /* Ensure menus are on top */
+}
+
+.profile-menu.open, .settings-menu.open, .achievements-menu.open {
+    transform: translateX(0);
+}
+
+/* Input fields within menus */
+.settings-menu input[type="range"]::-webkit-slider-thumb,
+.achievements-menu input[type="range"]::-webkit-slider-thumb,
+.profile-menu input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    /* Reduced size */
+    width: 16px; /* Changed from 20px */
+    height: 16px; /* Changed from 20px */
+    border-radius: 50%;
+    background: #60A5FA; /* Light blue for contrast */
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.3);
+    /* Adjusted margin-top for better vertical alignment with smaller size */
+    margin-top: -4px; /* Changed from -8px for finer tuning with smaller thumb */
+}
+
+.settings-menu input[type="range"]::-moz-range-thumb,
+.achievements-menu input[type="range"]::-moz-range-thumb,
+.profile-menu input[type="range"]::-moz-range-thumb {
+    /* Reduced size */
+    width: 16px; /* Changed from 20px */
+    height: 16px; /* Changed from 20px */
+    border-radius: 50%;
+    background: #60A5FA; /* Light blue for contrast */
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.3);
+    /* Correcting the thumb vertical position for Firefox */
+    border: none; /* Remove default border that can affect positioning */
+}
+
+.settings-menu input[type="range"]::-webkit-slider-runnable-track,
+.achievements-menu input[type="range"]::-webkit-slider-runnable-track,
+.profile-menu input[type="range"]::-webkit-slider-runnable-track {
+    background: #4B5563; /* Dark gray for contrast */
+    border-radius: 5px;
+    height: 8px; /* Kept same height for track */
+}
+
+.settings-menu input[type="range"]::-moz-range-track,
+.achievements-menu input[type="range"]::-moz-range-track,
+.profile-menu input[type="range"]::-moz-range-track {
+    background: #4B5563; /* Dark gray for contrast */
+    border-radius: 5px;
+    height: 8px; /* Kept same height for track */
+}
+
+/* Achievement Items */
+.achievement-item {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.achievement-item:last-child {
+    border-bottom: none;
+}
+
+.achievement-item i {
+    font-size: 1.2em;
+    min-width: 20px;
+    text-align: center;
+}
+
+.achievement-item.unlocked i {
+    color: #34D399; /* Green-400 */
+}
+
+.achievement-item.locked i {
+    color: #9CA3AF; /* Gray-400 */
+}
+
+/* Modal for game information */
+#info-modal {
+    z-index: 80; /* Higher than menus */
+}
