@@ -3,6 +3,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden; /* Ensure no scrollbars for background */
+    color: #e2e8f0; /* Default text color for the entire page */
 }
 
 body {
@@ -72,8 +73,8 @@ body.fade-out {
     padding: 1rem; /* Tailwind p-4 */
     flex-grow: 1; /* Allow content-wrapper to take available height */
     overflow-y: auto; /* THIS IS WHERE THE MAIN SCROLL WILL BE */
-    /* Add padding-bottom to ensure content doesn't get hidden under the footer */
-    padding-bottom: 2rem;
+    padding-bottom: 2rem; /* Add sufficient padding at the bottom */
+    width: 100%; /* Ensure it takes full width */
 }
 
 /* Apply basic card styling universally to game cards */
@@ -88,6 +89,7 @@ body.fade-out {
     align-items: center; /* Center horizontally */
     text-align: center; /* Ensure text is centered within the card */
     padding: 1rem; /* Add padding to card content */
+    color: #e2e8f0; /* Ensure text inside card is light */
 }
 .game-card:hover {
     border-color: #6366f1; /* Indigo-500 on hover */
@@ -103,10 +105,13 @@ body.fade-out {
 /* Title shadow for enhanced look */
 .title-shadow {
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8); /* Stronger shadow */
+    color: #fff; /* Ensure title is white */
 }
 .subtitle-shadow {
     text-shadow: 0 2px 15px rgba(0, 0, 0, 0.6); /* Stronger shadow */
+    color: #cbd5e0; /* Ensure subtitle is light grey */
 }
+
 /* Increased contrast for auth status and profile details */
 #auth-status,
 #profile-display-name,
@@ -117,4 +122,5 @@ body.fade-out {
 }
 footer {
     flex-shrink: 0; /* Prevent footer from shrinking and ensure it stays at the bottom */
+    color: #9ca3af; /* Footer text color */
 }
