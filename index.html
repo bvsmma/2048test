@@ -8,7 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <!-- Removed link to home.css as styles are now embedded or handled by Tailwind -->
     
     <!-- Custom Styles for animations and refined elements -->
     <style>
@@ -17,21 +16,21 @@
             height: 100%; /* Ensure html and body take full viewport height */
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Prevent scrollbars from background movement */
             font-family: 'Inter', sans-serif;
             color: #fff; /* Default text color */
         }
 
+        /* Body background image and initial state */
         body {
-            /* IMPORTANT: Removed background-color to reveal the background-image */
-            transition: opacity 0.5s ease-in-out; /* Global transition for fade */
-            /* Background image now directly on body to interact with overlay */
             background-image: url('https://i.imgur.com/qmJKSRj.jpeg'); /* Your photo link */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            position: relative; /* Needed for z-index context of overlay */
+            position: relative; /* Needed for z-index context of content-container */
+            opacity: 0; /* Initially hide to prevent FOUC and enable fade-in */
+            transition: opacity 0.5s ease-in-out; /* Global transition for fade */
+            background-color: transparent; /* Ensure body itself is transparent to show image below overlay */
         }
 
         /* Fade-in effect on page load */
@@ -46,6 +45,7 @@
         /* Fade-out effect for page transitions */
         body.fade-out {
             animation: fadeOut 0.5s ease-out forwards;
+            overflow: hidden; /* Prevent scrollbars during fade-out transition */
         }
         @keyframes fadeOut {
             from { opacity: 1; }
@@ -60,14 +60,14 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(45deg, #1f2937, #111827, #0d1117);
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
-            /* Changed z-index to 0 to place it above body background image but below content */
-            z-index: 0; 
-            opacity: 0.6; /* Slightly reduced opacity for better image visibility */
+            background-size: 400% 400%; /* Important for animation */
+            animation: gradientAnimation 15s ease infinite; /* Your animation here */
+            z-index: 0; /* Place overlay above html background image but below content */
+            opacity: 0.6; /* Make the gradient semi-transparent to allow image to show */
             pointer-events: none; /* Allow clicks to pass through to elements below */
         }
 
+        /* Keyframes for the gradient background animation */
         @keyframes gradientAnimation {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -79,6 +79,8 @@
             position: relative;
             z-index: 1; /* Ensure content is above the overlay */
             background-color: transparent; /* Ensure it's transparent to see background */
+            height: 100vh; /* Make it take full viewport height */
+            overflow-y: auto; /* Enable scrolling for content if needed */
         }
 
         .game-card {
@@ -92,10 +94,18 @@
         }
         /* Title shadow for enhanced look */
         .title-shadow {
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7); /* Stronger shadow */
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8); /* Stronger shadow */
         }
         .subtitle-shadow {
-            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.6); /* Stronger shadow */
+        }
+        /* Increased contrast for auth status and profile details */
+        #auth-status,
+        #profile-display-name,
+        #profile-email,
+        #email-verification-status span {
+            color: #E2E8F0; /* Brighter gray for better contrast */
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.4); /* Add shadow for readability */
         }
     </style>
 
@@ -356,12 +366,6 @@
                     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                     const user = userCredential.user;
 
-                    // Set displayName on the Firebase Auth user object
-                    if (displayName) {
-                        await user.updateProfile({ displayName: displayName });
-                        console.log("User display name updated in Auth:", displayName);
-                    }
-
                     // Send email verification
                     await user.sendEmailVerification();
                     console.log("Verification email sent to:", user.email);
@@ -416,9 +420,11 @@
                     // ALWAYS update user profile in Firestore with latest info from Google
                     // Use setDoc with { merge: true } to update existing fields without overwriting others
                     await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
-                        displayName: user.displayName, // Ensure displayName from Google is used
-                        email: user.email,
+                        displayName: user.displayName,
+                        email: user.email, // Keep email updated, though it won't change for Google
                         emailVerified: user.emailVerified,
+                        // Do NOT overwrite createdAt if it already exists by not including it here
+                        // If it's a new user, it will be added, if existing, it will be merged
                     }, { merge: true }); // Important: merge ensures existing fields are not deleted
 
                     console.log("User signed in with Google, profile updated/created:", user);
@@ -465,9 +471,9 @@
 
             // Function to get the correct display name for UI
             async function getDisplayUserName(user) {
-                if (!user) return "Guest";
+                if (!user) return "Guest"; // If no user, return "Guest"
 
-                // Prioritize Firebase Auth's displayName after reload
+                // Prioritize Firebase Auth's displayName
                 if (user.displayName) {
                     return user.displayName;
                 }
@@ -492,29 +498,31 @@
 
 
                 if (user) {
-                    // !!! IMPORTANT: Reload user to get the latest displayName from Firebase Auth !!!
+                    // Update window.currentUser immediately
+                    window.currentUser = user; 
+                    // Reload the user to get the absolute latest data, including displayName
                     await user.reload(); 
-                    user = auth.currentUser; // Update user object after reload
+                    window.currentUser = auth.currentUser; // Ensure window.currentUser is the latest after reload
 
-                    console.log("Auth state changed: User is signed in", user.uid, user.email, "Verified:", user.emailVerified, "DisplayName from Auth:", user.displayName);
-                    window.currentUser = user;
+                    console.log("Auth state changed: User is signed in", window.currentUser.uid, window.currentUser.email, "Verified:", window.currentUser.emailVerified, "DisplayName from Auth:", window.currentUser.displayName);
                     
-                    const userDisplayName = await getDisplayUserName(user);
-                    authStatusElement.textContent = `Signed in as: ${userDisplayName}`; // Now uses display name
-                    profileDisplayName.textContent = userDisplayName; // Also for profile modal
+                    // Directly use the updated displayName from window.currentUser
+                    const userDisplayName = window.currentUser.displayName || window.currentUser.email || "User";
+                    authStatusElement.textContent = `Signed in as: ${userDisplayName}`; 
+                    profileDisplayName.textContent = userDisplayName; 
 
                     authButton.textContent = "My Profile";
                     authButton.onclick = () => openProfileModal();
 
                     // Update email verification status
-                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${user.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${user.emailVerified ? 'Yes' : 'No'}</span>`;
-                    if (!user.emailVerified) {
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
+                    if (!window.currentUser.emailVerified) {
                         sendVerificationEmailButton.classList.remove('hidden');
                     } else {
                         sendVerificationEmailButton.classList.add('hidden');
                     }
                     
-                    profileEmail.textContent = user.email; // Email always shows email
+                    profileEmail.textContent = window.currentUser.email; // Email always shows email
                 } else {
                     console.log("Auth state changed: User is signed out");
                     window.currentUser = null;
@@ -546,10 +554,11 @@
                     authButton.textContent = "My Profile";
                     authButton.onclick = openProfileModal;
                     
-                    getDisplayUserName(window.currentUser).then(displayName => {
-                        authStatusElement.textContent = `Signed in as: ${displayName}`; // Now uses display name
-                        profileDisplayNameElement.textContent = displayName;
-                    });
+                    // Immediately try to get display name from currentUser, then update if Firestore has it
+                    // Directly use the updated displayName from window.currentUser
+                    const userDisplayName = window.currentUser.displayName || window.currentUser.email || "User";
+                    authStatusElement.textContent = `Signed in as: ${userDisplayName}`; 
+                    profileDisplayNameElement.textContent = userDisplayName; 
                     
                     profileEmailElement.textContent = window.currentUser.email; // Email always shows email
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
@@ -796,7 +805,13 @@
             console.log("Initializing Smooth Page Transitions.");
             document.querySelectorAll('a[href^="http"]:not([target="_blank"]), a[href^="game.html"], a[href^="tic_tac_toe.html"], a[href^="tic_tac_toe_ai.html"], a[href^="hangman.html"]').forEach(link => {
                 link.addEventListener('click', function(e) {
-                    // All internal links now trigger the fade-out for game transitions
+                    // All internal links that are not game buttons should trigger fade-out
+                    // The 'play-button' and 'play-button-small' now have their own click handlers.
+                    // This listener is for other navigation links that should fade out.
+                    if (this.classList.contains('play-button') || this.classList.contains('play-button-small') || this.classList.contains('coming-soon-button')) {
+                        return; // Let their specific handlers take over
+                    }
+
                     e.preventDefault(); // Prevent default navigation immediately
                     const destination = this.href;
 
@@ -813,8 +828,19 @@
             // Add fade-in on page load
             document.addEventListener('DOMContentLoaded', () => {
                 console.log("DOMContentLoaded event fired. Adding fade-in class.");
+                // Set initial opacity to 0 in CSS, then fade in on load
                 document.body.classList.add('fade-in');
             });
+
+            // Handle browser back/forward buttons to ensure proper fade-in
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted) { // If page is loaded from cache (e.g., via back button)
+                    console.log("pageshow event (persisted) fired. Ensuring fade-in and resetting body classes.");
+                    document.body.classList.remove('fade-out'); // Remove fade-out class if present
+                    document.body.classList.add('fade-in'); // Ensure fade-in animation plays
+                }
+            });
+
 
             // --- Authentication Modals Logic ---
             console.log("Initializing Authentication Modals Logic.");
@@ -860,7 +886,8 @@
             window.openProfileModal = async () => {
                 console.log("Attempting to open Profile Modal.");
                 if (window.currentUser) {
-                    // Update elements directly, they are already defined by the Firebase script
+                    // Set loading state for display name
+                    document.getElementById('profile-display-name').textContent = "Loading...";
                     document.getElementById('profile-email').textContent = window.currentUser.email;
 
                     // Refresh user data to get latest verification status
@@ -874,9 +901,15 @@
                         sendVerificationEmailButton.classList.add('hidden');
                     }
 
-                    // Get display name for profile modal
-                    const userDisplayName = await getDisplayUserName(window.currentUser);
-                    document.getElementById('profile-display-name').textContent = userDisplayName;
+                    // Get display name from Firebase Auth first, then try Firestore if Auth displayName is null
+                    let displayNameToUse = window.currentUser.displayName;
+                    if (!displayNameToUse) {
+                        const profileResult = await window.getUserProfile(window.currentUser.uid);
+                        if (profileResult.success && profileResult.profile.displayName) {
+                            displayNameToUse = profileResult.profile.displayName;
+                        }
+                    }
+                    document.getElementById('profile-display-name').textContent = displayNameToUse || window.currentUser.email || "Guest";
                     
                     profileModal.classList.remove('hidden');
                 } else {
@@ -919,8 +952,8 @@
                 const result = await window.signInWithGoogle();
                 if (result.success) {
                     authModal.classList.add('hidden');
-                    // Notification message will now use the correct displayName from the user object directly
-                    const userForNotification = result.user;
+                    // Notification message will now use the correct displayName from the updated currentUser
+                    const userForNotification = window.currentUser; // Use window.currentUser after reload in onAuthStateChanged
                     const displayNameForNotification = userForNotification.displayName || userForNotification.email || "User";
                     openNotificationModal("Google Sign-In", `Welcome, ${displayNameForNotification}!`);
                 } else {
@@ -944,8 +977,7 @@
                     const result = await window.signIn(email, password);
                     if (result.success) {
                         authModal.classList.add('hidden');
-                        // Notification message will now use the correct displayName from the user object directly
-                        const userForNotification = result.user;
+                        const userForNotification = window.currentUser; // Use window.currentUser after reload in onAuthStateChanged
                         const displayNameForNotification = userForNotification.displayName || userForNotification.email || "User";
                         openNotificationModal("Sign In Successful", `Welcome back, ${displayNameForNotification}!`);
                     } else {
@@ -1022,7 +1054,7 @@
 
         } catch (e) {
             console.error("Critical error in main script block:", e);
-            document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Error loading page: ${e.message}. Please check the developer console for details.</div>`;
+            document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Ошибка загрузки страницы: ${e.message}. Пожалуйста, проверьте консоль разработчика для получения подробной информации.</div>`;
         }
         console.log("--- Main script execution finished ---"); // Final log
     </script>
