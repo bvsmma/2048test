@@ -248,6 +248,7 @@ body.fade-out {
 /* Modal for game information */
 #info-modal > div { /* Target the inner modal content for padding/blur */
     padding: 24px; /* Tailwind p-6 */
+    background-color: rgba(31, 41, 55, 0.7); /* Dark gray with transparency */
     backdrop-filter: blur(8px); /* Add blur effect */
     -webkit-backdrop-filter: blur(8px); /* For Safari support */
 }
