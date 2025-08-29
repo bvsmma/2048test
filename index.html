@@ -18,6 +18,8 @@
             padding: 0;
             font-family: 'Inter', sans-serif;
             color: #fff; /* Default text color */
+            /* Prevent multiple scrollbars by managing overflow precisely */
+            overflow: hidden; /* Default to hidden to prevent scroll during transitions */
         }
 
         /* Body background image and initial state */
@@ -27,11 +29,10 @@
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            position: relative; /* Needed for z-index context of content-container */
+            position: relative; /* Needed for z-index context of content-wrapper */
             opacity: 0; /* Initially hide to prevent FOUC and enable fade-in */
             transition: opacity 0.5s ease-in-out; /* Global transition for fade */
             background-color: #0d1117; /* Fallback background color, for consistency */
-            overflow: hidden; /* Temporarily hide overflow to manage transitions cleanly */
         }
 
         /* Fade-in effect on page load */
@@ -64,7 +65,7 @@
             background: linear-gradient(45deg, #1f2937, #111827, #0d1117);
             background-size: 400% 400%; /* Important for animation */
             animation: gradientAnimation 15s ease infinite; /* Your animation here */
-            z-index: 0; /* Place overlay above html background image but below content */
+            z-index: 0; /* Place overlay above body background image but below content */
             opacity: 0.6; /* Make the gradient semi-transparent to allow image to show */
             pointer-events: none; /* Allow clicks to pass through to elements below */
         }
@@ -92,7 +93,11 @@
         .game-library {
             flex-grow: 1; /* Allow the game library to grow and take available space */
             overflow-y: auto; /* Enable vertical scrolling for the game cards */
-            max-height: calc(100vh - 250px); /* Adjust based on header/footer height */
+            /* Max height calculation: 100vh - (header_height + footer_height + margins/paddings) */
+            /* Adjusted calculation, might need fine-tuning based on exact content heights */
+            max-height: calc(100vh - 200px); /* Increased available height slightly */
+            width: 100%; /* Ensure it takes full width of its parent */
+            padding-bottom: 1rem; /* Add some padding at the bottom for scroll comfort */
         }
         
         /* Title shadow for enhanced look */
@@ -927,7 +932,7 @@
             window.openProfileModal = async () => {
                 console.log("Attempting to open Profile Modal.");
                 if (window.currentUser) {
-                    document.getElementById('profile-display-name').textContent = "Загрузка..."; // Set loading state
+                    document.getElementById('profile-display-name').textContent = "Loading..."; // Set loading state
                     document.getElementById('profile-email').textContent = window.currentUser.email;
 
                     await window.currentUser.reload();
@@ -947,7 +952,7 @@
                             displayNameToUse = profileResult.profile.displayName;
                         }
                     }
-                    document.getElementById('profile-display-name').textContent = displayNameToUse || window.currentUser.email || "Гость";
+                    document.getElementById('profile-display-name').textContent = displayNameToUse || window.currentUser.email || "Guest";
                     
                     profileModal.classList.remove('hidden');
                 } else {
@@ -989,8 +994,8 @@
                 if (result.success) {
                     authModal.classList.add('hidden');
                     const userForNotification = window.currentUser; 
-                    const displayNameForNotification = userForNotification.displayName || userForNotification.email || "Пользователь";
-                    openNotificationModal("Вход через Google", `Добро пожаловать, ${displayNameForNotification}!`);
+                    const displayNameForNotification = userForNotification.displayName || userForNotification.email || "User";
+                    openNotificationModal("Google Sign-In", `Welcome, ${displayNameForNotification}!`);
                 } else {
                     authErrorMessage.textContent = result.error;
                     authErrorMessage.classList.remove('hidden');
@@ -1013,8 +1018,8 @@
                     if (result.success) {
                         authModal.classList.add('hidden');
                         const userForNotification = window.currentUser; 
-                        const displayNameForNotification = userForNotification.displayName || userForNotification.email || "Пользователь";
-                        openNotificationModal("Вход выполнен успешно", `С возвращением, ${displayNameForNotification}!`);
+                        const displayNameForNotification = userForNotification.displayName || userForNotification.email || "User";
+                        openNotificationModal("Sign In Successful", `Welcome back, ${displayNameForNotification}!`);
                     } else {
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
@@ -1024,7 +1029,7 @@
                     const result = await window.signUp(email, password, displayName);
                     if (result.success) {
                         authModal.classList.add('hidden');
-                        openNotificationModal("Регистрация успешна!", `Письмо для подтверждения отправлено на ${result.user.email}. Пожалуйста, подтвердите ваш email для полной активации аккаунта.`);
+                        openNotificationModal("Registration Successful!", `A verification email has been sent to ${result.user.email}. Please verify your email to fully activate your account.`);
                     } else {
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
@@ -1043,16 +1048,16 @@
                 if (result.success) {
                     console.log("Sign out successful, closing profile modal.");
                     profileModal.classList.add('hidden');
-                    openNotificationModal("Выход выполнен", "Вы успешно вышли из аккаунта.");
+                    openNotificationModal("Signed Out", "You have been successfully signed out.");
                 }
             });
 
             sendVerificationEmailButton.addEventListener('click', async () => {
                 const result = await window.sendVerificationEmail();
                 if (result.success) {
-                    openNotificationModal("Подтверждение отправлено", result.message);
+                    openNotificationModal("Verification Sent", result.message);
                 } else {
-                    openNotificationModal("Ошибка", result.error, "red");
+                    openNotificationModal("Error", result.error, "red");
                 }
             });
 
@@ -1089,7 +1094,7 @@
 
         } catch (e) {
             console.error("Critical error in main script block:", e);
-            document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Ошибка загрузки страницы: ${e.message}. Пожалуйста, проверьте консоль разработчика для получения подробной информации.</div>`;
+            document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Error loading page: ${e.message}. Please check the developer console for details.</div>`;
         }
         console.log("--- Main script execution finished ---"); 
     </script>
