@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.wrongGuessesSpan.textContent = '0';
         resetAlphabetButtons();
         hideHangmanParts();
-        Tone.Destination.volume.value = soundEnabled ? elements.volumeSlider.value * 20 - 20 : -Infinity; // Update master volume
+        Tone.Destination.volume.value = soundEnabled ? Tone.fromDb(20 * Math.log10(parseFloat(elements.volumeSlider.value))) : -Infinity; // Update master volume
     }
 
     function resetAlphabetButtons() {
@@ -143,7 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selectedWord.includes(char)) {
             button.classList.add('correct');
-            correctGuessSound.triggerAttackRelease("C5", "8n");
+            if (soundEnabled && Tone.context.state === 'running') {
+                correctGuessSound.triggerAttackRelease("C5", "8n");
+            }
             for (let i = 0; i < selectedWord.length; i++) {
                 if (selectedWord[i] === char) {
                     guessedWord[i] = char;
@@ -157,7 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             button.classList.add('wrong');
-            wrongGuessSound.triggerAttackRelease("C2", "8n"); // Lower frequency for wrong guess
+            if (soundEnabled && Tone.context.state === 'running') {
+                wrongGuessSound.triggerAttackRelease("C2", "8n"); // Lower frequency for wrong guess
+            }
             wrongGuesses++;
             elements.wrongGuessesSpan.textContent = wrongGuesses.toString();
             showHangmanPart(wrongGuesses - 1); // Show next hangman part
@@ -171,11 +175,15 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.gameMessage.classList.remove('hidden');
         if (isWin) {
             elements.gameStatus.textContent = 'You Win!';
-            winSound.triggerAttackRelease(["C5", "E5", "G5"], "2n");
+            if (soundEnabled && Tone.context.state === 'running') {
+                winSound.triggerAttackRelease(["C5", "E5", "G5"], "2n");
+            }
             // TODO: Add win achievement logic
         } else {
             elements.gameStatus.textContent = `You Lose! The word was "${selectedWord}"`;
-            loseSound.triggerAttackRelease("8n");
+            if (soundEnabled && Tone.context.state === 'running') {
+                loseSound.triggerAttackRelease("8n");
+            }
             // TODO: Add lose achievement logic
         }
         // Disable all alphabet buttons
@@ -186,10 +194,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Menu Logic ---
-    function toggleMenu(menuElement, openButton, closeButton) {
+    function toggleMenu(menuElement) {
         menuElement.classList.toggle('open');
         // Play sound for opening/closing menus
-        buttonClickSound.triggerAttackRelease("C5", "32n");
+        if (soundEnabled && Tone.context.state === 'running') {
+            buttonClickSound.triggerAttackRelease("C5", "32n");
+        }
     }
 
     function populateAchievements() {
@@ -234,18 +244,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     elements.infoButton.addEventListener('click', () => {
         elements.infoModal.classList.remove('hidden');
-        buttonClickSound.triggerAttackRelease("C5", "32n");
+        if (soundEnabled && Tone.context.state === 'running') {
+            buttonClickSound.triggerAttackRelease("C5", "32n");
+        }
     });
     elements.closeInfoModal.addEventListener('click', () => {
         elements.infoModal.classList.add('hidden');
-        buttonClickSound.triggerAttackRelease("C5", "32n");
+        if (soundEnabled && Tone.context.state === 'running') {
+            buttonClickSound.triggerAttackRelease("C5", "32n");
+        }
     });
 
     // Close info modal if clicking outside
     elements.infoModal.addEventListener('click', (event) => {
         if (event.target === elements.infoModal) {
             elements.infoModal.classList.add('hidden');
-            buttonClickSound.triggerAttackRelease("C5", "32n");
+            if (soundEnabled && Tone.context.state === 'running') {
+                buttonClickSound.triggerAttackRelease("C5", "32n");
+            }
         }
     });
 
@@ -254,7 +270,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (soundEnabled) {
             elements.soundIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
             elements.soundText.textContent = 'Sound: On';
-            Tone.Destination.volume.value = elements.volumeSlider.value * 20 - 20; // Restore volume
+            // Restore volume if it was previously muted by toggle
+            if (parseFloat(elements.volumeSlider.value) > 0) {
+                Tone.Destination.volume.value = Tone.fromDb(20 * Math.log10(parseFloat(elements.volumeSlider.value)));
+            } else {
+                // If slider is at 0, keep it muted
+                Tone.Destination.volume.value = -Infinity;
+            }
         } else {
             elements.soundIcon.classList.replace('fa-volume-up', 'fa-volume-mute');
             elements.soundText.textContent = 'Sound: Off';
@@ -271,18 +293,17 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.soundText.textContent = `Sound: ${Math.round(volumeValue * 100)}%`;
             
             // If the slider is moved from 0 to something, ensure sound is enabled and icon is correct
-            if (volumeValue > 0 && !soundEnabled) {
-                soundEnabled = true;
+            if (volumeValue > 0 && elements.soundIcon.classList.contains('fa-volume-mute')) {
                 elements.soundIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
                 elements.soundText.textContent = `Sound: ${Math.round(volumeValue * 100)}%`;
-            } else if (volumeValue === 0 && soundEnabled) {
-                // If slider is moved to 0, update icon and text without changing soundEnabled flag
+            } else if (volumeValue === 0 && elements.soundIcon.classList.contains('fa-volume-up')) {
+                // If slider is moved to 0, update icon and text
                 elements.soundIcon.classList.replace('fa-volume-up', 'fa-volume-mute');
                 elements.soundText.textContent = 'Sound: Off';
             }
         } else if (volumeValue > 0) {
-            // If muted but slider is moved up, re-enable sound and update UI
-            soundEnabled = true;
+            // If sound was globally muted but slider is moved up, re-enable sound and update UI
+            soundEnabled = true; // Re-enable sound
             elements.soundIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
             Tone.Destination.volume.value = Tone.fromDb(20 * Math.log10(volumeValue));
             elements.soundText.textContent = `Sound: ${Math.round(volumeValue * 100)}%`;
@@ -298,7 +319,10 @@ window.addEventListener('pageshow', (event) => {
     if (event.persisted) { // If page is loaded from cache (e.g., via back button)
         console.log("pageshow event (persisted) fired in Hangman. Ensuring fade-in and resetting body classes.");
         document.body.classList.remove('fade-out'); // Remove fade-out class if present
-        document.body.classList.add('fade-in'); // Ensure fade-in animation plays
+        // Small delay to ensure browser fully renders before fade-in
+        setTimeout(() => {
+            document.body.classList.add('fade-in'); // Ensure fade-in animation plays
+        }, 10); 
     }
 });
 
