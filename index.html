@@ -14,140 +14,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase configuration (provided by the environment)
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let currentUser = null; // To store current user information
-
-        // Global functions for authentication and Firestore will be attached to window for access from inline script
-        window.firebaseApp = app;
-        window.firebaseAuth = auth;
-        window.firebaseDb = db;
-        window.currentUser = currentUser; // Make currentUser accessible globally
-
-        window.signIn = async (email, password) => {
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log("User signed in:", userCredential.user);
-                return { success: true, user: userCredential.user };
-            } catch (error) {
-                console.error("Sign in error:", error.message);
-                return { success: false, error: error.message };
-            }
-        };
-
-        window.signUp = async (email, password, displayName) => {
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                // Store additional user info in Firestore
-                await setDoc(doc(db, "artifacts", appId, "users", user.uid, "profile", "data"), {
-                    displayName: displayName,
-                    email: user.email,
-                    createdAt: new Date()
-                });
-                console.log("User signed up:", user);
-                return { success: true, user: user };
-            } catch (error) {
-                console.error("Sign up error:", error.message);
-                return { success: false, error: error.message };
-            }
-        };
-
-        window.signOutUser = async () => {
-            try {
-                await signOut(auth);
-                console.log("User signed out.");
-                window.currentUser = null;
-                return { success: true };
-            } catch (error) {
-                console.error("Sign out error:", error.message);
-                return { success: false, error: error.message };
-            }
-        };
-
-        window.getUserProfile = async (uid) => {
-            try {
-                const docRef = doc(db, "artifacts", appId, "users", uid, "profile", "data");
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    return { success: true, profile: docSnap.data() };
-                } else {
-                    console.log("No such user profile document!");
-                    return { success: false, error: "No profile found" };
-                }
-            } catch (error) {
-                console.error("Error getting user profile:", error.message);
-                return { success: false, error: error.message };
-            }
-        };
-
-        // Listen for auth state changes
-        onAuthStateChanged(auth, async (user) => {
-            const authStatusElement = document.getElementById('auth-status');
-            const authButton = document.getElementById('auth-button');
-            const profileDisplayName = document.getElementById('profile-display-name');
-
-            if (user) {
-                console.log("Auth state changed: User is signed in", user.uid);
-                window.currentUser = user;
-                authStatusElement.textContent = `Signed in as: ${user.email}`;
-                authButton.textContent = "My Profile";
-                authButton.onclick = () => openProfileModal();
-
-                // Fetch user profile from Firestore
-                const profileResult = await window.getUserProfile(user.uid);
-                if (profileResult.success) {
-                    profileDisplayName.textContent = profileResult.profile.displayName || user.email;
-                } else {
-                    profileDisplayName.textContent = user.email;
-                }
-            } else {
-                console.log("Auth state changed: User is signed out");
-                window.currentUser = null;
-                authStatusElement.textContent = "Signed out";
-                authButton.textContent = "Sign In / Register";
-                authButton.onclick = () => openAuthModal('signIn'); // Default to sign in
-                profileDisplayName.textContent = "Guest";
-            }
-            updateUIForAuthStatus(); // Update other UI elements
-        });
-
-        // Function to update UI elements based on auth status
-        function updateUIForAuthStatus() {
-            const authButton = document.getElementById('auth-button');
-            const authStatusElement = document.getElementById('auth-status');
-            const profileDisplayName = document.getElementById('profile-display-name');
-            const signOutButton = document.getElementById('profile-sign-out-button');
-
-            if (window.currentUser) {
-                // User is logged in
-                authButton.textContent = "My Profile";
-                authButton.onclick = openProfileModal;
-                authStatusElement.textContent = `Signed in as: ${window.currentUser.email}`;
-                signOutButton.classList.remove('hidden');
-            } else {
-                // User is logged out
-                authButton.textContent = "Sign In / Register";
-                authButton.onclick = () => openAuthModal('signIn');
-                authStatusElement.textContent = "Signed out";
-                profileDisplayName.textContent = "Guest";
-                signOutButton.classList.add('hidden');
-            }
-        }
-    </script>
+    <!-- Firebase SDKs (UPDATED: Using standard scripts for GitHub Pages compatibility) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body class="bg-gray-900 text-white">
 
@@ -319,32 +190,27 @@
     </div>
 
 
-    <!-- Script for sound effects -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+    <script>
         // Firebase configuration (provided by the environment)
         const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
         let currentUser = null; // To store current user information
 
         // Global functions for authentication and Firestore will be attached to window for access from inline script
-        window.firebaseApp = app;
+        window.firebaseApp = firebase.app();
         window.firebaseAuth = auth;
         window.firebaseDb = db;
         window.currentUser = currentUser; // Make currentUser accessible globally
 
         window.signIn = async (email, password) => {
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 console.log("User signed in:", userCredential.user);
                 return { success: true, user: userCredential.user };
             } catch (error) {
@@ -355,13 +221,13 @@
 
         window.signUp = async (email, password, displayName) => {
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 // Store additional user info in Firestore
-                await setDoc(doc(db, "artifacts", appId, "users", user.uid, "profile", "data"), {
+                await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
                     displayName: displayName,
                     email: user.email,
-                    createdAt: new Date()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp() // Use server timestamp
                 });
                 console.log("User signed up:", user);
                 return { success: true, user: user };
@@ -373,7 +239,7 @@
 
         window.signOutUser = async () => {
             try {
-                await signOut(auth);
+                await auth.signOut();
                 console.log("User signed out.");
                 window.currentUser = null;
                 return { success: true };
@@ -385,9 +251,8 @@
 
         window.getUserProfile = async (uid) => {
             try {
-                const docRef = doc(db, "artifacts", appId, "users", uid, "profile", "data");
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
+                const docSnap = await db.collection("artifacts").doc(appId).collection("users").doc(uid).collection("profile").doc("data").get();
+                if (docSnap.exists) {
                     return { success: true, profile: docSnap.data() };
                 } else {
                     console.log("No such user profile document!");
@@ -400,7 +265,7 @@
         };
 
         // Listen for auth state changes
-        onAuthStateChanged(auth, async (user) => {
+        auth.onAuthStateChanged(async (user) => {
             const authStatusElement = document.getElementById('auth-status');
             const authButton = document.getElementById('auth-button');
             const profileDisplayName = document.getElementById('profile-display-name');
@@ -730,8 +595,10 @@
             const profileModal = document.getElementById('profile-modal');
             const closeProfileModalButton = document.getElementById('close-profile-modal');
             const profileSignOutButton = document.getElementById('profile-sign-out-button');
-            const profileDisplayNameElement = document.getElementById('profile-display-name');
-            const profileEmailElement = document.getElementById('profile-email');
+            // profileDisplayNameElement and profileEmailElement are already defined globally in the Firebase script scope
+            // profileDisplayNameElement = document.getElementById('profile-display-name');
+            // profileEmailElement = document.getElementById('profile-email');
+
 
             let isSignInMode = true; // State for auth modal
 
@@ -747,14 +614,15 @@
 
             window.openProfileModal = async () => {
                 if (window.currentUser) {
-                    profileDisplayNameElement.textContent = "Loading...";
-                    profileEmailElement.textContent = window.currentUser.email;
+                    // Update elements directly, they are already defined by the Firebase script
+                    document.getElementById('profile-display-name').textContent = "Loading...";
+                    document.getElementById('profile-email').textContent = window.currentUser.email;
 
                     const profileResult = await window.getUserProfile(window.currentUser.uid);
                     if (profileResult.success) {
-                        profileDisplayNameElement.textContent = profileResult.profile.displayName || window.currentUser.email;
+                        document.getElementById('profile-display-name').textContent = profileResult.profile.displayName || window.currentUser.email;
                     } else {
-                        profileDisplayNameElement.textContent = window.currentUser.email;
+                        document.getElementById('profile-display-name').textContent = window.currentUser.email;
                     }
                     profileModal.classList.remove('hidden');
                 } else {
@@ -821,9 +689,6 @@
                     profileModal.classList.add('hidden');
                 }
             });
-        }
     </script>
 </body>
 </html>
-```
-
