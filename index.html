@@ -18,8 +18,8 @@
             padding: 0;
             font-family: 'Inter', sans-serif;
             color: #fff; /* Default text color */
-            /* Prevent multiple scrollbars by managing overflow precisely */
-            overflow: hidden; /* Default to hidden to prevent scroll during transitions */
+            /* Control overflow precisely. 'hidden' on html prevents scrollbar from appearing during initial load/fade-in */
+            overflow: hidden; 
         }
 
         /* Body background image and initial state */
@@ -38,7 +38,7 @@
         /* Fade-in effect on page load */
         body.fade-in {
             animation: fadeIn 0.5s ease-out forwards;
-            overflow-y: auto; /* Enable scroll after fade-in completes */
+            overflow-y: auto; /* Enable scroll after fade-in completes on the body */
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -88,14 +88,29 @@
             align-items: center; /* Center horizontally */
             padding: 1rem; /* Tailwind p-4 */
         }
+        
+        /* Apply basic card styling universally to game cards */
+        .game-card {
+            background-color: #1f2937; /* Darker card background */
+            border: 1px solid #374151; /* Subtle border */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            display: flex; /* Use flex to center content */
+            flex-direction: column; /* Stack content vertically */
+            justify-content: center; /* Center vertically */
+            align-items: center; /* Center horizontally */
+        }
+        .game-card:hover {
+            border-color: #6366f1; /* Indigo-500 on hover */
+        }
 
         /* The main game library area needs to be flexible to take up space and scroll */
         .game-library {
             flex-grow: 1; /* Allow the game library to grow and take available space */
             overflow-y: auto; /* Enable vertical scrolling for the game cards */
-            /* Max height calculation: 100vh - (header_height + footer_height + margins/paddings) */
-            /* Adjusted calculation, might need fine-tuning based on exact content heights */
-            max-height: calc(100vh - 200px); /* Increased available height slightly */
+            /* Max height calculation: 100vh - (header_height + auth_status + search_bar + footer_height + margins/paddings) */
+            /* This is a more precise calculation. Adjusted based on standard element heights. */
+            max-height: calc(100vh - 270px); /* Adjusted to accommodate header, auth, search, and footer */
             width: 100%; /* Ensure it takes full width of its parent */
             padding-bottom: 1rem; /* Add some padding at the bottom for scroll comfort */
         }
@@ -975,13 +990,13 @@
             forgotPasswordButton.addEventListener('click', async () => {
                 const email = authEmailInput.value;
                 if (!email) {
-                    authErrorMessage.textContent = "Пожалуйста, введите ваш email для сброса пароля.";
+                    authErrorMessage.textContent = "Please enter your email to reset password.";
                     authErrorMessage.classList.remove('hidden');
                     return;
                 }
                 const result = await window.sendPasswordReset(email);
                 if (result.success) {
-                    openNotificationModal("Сброс пароля", result.message);
+                    openNotificationModal("Password Reset", result.message);
                     authModal.classList.add('hidden'); 
                 } else {
                     authErrorMessage.textContent = result.error;
