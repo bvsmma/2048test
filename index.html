@@ -23,8 +23,7 @@
         }
 
         body {
-            /* Fallback background color, mostly for content that isn't fully transparent */
-            background-color: #0d1117; 
+            /* IMPORTANT: Removed background-color to reveal the background-image */
             transition: opacity 0.5s ease-in-out; /* Global transition for fade */
             /* Background image now directly on body to interact with overlay */
             background-image: url('https://i.imgur.com/qmJKSRj.jpeg'); /* Your photo link */
@@ -63,8 +62,9 @@
             background: linear-gradient(45deg, #1f2937, #111827, #0d1117);
             background-size: 400% 400%;
             animation: gradientAnimation 15s ease infinite;
-            z-index: -1; /* Place overlay behind body content but over body's background image */
-            opacity: 0.7; /* Make the gradient semi-transparent to allow image to show */
+            /* Changed z-index to 0 to place it above body background image but below content */
+            z-index: 0; 
+            opacity: 0.6; /* Slightly reduced opacity for better image visibility */
             pointer-events: none; /* Allow clicks to pass through to elements below */
         }
 
@@ -92,10 +92,10 @@
         }
         /* Title shadow for enhanced look */
         .title-shadow {
-            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7); /* Stronger shadow */
         }
         .subtitle-shadow {
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.5); /* Stronger shadow */
         }
     </style>
 
@@ -919,9 +919,10 @@
                 const result = await window.signInWithGoogle();
                 if (result.success) {
                     authModal.classList.add('hidden');
-                    // Notification message will now use the correct displayName from the updated currentUser
-                    const userDisplayName = await getDisplayUserName(window.currentUser);
-                    openNotificationModal("Google Sign-In", `Welcome, ${userDisplayName}!`);
+                    // Notification message will now use the correct displayName from the user object directly
+                    const userForNotification = result.user;
+                    const displayNameForNotification = userForNotification.displayName || userForNotification.email || "User";
+                    openNotificationModal("Google Sign-In", `Welcome, ${displayNameForNotification}!`);
                 } else {
                     authErrorMessage.textContent = result.error;
                     authErrorMessage.classList.remove('hidden');
@@ -943,8 +944,10 @@
                     const result = await window.signIn(email, password);
                     if (result.success) {
                         authModal.classList.add('hidden');
-                        const userDisplayName = await getDisplayUserName(window.currentUser);
-                        openNotificationModal("Sign In Successful", `Welcome back, ${userDisplayName}!`);
+                        // Notification message will now use the correct displayName from the user object directly
+                        const userForNotification = result.user;
+                        const displayNameForNotification = userForNotification.displayName || userForNotification.email || "User";
+                        openNotificationModal("Sign In Successful", `Welcome back, ${displayNameForNotification}!`);
                     } else {
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
