@@ -167,11 +167,16 @@
                 <input type="email" id="auth-email" placeholder="Email" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <input type="password" id="auth-password" placeholder="Password" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <input type="text" id="auth-display-name" placeholder="Display Name (for registration)" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 hidden">
+                <p id="auth-error-message" class="text-red-400 text-sm mt-2 hidden"></p>
                 <button type="submit" id="auth-submit-button" class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">Sign In</button>
             </form>
-            <p id="auth-error-message" class="text-red-400 text-sm mt-2 hidden"></p>
+            <button id="forgot-password-button" class="mt-2 text-sm text-blue-400 hover:underline" data-click-sound="buttonClick">Forgot Password?</button>
             <button id="toggle-auth-mode" class="mt-4 text-blue-400 hover:underline text-sm" data-click-sound="buttonClick">
                 Don't have an account? Register
+            </button>
+            <!-- Google Sign-In Button -->
+            <button id="google-sign-in-button" class="mt-4 flex items-center justify-center gap-2 w-full px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                <i class="fab fa-google"></i> Sign In with Google
             </button>
             <button id="close-auth-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
         </div>
@@ -183,9 +188,21 @@
             <h2 class="text-2xl font-bold mb-4 text-white">My Profile</h2>
             <p class="mb-2">Hello, <span id="profile-display-name" class="font-bold text-blue-400">Guest</span>!</p>
             <p class="mb-4">Email: <span id="profile-email" class="text-gray-400">Not signed in</span></p>
+            <p class="mb-4" id="email-verification-status">Email Verified: <span class="font-bold text-yellow-400">No</span></p>
+            <button id="send-verification-email-button" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 text-sm mt-2 hidden" data-click-sound="buttonClick">Send Verification Email</button>
+
             <!-- Add more profile info here like wins/losses from Firestore -->
             <button id="profile-sign-out-button" class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4" data-click-sound="buttonClick">Sign Out</button>
             <button id="close-profile-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
+        </div>
+    </div>
+
+    <!-- Password Reset Success/Error Modal (Simple Notification) -->
+    <div id="notification-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
+            <h3 id="notification-title" class="text-xl font-bold mb-3 text-white">Notification</h3>
+            <p id="notification-message" class="mb-4">Message goes here.</p>
+            <button id="close-notification-modal" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">OK</button>
         </div>
     </div>
 
@@ -221,7 +238,8 @@
             
             const auth = firebase.auth();
             const db = firebase.firestore();
-            console.log("Firebase Auth and Firestore services initialized.");
+            const googleProvider = new firebase.auth.GoogleAuthProvider(); // Initialize Google Auth Provider
+            console.log("Firebase Auth, Firestore, and GoogleAuthProvider services initialized.");
 
             let currentUser = null; // To store current user information
 
@@ -248,13 +266,19 @@
                     console.log("Attempting to sign up user:", email, "with display name:", displayName);
                     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                     const user = userCredential.user;
+
+                    // Send email verification
+                    await user.sendEmailVerification();
+                    console.log("Verification email sent to:", user.email);
+
                     // Store additional user info in Firestore
                     await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
                         displayName: displayName,
                         email: user.email,
+                        emailVerified: user.emailVerified, // Store verification status
                         createdAt: firebase.firestore.FieldValue.serverTimestamp() // Use server timestamp
                     });
-                    console.log("User signed up:", user);
+                    console.log("User signed up and profile created:", user);
                     return { success: true, user: user };
                 } catch (error) {
                     console.error("Sign up error:", error.message);
@@ -274,6 +298,63 @@
                     return { success: false, error: error.message };
                 }
             };
+
+            // Function to send password reset email
+            window.sendPasswordReset = async (email) => {
+                try {
+                    await auth.sendPasswordResetEmail(email);
+                    console.log("Password reset email sent to:", email);
+                    return { success: true, message: `Password reset email sent to ${email}. Check your inbox!` };
+                } catch (error) {
+                    console.error("Password reset error:", error.message);
+                    return { success: false, error: error.message };
+                }
+            };
+
+            // Function for Google Sign-In
+            window.signInWithGoogle = async () => {
+                try {
+                    console.log("Attempting Google Sign-In.");
+                    const result = await auth.signInWithPopup(googleProvider);
+                    const user = result.user;
+
+                    // Check if user profile exists in Firestore, if not, create it
+                    const profileCheck = await window.getUserProfile(user.uid);
+                    if (!profileCheck.success) {
+                        await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
+                            displayName: user.displayName,
+                            email: user.email,
+                            emailVerified: user.emailVerified,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        console.log("Google user profile created in Firestore.");
+                    } else {
+                        console.log("Google user profile already exists.");
+                    }
+                    console.log("User signed in with Google:", user);
+                    return { success: true, user: user };
+                } catch (error) {
+                    console.error("Google Sign-In error:", error.message);
+                    return { success: false, error: error.message };
+                }
+            };
+
+            // Function to send email verification for current user
+            window.sendVerificationEmail = async () => {
+                if (window.currentUser && !window.currentUser.emailVerified) {
+                    try {
+                        await window.currentUser.sendEmailVerification();
+                        console.log("Verification email sent to current user:", window.currentUser.email);
+                        return { success: true, message: `Verification email sent to ${window.currentUser.email}. Check your inbox!` };
+                    } catch (error) {
+                        console.error("Error sending verification email:", error.message);
+                        return { success: false, error: error.message };
+                    }
+                } else {
+                    return { success: false, error: "No user signed in or email already verified." };
+                }
+            };
+
 
             window.getUserProfile = async (uid) => {
                 try {
@@ -299,13 +380,25 @@
                 const authButton = document.getElementById('auth-button');
                 const profileDisplayName = document.getElementById('profile-display-name');
                 const profileEmail = document.getElementById('profile-email');
+                const emailVerificationStatus = document.getElementById('email-verification-status');
+                const sendVerificationEmailButton = document.getElementById('send-verification-email-button');
+
 
                 if (user) {
-                    console.log("Auth state changed: User is signed in", user.uid, user.email);
+                    console.log("Auth state changed: User is signed in", user.uid, user.email, "Verified:", user.emailVerified);
                     window.currentUser = user;
                     authStatusElement.textContent = `Signed in as: ${user.email}`;
                     authButton.textContent = "My Profile";
                     authButton.onclick = () => openProfileModal();
+
+                    // Update email verification status
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${user.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${user.emailVerified ? 'Yes' : 'No'}</span>`;
+                    if (!user.emailVerified) {
+                        sendVerificationEmailButton.classList.remove('hidden');
+                    } else {
+                        sendVerificationEmailButton.classList.add('hidden');
+                    }
+
 
                     // Fetch user profile from Firestore
                     const profileResult = await window.getUserProfile(user.uid);
@@ -323,6 +416,8 @@
                     authButton.onclick = () => openAuthModal('signIn'); // Default to sign in
                     profileDisplayName.textContent = "Guest";
                     profileEmail.textContent = "Not signed in";
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold text-gray-400">N/A</span>`;
+                    sendVerificationEmailButton.classList.add('hidden');
                 }
                 updateUIForAuthStatus(); // Update other UI elements
             });
@@ -335,6 +430,9 @@
                 const profileDisplayNameElement = document.getElementById('profile-display-name');
                 const profileEmailElement = document.getElementById('profile-email');
                 const signOutButton = document.getElementById('profile-sign-out-button');
+                const emailVerificationStatus = document.getElementById('email-verification-status');
+                const sendVerificationEmailButton = document.getElementById('send-verification-email-button');
+
 
                 if (window.currentUser) {
                     // User is logged in
@@ -342,6 +440,14 @@
                     authButton.onclick = openProfileModal;
                     authStatusElement.textContent = `Signed in as: ${window.currentUser.email}`;
                     profileEmailElement.textContent = window.currentUser.email;
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
+                    if (!window.currentUser.emailVerified) {
+                        sendVerificationEmailButton.classList.remove('hidden');
+                    } else {
+                        sendVerificationEmailButton.classList.add('hidden');
+                    }
+
+
                     // Fetch profile display name if available
                     window.getUserProfile(window.currentUser.uid).then(result => {
                         if (result.success) {
@@ -358,6 +464,8 @@
                     authStatusElement.textContent = "Signed out";
                     profileDisplayNameElement.textContent = "Guest";
                     profileEmailElement.textContent = "Not signed in";
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold text-gray-400">N/A</span>`;
+                    sendVerificationEmailButton.classList.add('hidden');
                     signOutButton.classList.add('hidden');
                 }
             }
@@ -455,7 +563,7 @@
                 });
 
                 // Add event listeners to play buttons for click (only click now)
-                document.querySelectorAll('.play-button, .play-button-small, .coming-soon-button, #search-button, #toggle-all-sound-button, #close-game-info-modal, #auth-submit-button, #toggle-auth-mode, #close-auth-modal, #profile-sign-out-button, #close-profile-modal').forEach(button => {
+                document.querySelectorAll('.play-button, .play-button-small, .coming-soon-button, #search-button, #toggle-all-sound-button, #close-game-info-modal, #auth-submit-button, #toggle-auth-mode, #close-auth-modal, #profile-sign-out-button, #close-profile-modal, #forgot-password-button, #google-sign-in-button, #send-verification-email-button, #close-notification-modal').forEach(button => {
                     button.addEventListener('click', playButtonClickSound); // Play click sound on click
                 });
 
@@ -622,10 +730,20 @@
             const authDisplayNameInput = document.getElementById('auth-display-name');
             const authSubmitButton = document.getElementById('auth-submit-button');
             const authErrorMessage = document.getElementById('auth-error-message');
+            const forgotPasswordButton = document.getElementById('forgot-password-button');
+            const googleSignInButton = document.getElementById('google-sign-in-button');
 
             const profileModal = document.getElementById('profile-modal');
             const closeProfileModalButton = document.getElementById('close-profile-modal');
             const profileSignOutButton = document.getElementById('profile-sign-out-button');
+            const emailVerificationStatus = document.getElementById('email-verification-status');
+            const sendVerificationEmailButton = document.getElementById('send-verification-email-button');
+
+            const notificationModal = document.getElementById('notification-modal');
+            const notificationTitle = document.getElementById('notification-title');
+            const notificationMessage = document.getElementById('notification-message');
+            const closeNotificationModalButton = document.getElementById('close-notification-modal');
+
 
             let isSignInMode = true; // State for auth modal
 
@@ -636,6 +754,7 @@
                 authSubmitButton.textContent = isSignInMode ? "Sign In" : "Register";
                 toggleAuthModeButton.textContent = isSignInMode ? "Don't have an account? Register" : "Already have an account? Sign In";
                 authDisplayNameInput.classList.toggle('hidden', isSignInMode);
+                forgotPasswordButton.classList.toggle('hidden', !isSignInMode); // Show only in Sign In mode
                 authErrorMessage.classList.add('hidden'); // Clear previous errors
                 authModal.classList.remove('hidden');
             };
@@ -645,6 +764,18 @@
                 if (window.currentUser) {
                     document.getElementById('profile-display-name').textContent = "Loading...";
                     document.getElementById('profile-email').textContent = window.currentUser.email;
+
+                    // Refresh user data to get latest verification status
+                    await window.currentUser.reload();
+                    window.currentUser = auth.currentUser; // Update window.currentUser with fresh data
+
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
+                    if (window.currentUser.email && !window.currentUser.emailVerified) { // Only show button if email exists and is not verified
+                        sendVerificationEmailButton.classList.remove('hidden');
+                    } else {
+                        sendVerificationEmailButton.classList.add('hidden');
+                    }
+
 
                     const profileResult = await window.getUserProfile(window.currentUser.uid);
                     if (profileResult.success) {
@@ -670,6 +801,37 @@
                 openAuthModal(isSignInMode ? 'signIn' : 'register');
             });
 
+            // Handle Forgot Password
+            forgotPasswordButton.addEventListener('click', async () => {
+                const email = authEmailInput.value;
+                if (!email) {
+                    authErrorMessage.textContent = "Please enter your email to reset password.";
+                    authErrorMessage.classList.remove('hidden');
+                    return;
+                }
+                const result = await window.sendPasswordReset(email);
+                if (result.success) {
+                    openNotificationModal("Password Reset", result.message);
+                    authModal.classList.add('hidden'); // Close auth modal after sending reset
+                } else {
+                    authErrorMessage.textContent = result.error;
+                    authErrorMessage.classList.remove('hidden');
+                }
+            });
+
+            // Handle Google Sign-In
+            googleSignInButton.addEventListener('click', async () => {
+                const result = await window.signInWithGoogle();
+                if (result.success) {
+                    authModal.classList.add('hidden');
+                    openNotificationModal("Google Sign-In", `Welcome, ${result.user.displayName || result.user.email}!`);
+                } else {
+                    authErrorMessage.textContent = result.error;
+                    authErrorMessage.classList.remove('hidden');
+                }
+            });
+
+
             authForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 console.log("Auth form submitted.");
@@ -683,10 +845,9 @@
                     console.log("Attempting sign in.");
                     const result = await window.signIn(email, password);
                     if (result.success) {
-                        console.log("Sign in successful, closing modal.");
                         authModal.classList.add('hidden');
+                        openNotificationModal("Sign In Successful", `Welcome back, ${result.user.displayName || result.user.email}!`);
                     } else {
-                        console.error("Sign in failed:", result.error);
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
                     }
@@ -694,10 +855,9 @@
                     console.log("Attempting registration.");
                     const result = await window.signUp(email, password, displayName);
                     if (result.success) {
-                        console.log("Registration successful, closing modal.");
                         authModal.classList.add('hidden');
+                        openNotificationModal("Registration Successful!", `A verification email has been sent to ${result.user.email}. Please verify your email to fully activate your account.`);
                     } else {
-                        console.error("Registration failed:", result.error);
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
                     }
@@ -715,6 +875,16 @@
                 if (result.success) {
                     console.log("Sign out successful, closing profile modal.");
                     profileModal.classList.add('hidden');
+                    openNotificationModal("Signed Out", "You have been successfully signed out.");
+                }
+            });
+
+            sendVerificationEmailButton.addEventListener('click', async () => {
+                const result = await window.sendVerificationEmail();
+                if (result.success) {
+                    openNotificationModal("Verification Sent", result.message);
+                } else {
+                    openNotificationModal("Error", result.error, "red");
                 }
             });
 
@@ -731,6 +901,24 @@
                     profileModal.classList.add('hidden');
                 }
             });
+            notificationModal.addEventListener('click', (event) => {
+                if (event.target === notificationModal) {
+                    notificationModal.classList.add('hidden');
+                }
+            });
+            closeNotificationModalButton.addEventListener('click', () => {
+                notificationModal.classList.add('hidden');
+            });
+
+            // Helper function to open generic notification modal
+            function openNotificationModal(title, message, type = "blue") {
+                notificationTitle.textContent = title;
+                notificationMessage.textContent = message;
+                notificationTitle.className = `text-xl font-bold mb-3 text-${type}-400`; // Update title color based on type
+                notificationModal.classList.remove('hidden');
+            }
+
+
         } catch (e) {
             console.error("Critical error in main script block:", e);
             document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Ошибка загрузки страницы: ${e.message}. Пожалуйста, проверьте консоль разработчика для получения подробной информации.</div>`;
