@@ -191,274 +191,293 @@
 
 
     <script>
-        // Firebase configuration (provided by the environment)
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        console.log("--- Starting main script execution ---"); // Initial log
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        try {
+            // Firebase configuration (provided by the environment)
+            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-        let currentUser = null; // To store current user information
+            console.log("Firebase config loaded:", firebaseConfig); // Log config
+            console.log("App ID:", appId); // Log app ID
 
-        // Global functions for authentication and Firestore will be attached to window for access from inline script
-        window.firebaseApp = firebase.app();
-        window.firebaseAuth = auth;
-        window.firebaseDb = db;
-        window.currentUser = currentUser; // Make currentUser accessible globally
-
-        window.signIn = async (email, password) => {
-            try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                console.log("User signed in:", userCredential.user);
-                return { success: true, user: userCredential.user };
-            } catch (error) {
-                console.error("Sign in error:", error.message);
-                return { success: false, error: error.message };
-            }
-        };
-
-        window.signUp = async (email, password, displayName) => {
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                // Store additional user info in Firestore
-                await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
-                    displayName: displayName,
-                    email: user.email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp() // Use server timestamp
-                });
-                console.log("User signed up:", user);
-                return { success: true, user: user };
-            } catch (error) {
-                console.error("Sign up error:", error.message);
-                return { success: false, error: error.message };
-            }
-        };
-
-        window.signOutUser = async () => {
-            try {
-                await auth.signOut();
-                console.log("User signed out.");
-                window.currentUser = null;
-                return { success: true };
-            } catch (error) {
-                console.error("Sign out error:", error.message);
-                return { success: false, error: error.message };
-            }
-        };
-
-        window.getUserProfile = async (uid) => {
-            try {
-                const docSnap = await db.collection("artifacts").doc(appId).collection("users").doc(uid).collection("profile").doc("data").get();
-                if (docSnap.exists) {
-                    return { success: true, profile: docSnap.data() };
-                } else {
-                    console.log("No such user profile document!");
-                    return { success: false, error: "No profile found" };
-                }
-            } catch (error) {
-                console.error("Error getting user profile:", error.message);
-                return { success: false, error: error.message };
-            }
-        };
-
-        // Listen for auth state changes
-        auth.onAuthStateChanged(async (user) => {
-            const authStatusElement = document.getElementById('auth-status');
-            const authButton = document.getElementById('auth-button');
-            const profileDisplayName = document.getElementById('profile-display-name');
-            const profileEmail = document.getElementById('profile-email');
-
-            if (user) {
-                console.log("Auth state changed: User is signed in", user.uid);
-                window.currentUser = user;
-                authStatusElement.textContent = `Signed in as: ${user.email}`;
-                authButton.textContent = "My Profile";
-                authButton.onclick = () => openProfileModal();
-
-                // Fetch user profile from Firestore
-                const profileResult = await window.getUserProfile(user.uid);
-                if (profileResult.success) {
-                    profileDisplayName.textContent = profileResult.profile.displayName || user.email;
-                } else {
-                    profileDisplayName.textContent = user.email;
-                }
-                profileEmail.textContent = user.email;
+            // Initialize Firebase
+            if (typeof firebase !== 'undefined' && firebase.apps.length === 0) { // Check if not already initialized
+                firebase.initializeApp(firebaseConfig);
+                console.log("Firebase app initialized.");
+            } else if (typeof firebase === 'undefined') {
+                console.error("Firebase global object is not defined. Ensure Firebase SDK scripts are loaded.");
             } else {
-                console.log("Auth state changed: User is signed out");
-                window.currentUser = null;
-                authStatusElement.textContent = "Signed out";
-                authButton.textContent = "Sign In / Register";
-                authButton.onclick = () => openAuthModal('signIn'); // Default to sign in
-                profileDisplayName.textContent = "Guest";
-                profileEmail.textContent = "Not signed in";
+                console.log("Firebase app already initialized.");
             }
-            updateUIForAuthStatus(); // Update other UI elements
-        });
+            
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            console.log("Firebase Auth and Firestore services initialized.");
 
-        // Function to update UI elements based on auth status
-        function updateUIForAuthStatus() {
-            const authButton = document.getElementById('auth-button');
-            const authStatusElement = document.getElementById('auth-status');
-            const profileDisplayNameElement = document.getElementById('profile-display-name');
-            const profileEmailElement = document.getElementById('profile-email');
-            const signOutButton = document.getElementById('profile-sign-out-button');
+            let currentUser = null; // To store current user information
 
-            if (window.currentUser) {
-                // User is logged in
-                authButton.textContent = "My Profile";
-                authButton.onclick = openProfileModal;
-                authStatusElement.textContent = `Signed in as: ${window.currentUser.email}`;
-                profileEmailElement.textContent = window.currentUser.email;
-                // Fetch profile display name if available
-                window.getUserProfile(window.currentUser.uid).then(result => {
-                    if (result.success) {
-                        profileDisplayNameElement.textContent = result.profile.displayName || window.currentUser.email;
-                    } else {
-                        profileDisplayNameElement.textContent = window.currentUser.email;
-                    }
-                });
-                signOutButton.classList.remove('hidden');
-            } else {
-                // User is logged out
-                authButton.textContent = "Sign In / Register";
-                authButton.onclick = () => openAuthModal('signIn');
-                authStatusElement.textContent = "Signed out";
-                profileDisplayNameElement.textContent = "Guest";
-                profileEmailElement.textContent = "Not signed in";
-                signOutButton.classList.add('hidden');
-            }
-        }
-        // --- Sound Effects ---
-        console.log("Script loaded.");
-        let allSoundEnabled = true; // Global flag for all sounds
+            // Global functions for authentication and Firestore will be attached to window for access from inline script
+            window.firebaseApp = firebase.app();
+            window.firebaseAuth = auth;
+            window.firebaseDb = db;
+            window.currentUser = currentUser; // Make currentUser accessible globally
 
-        // Ensure Tone.js is loaded
-        if (typeof Tone === 'undefined') {
-            console.error("Tone.js not loaded. Please ensure the script tag is correct.");
-        } else {
-            console.log("Tone.js is defined.");
-            // Initialize Tone.js context if not already running
-            const startAudioContext = () => {
-                if (Tone.context.state !== 'running') {
-                    Tone.start().then(() => {
-                        console.log("Tone.js AudioContext started.");
-                    }).catch(e => console.error("Error starting Tone.js AudioContext:", e));
-                } else {
-                    console.log("Tone.js AudioContext already running.");
+            window.signIn = async (email, password) => {
+                try {
+                    console.log("Attempting to sign in user:", email);
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    console.log("User signed in:", userCredential.user);
+                    return { success: true, user: userCredential.user };
+                } catch (error) {
+                    console.error("Sign in error:", error.message);
+                    return { success: false, error: error.message };
                 }
             };
 
-            // Attempt to start audio context on any user interaction
-            // This is the key to getting sound working on initial hover
-            document.documentElement.addEventListener('click', startAudioContext, { once: true });
-            document.documentElement.addEventListener('keydown', startAudioContext, { once: true });
-
-
-            // Synth for card hover sounds 
-            const cardHoverSynth = new Tone.PolySynth(Tone.Synth, {
-                volume: -15, 
-                oscillator: { type: "sine" }, 
-                envelope: {
-                    attack: 0.001,
-                    decay: 0.03,
-                    sustain: 0.01,
-                    release: 0.03,
-                    releaseCurve: "exponential" 
+            window.signUp = async (email, password, displayName) => {
+                try {
+                    console.log("Attempting to sign up user:", email, "with display name:", displayName);
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    // Store additional user info in Firestore
+                    await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
+                        displayName: displayName,
+                        email: user.email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp() // Use server timestamp
+                    });
+                    console.log("User signed up:", user);
+                    return { success: true, user: user };
+                } catch (error) {
+                    console.error("Sign up error:", error.message);
+                    return { success: false, error: error.message };
                 }
-            }).toDestination();
+            };
 
-            // Synth for button click sounds
-            const buttonClickSynth = new Tone.PolySynth(Tone.Synth, {
-                volume: -15, // Matches card hover synth volume
-                oscillator: { type: "sine" }, // Matches card hover synth oscillator
-                envelope: {
-                    attack: 0.001,
-                    decay: 0.03,
-                    sustain: 0.01,
-                    release: 0.03,
-                    releaseCurve: "exponential" // Matches card hover synth envelope
+            window.signOutUser = async () => {
+                try {
+                    console.log("Attempting to sign out user.");
+                    await auth.signOut();
+                    console.log("User signed out.");
+                    window.currentUser = null;
+                    return { success: true };
+                } catch (error) {
+                    console.error("Sign out error:", error.message);
+                    return { success: false, error: error.message };
                 }
-            }).toDestination();
+            };
 
-            // Function to play a hover sound (for cards only now)
-            function playCardHoverSound() {
-                if (!allSoundEnabled) {
-                    console.log("Sounds are muted globally.");
-                    return;
+            window.getUserProfile = async (uid) => {
+                try {
+                    console.log("Attempting to get user profile for UID:", uid);
+                    const docSnap = await db.collection("artifacts").doc(appId).collection("users").doc(uid).collection("profile").doc("data").get();
+                    if (docSnap.exists) {
+                        console.log("User profile found:", docSnap.data());
+                        return { success: true, profile: docSnap.data() };
+                    } else {
+                        console.warn("No such user profile document for UID:", uid);
+                        return { success: false, error: "No profile found" };
+                    }
+                } catch (error) {
+                    console.error("Error getting user profile for UID:", uid, error.message);
+                    return { success: false, error: error.message };
                 }
-                // Only play if AudioContext is already running
-                if (Tone.context.state === 'running') {
-                    cardHoverSynth.triggerAttackRelease("G4", "64n"); 
-                    console.log("Card hover sound played.");
+            };
+
+            // Listen for auth state changes
+            auth.onAuthStateChanged(async (user) => {
+                console.log("Firebase auth state changed listener triggered.");
+                const authStatusElement = document.getElementById('auth-status');
+                const authButton = document.getElementById('auth-button');
+                const profileDisplayName = document.getElementById('profile-display-name');
+                const profileEmail = document.getElementById('profile-email');
+
+                if (user) {
+                    console.log("Auth state changed: User is signed in", user.uid, user.email);
+                    window.currentUser = user;
+                    authStatusElement.textContent = `Signed in as: ${user.email}`;
+                    authButton.textContent = "My Profile";
+                    authButton.onclick = () => openProfileModal();
+
+                    // Fetch user profile from Firestore
+                    const profileResult = await window.getUserProfile(user.uid);
+                    if (profileResult.success) {
+                        profileDisplayName.textContent = profileResult.profile.displayName || user.email;
+                    } else {
+                        profileDisplayName.textContent = user.email;
+                    }
+                    profileEmail.textContent = user.email;
                 } else {
-                    console.warn("AudioContext is not running. Card hover sound cannot be played until user interaction.");
+                    console.log("Auth state changed: User is signed out");
+                    window.currentUser = null;
+                    authStatusElement.textContent = "Signed out";
+                    authButton.textContent = "Sign In / Register";
+                    authButton.onclick = () => openAuthModal('signIn'); // Default to sign in
+                    profileDisplayName.textContent = "Guest";
+                    profileEmail.textContent = "Not signed in";
+                }
+                updateUIForAuthStatus(); // Update other UI elements
+            });
+
+            // Function to update UI elements based on auth status
+            function updateUIForAuthStatus() {
+                console.log("Updating UI for auth status.");
+                const authButton = document.getElementById('auth-button');
+                const authStatusElement = document.getElementById('auth-status');
+                const profileDisplayNameElement = document.getElementById('profile-display-name');
+                const profileEmailElement = document.getElementById('profile-email');
+                const signOutButton = document.getElementById('profile-sign-out-button');
+
+                if (window.currentUser) {
+                    // User is logged in
+                    authButton.textContent = "My Profile";
+                    authButton.onclick = openProfileModal;
+                    authStatusElement.textContent = `Signed in as: ${window.currentUser.email}`;
+                    profileEmailElement.textContent = window.currentUser.email;
+                    // Fetch profile display name if available
+                    window.getUserProfile(window.currentUser.uid).then(result => {
+                        if (result.success) {
+                            profileDisplayNameElement.textContent = result.profile.displayName || window.currentUser.email;
+                        } else {
+                            profileDisplayNameElement.textContent = window.currentUser.email;
+                        }
+                    });
+                    signOutButton.classList.remove('hidden');
+                } else {
+                    // User is logged out
+                    authButton.textContent = "Sign In / Register";
+                    authButton.onclick = () => openAuthModal('signIn');
+                    authStatusElement.textContent = "Signed out";
+                    profileDisplayNameElement.textContent = "Guest";
+                    profileEmailElement.textContent = "Not signed in";
+                    signOutButton.classList.add('hidden');
                 }
             }
+            // --- Sound Effects ---
+            console.log("Initializing sound effects.");
+            let allSoundEnabled = true; // Global flag for all sounds
 
-            // Function to play a click sound
-            function playButtonClickSound() {
-                if (!allSoundEnabled) {
-                    console.log("Sounds are muted globally.");
-                    return;
-                }
-                // Only play if AudioContext is already running
-                if (Tone.context.state === 'running') {
-                    buttonClickSynth.triggerAttackRelease("C5", "32n"); 
-                    console.log("Button click sound played.");
-                } else {
-                    console.warn("AudioContext is not running. Click sound cannot be played until user interaction.");
-                }
-            }
+            // Ensure Tone.js is loaded
+            if (typeof Tone === 'undefined') {
+                console.error("Tone.js not loaded. Please ensure the script tag is correct.");
+            } else {
+                console.log("Tone.js is defined. Setting up audio context listener.");
+                // Initialize Tone.js context if not already running
+                const startAudioContext = () => {
+                    if (Tone.context.state !== 'running') {
+                        Tone.start().then(() => {
+                            console.log("Tone.js AudioContext started successfully.");
+                        }).catch(e => console.error("Error starting Tone.js AudioContext:", e));
+                    } else {
+                        console.log("Tone.js AudioContext already running.");
+                    }
+                };
 
-            // Add event listeners to game cards for hover (only cards now)
-            document.querySelectorAll('.game-card').forEach(card => {
-                card.addEventListener('mouseenter', playCardHoverSound);
-                // Add click listener to the card itself (not the button) for modal
-                card.addEventListener('click', (event) => {
-                    // Prevent opening modal if a child button was clicked
-                    if (event.target.closest('a')) {
-                        console.log("Clicked a button inside card, not opening modal.");
-                        playButtonClickSound(); // Play click sound for buttons
+                // Attempt to start audio context on any user interaction
+                document.documentElement.addEventListener('click', startAudioContext, { once: true });
+                document.documentElement.addEventListener('keydown', startAudioContext, { once: true });
+
+
+                // Synth for card hover sounds 
+                const cardHoverSynth = new Tone.PolySynth(Tone.Synth, {
+                    volume: -15, 
+                    oscillator: { type: "sine" }, 
+                    envelope: {
+                        attack: 0.001,
+                        decay: 0.03,
+                        sustain: 0.01,
+                        release: 0.03,
+                        releaseCurve: "exponential" 
+                    }
+                }).toDestination();
+
+                // Synth for button click sounds
+                const buttonClickSynth = new Tone.PolySynth(Tone.Synth, {
+                    volume: -15, // Matches card hover synth volume
+                    oscillator: { type: "sine" }, // Matches card hover synth oscillator
+                    envelope: {
+                        attack: 0.001,
+                        decay: 0.03,
+                        sustain: 0.01,
+                        release: 0.03,
+                        releaseCurve: "exponential" // Matches card hover synth envelope
+                    }
+                }).toDestination();
+
+                // Function to play a hover sound (for cards only now)
+                function playCardHoverSound() {
+                    if (!allSoundEnabled) {
                         return;
                     }
-                    playButtonClickSound(); // Play click sound for card click
-                    openGameInfoModal(card.dataset.gameId);
+                    if (Tone.context.state === 'running') {
+                        cardHoverSynth.triggerAttackRelease("G4", "64n"); 
+                        console.log("Card hover sound played.");
+                    } else {
+                        console.warn("AudioContext not running for card hover. User interaction needed.");
+                    }
+                }
+
+                // Function to play a click sound
+                function playButtonClickSound() {
+                    if (!allSoundEnabled) {
+                        return;
+                    }
+                    if (Tone.context.state === 'running') {
+                        buttonClickSynth.triggerAttackRelease("C5", "32n"); 
+                        console.log("Button click sound played.");
+                    } else {
+                        console.warn("AudioContext not running for button click. User interaction needed.");
+                    }
+                }
+
+                // Add event listeners to game cards for hover (only cards now)
+                document.querySelectorAll('.game-card').forEach(card => {
+                    card.addEventListener('mouseenter', playCardHoverSound);
+                    // Add click listener to the card itself (not the button) for modal
+                    card.addEventListener('click', (event) => {
+                        // Prevent opening modal if a child button was clicked
+                        if (event.target.closest('a')) {
+                            console.log("Clicked a button inside card, not opening modal.");
+                            playButtonClickSound(); // Play click sound for buttons
+                            return;
+                        }
+                        playButtonClickSound(); // Play click sound for card click
+                        openGameInfoModal(card.dataset.gameId);
+                    });
                 });
-            });
 
-            // Add event listeners to play buttons for click (only click now)
-            document.querySelectorAll('.play-button, .play-button-small, .coming-soon-button, #search-button, #toggle-all-sound-button, #close-game-info-modal, #auth-submit-button, #toggle-auth-mode, #close-auth-modal, #profile-sign-out-button, #close-profile-modal').forEach(button => {
-                button.addEventListener('click', playButtonClickSound); // Play click sound on click
-            });
+                // Add event listeners to play buttons for click (only click now)
+                document.querySelectorAll('.play-button, .play-button-small, .coming-soon-button, #search-button, #toggle-all-sound-button, #close-game-info-modal, #auth-submit-button, #toggle-auth-mode, #close-auth-modal, #profile-sign-out-button, #close-profile-modal').forEach(button => {
+                    button.addEventListener('click', playButtonClickSound); // Play click sound on click
+                });
 
 
-            // Mute/Unmute Button Logic
-            const toggleAllSoundButton = document.getElementById('toggle-all-sound-button');
-            const allSoundIcon = document.getElementById('all-sound-icon');
+                // Mute/Unmute Button Logic
+                const toggleAllSoundButton = document.getElementById('toggle-all-sound-button');
+                const allSoundIcon = document.getElementById('all-sound-icon');
 
-            toggleAllSoundButton.addEventListener('click', () => {
-                allSoundEnabled = !allSoundEnabled;
-                if (allSoundEnabled) {
-                    Tone.Destination.volume.value = 0; // Unmute (0 dB)
-                    allSoundIcon.classList.remove('fa-volume-mute');
-                    allSoundIcon.classList.add('fa-volume-up');
-                    console.log("All sounds unmuted.");
-                } else {
-                    Tone.Destination.volume.value = -Infinity; // Mute completely
-                    allSoundIcon.classList.remove('fa-volume-up');
-                    allSoundIcon.classList.add('fa-volume-mute');
-                    console.log("All sounds muted.");
-                }
-                // Ensure audio context is started if unmuting
-                if (allSoundEnabled && Tone.context.state !== 'running') {
-                    startAudioContext();
-                }
-            });
+                toggleAllSoundButton.addEventListener('click', () => {
+                    allSoundEnabled = !allSoundEnabled;
+                    if (allSoundEnabled) {
+                        Tone.Destination.volume.value = 0; // Unmute (0 dB)
+                        allSoundIcon.classList.remove('fa-volume-mute');
+                        allSoundIcon.classList.add('fa-volume-up');
+                        console.log("All sounds unmuted.");
+                    } else {
+                        Tone.Destination.volume.value = -Infinity; // Mute completely
+                        allSoundIcon.classList.remove('fa-volume-up');
+                        allSoundIcon.classList.add('fa-volume-mute');
+                        console.log("All sounds muted.");
+                    }
+                    // Ensure audio context is started if unmuting
+                    if (allSoundEnabled && Tone.context.state !== 'running') {
+                        startAudioContext();
+                    }
+                });
+            }
 
             // --- Game Info Modal Logic ---
+            console.log("Initializing Game Info Modal logic.");
             const gameInfoModal = document.getElementById('game-info-modal');
             const closeGameInfoModalButton = document.getElementById('close-game-info-modal');
             const modalGameTitle = document.getElementById('modal-game-title');
@@ -523,6 +542,7 @@
 
 
             // --- Search Functionality ---
+            console.log("Initializing Search Functionality.");
             const gameSearchInput = document.getElementById('game-search');
             const allGameCards = document.querySelectorAll('.game-card');
 
@@ -554,6 +574,7 @@
             });
 
             // --- Smooth Page Transitions (Conceptual Implementation) ---
+            console.log("Initializing Smooth Page Transitions.");
             document.querySelectorAll('a[href^="http"]:not([target="_blank"]), a[href^="game.html"], a[href^="tic_tac_toe.html"], a[href^="tic_tac_toe_ai.html"], a[href^="hangman.html"]').forEach(link => {
                 link.addEventListener('click', function(e) {
                     // Only apply transition to internal links that are not game buttons
@@ -577,10 +598,12 @@
 
             // Add fade-in on page load
             document.addEventListener('DOMContentLoaded', () => {
+                console.log("DOMContentLoaded event fired. Adding fade-in class.");
                 document.body.classList.add('fade-in');
             });
 
             // --- Authentication Modals Logic ---
+            console.log("Initializing Authentication Modals Logic.");
             const authModal = document.getElementById('auth-modal');
             const closeAuthModalButton = document.getElementById('close-auth-modal');
             const toggleAuthModeButton = document.getElementById('toggle-auth-mode');
@@ -595,14 +618,11 @@
             const profileModal = document.getElementById('profile-modal');
             const closeProfileModalButton = document.getElementById('close-profile-modal');
             const profileSignOutButton = document.getElementById('profile-sign-out-button');
-            // profileDisplayNameElement and profileEmailElement are already defined globally in the Firebase script scope
-            // profileDisplayNameElement = document.getElementById('profile-display-name');
-            // profileEmailElement = document.getElementById('profile-email');
-
 
             let isSignInMode = true; // State for auth modal
 
             window.openAuthModal = (mode = 'signIn') => {
+                console.log(`Opening Auth Modal in ${mode} mode.`);
                 isSignInMode = (mode === 'signIn');
                 authModalTitle.textContent = isSignInMode ? "Sign In" : "Register";
                 authSubmitButton.textContent = isSignInMode ? "Sign In" : "Register";
@@ -613,8 +633,8 @@
             };
 
             window.openProfileModal = async () => {
+                console.log("Attempting to open Profile Modal.");
                 if (window.currentUser) {
-                    // Update elements directly, they are already defined by the Firebase script
                     document.getElementById('profile-display-name').textContent = "Loading...";
                     document.getElementById('profile-email').textContent = window.currentUser.email;
 
@@ -626,22 +646,25 @@
                     }
                     profileModal.classList.remove('hidden');
                 } else {
-                    console.warn("No user signed in to open profile modal.");
+                    console.warn("No user signed in to open profile modal. Redirecting to sign in.");
                     openAuthModal('signIn'); // Redirect to sign in if no user
                 }
             };
 
             closeAuthModalButton.addEventListener('click', () => {
+                console.log("Closing Auth Modal.");
                 authModal.classList.add('hidden');
             });
 
             toggleAuthModeButton.addEventListener('click', () => {
+                console.log("Toggling Auth Mode.");
                 isSignInMode = !isSignInMode;
                 openAuthModal(isSignInMode ? 'signIn' : 'register');
             });
 
             authForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                console.log("Auth form submitted.");
                 authErrorMessage.classList.add('hidden'); // Hide previous error
 
                 const email = authEmailInput.value;
@@ -649,18 +672,24 @@
                 const displayName = authDisplayNameInput.value;
 
                 if (isSignInMode) {
+                    console.log("Attempting sign in.");
                     const result = await window.signIn(email, password);
                     if (result.success) {
+                        console.log("Sign in successful, closing modal.");
                         authModal.classList.add('hidden');
                     } else {
+                        console.error("Sign in failed:", result.error);
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
                     }
                 } else {
+                    console.log("Attempting registration.");
                     const result = await window.signUp(email, password, displayName);
                     if (result.success) {
+                        console.log("Registration successful, closing modal.");
                         authModal.classList.add('hidden');
                     } else {
+                        console.error("Registration failed:", result.error);
                         authErrorMessage.textContent = result.error;
                         authErrorMessage.classList.remove('hidden');
                     }
@@ -668,12 +697,15 @@
             });
 
             closeProfileModalButton.addEventListener('click', () => {
+                console.log("Closing Profile Modal.");
                 profileModal.classList.add('hidden');
             });
 
             profileSignOutButton.addEventListener('click', async () => {
+                console.log("Sign out button clicked.");
                 const result = await window.signOutUser();
                 if (result.success) {
+                    console.log("Sign out successful, closing profile modal.");
                     profileModal.classList.add('hidden');
                 }
             });
@@ -681,14 +713,21 @@
             // Close modals when clicking outside
             authModal.addEventListener('click', (event) => {
                 if (event.target === authModal) {
+                    console.log("Clicked outside Auth Modal, closing.");
                     authModal.classList.add('hidden');
                 }
             });
             profileModal.addEventListener('click', (event) => {
                 if (event.target === profileModal) {
+                    console.log("Clicked outside Profile Modal, closing.");
                     profileModal.classList.add('hidden');
                 }
             });
+        } catch (e) {
+            console.error("Critical error in main script block:", e);
+            document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Ошибка загрузки страницы: ${e.message}. Пожалуйста, проверьте консоль разработчика для получения подробной информации.</div>`;
+        }
+        console.log("--- Main script execution finished ---"); // Final log
     </script>
 </body>
 </html>
