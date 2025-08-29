@@ -1,19 +1,46 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Ensure no scrollbars for background */
+}
+
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #faf8ef;
+    /* Background image directly on body */
     background-image: url('https://i.imgur.com/qmJKSRj.jpeg'); /* Your photo link */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    display: flex;
-    flex-direction: column;
+    background-color: #0d1117; /* Fallback dark background */
+    display: flex; /* Make body a flex container */
+    flex-direction: column; /* Stack children vertically */
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    margin: 0;
-    overflow: hidden;
     color: #fff; /* Default text color for the body */
+    opacity: 0; /* Initially hidden for fade-in effect */
+    transition: opacity 0.5s ease-in-out; /* Fade-in transition */
+}
+
+body.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Fade-out effect for page transitions */
+body.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+    overflow: hidden; /* Prevent scrollbars during fade-out transition */
+}
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
 
 /* Main game window styling */
