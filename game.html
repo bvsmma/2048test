@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 Game</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Your custom styles -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Tone.js for sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <div class="main-game-window">
+        <div class="game-header">
+            <h1 class="game-title">2048</h1>
+            <div class="score-container">
+                <div class="score-label">Score</div>
+                <span id="score">0</span>
+            </div>
+            <div class="score-container ml-4">
+                <div class="score-label">Best</div>
+                <span id="best-score">0</span>
+            </div>
+        </div>
+
+        <div class="game-wrapper">
+            <div id="game-container" class="game-container">
+                <!-- Grid cells are now static in HTML for reliability -->
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                
+                <!-- Game status message (should be after cells) -->
+                <div class="game-message" id="game-message">
+                    <p id="game-status"></p>
+                    <button id="restart-button">Play Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings button, fixed position -->
+        <button id="settings-button" class="fixed top-4 right-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200">
+            <i class="fas fa-cog"></i>
+        </button>
+        
+        <!-- Achievements button, fixed position below settings -->
+        <button id="achievements-button" class="fixed top-20 right-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200">
+            <i class="fas fa-trophy"></i>
+        </button>
+
+        <!-- Profile button, fixed position below Achievements -->
+        <button id="profile-button" class="fixed top-36 right-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200">
+            <i class="fas fa-user"></i>
+        </button>
+
+
+        <!-- Slide-out Profile menu -->
+        <div id="profile-menu" class="profile-menu fixed top-0 right-0 h-full w-64 bg-gray-800 text-white p-6 transform translate-x-full transition-transform duration-300 ease-in-out z-70 flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">My Profile</h2>
+                <button id="close-profile-menu-button" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <div class="flex flex-col gap-4 flex-grow overflow-y-auto">
+                <div>
+                    <label for="player-name-input" class="block text-sm font-medium text-gray-300 mb-1">Player Name:</label>
+                    <input type="text" id="player-name-input" class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your name">
+                </div>
+                <div class="flex justify-between text-lg">
+                    <span class="text-gray-300">Score:</span>
+                    <span id="profile-score" class="font-bold text-white">0</span>
+                </div>
+                <div class="flex justify-between text-lg">
+                    <span class="text-gray-300">Best Score:</span>
+                    <span id="profile-best-score" class="font-bold text-white">0</span>
+                </div>
+
+                <div class="unlocked-icons-section mt-4 pt-4 border-t border-gray-700">
+                    <h3 class="text-xl font-bold mb-3">Awards (Coming Soon)</h3> <!-- Изменено на "Awards (Coming Soon)" -->
+                    <div id="unlocked-icons-list" class="grid grid-cols-3 gap-3">
+                        <!-- Здесь будет сообщение "Coming Soon" вместо иконок, как определено в script.js -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide-out settings menu -->
+        <div id="settings-menu" class="settings-menu fixed top-0 right-0 h-full w-64 bg-gray-800 text-white p-6 transform translate-x-full transition-transform duration-300 ease-in-out z-60 flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Settings</h2>
+                <button id="close-settings-menu-button" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <!-- NEW BUTTON TO GO BACK TO THE HUB -->
+                <a href="index.html" class="flex items-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-colors duration-200 text-lg">
+                    <i class="fas fa-home w-6 text-center"></i> Back to Hub
+                </a>
+                <button id="undo-button" class="flex items-center gap-2 px-4 py-3 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-200 text-lg">
+                    <i class="fas fa-undo w-6 text-center"></i> Undo Move
+                </button>
+                <button id="info-button" class="flex items-center gap-2 px-4 py-3 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-200 text-lg">
+                    <i class="fas fa-info-circle w-6 text-center"></i> Information
+                </button>
+                <button id="toggle-sound-button" class="flex items-center gap-2 px-4 py-3 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-200 text-lg">
+                    <i class="fas fa-volume-up w-6 text-center" id="sound-icon"></i> <span id="sound-text">Sound: On</span>
+                </button>
+                
+                <div class="volume-control flex flex-col gap-2 mt-2">
+                    <label for="volume-slider" class="text-gray-300 text-sm flex items-center gap-2">
+                        <i class="fas fa-volume-down text-base"></i> Volume:
+                    </label>
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                </div>
+
+                <button id="reset-button-main" class="flex items-center gap-2 px-4 py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition-colors duration-200 text-lg mt-4">
+                    <i class="fas fa-redo w-6 text-center"></i> New Game
+                </button>
+            </div>
+        </div>
+
+        <!-- New: Slide-out Achievements Menu -->
+        <div id="achievements-menu" class="achievements-menu fixed top-0 right-0 h-full w-64 bg-gray-800 text-white p-6 transform translate-x-full transition-transform duration-300 ease-in-out z-55 flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Achievements</h2>
+                <button id="close-achievements-menu-button" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <div id="achievements-list" class="flex flex-col gap-3 text-sm text-gray-300 overflow-y-auto flex-grow">
+                <!-- Achievements will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for game information -->
+    <div id="info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+            <h2 class="text-2xl font-bold mb-4">How to Play 2048</h2>
+            <p class="mb-2">Use your arrow keys (or swipe on mobile) to move tiles. When two tiles with the same number touch, they merge into one!</p>
+            <p class="mb-4">The goal is to get a tile with the number 2048.</p>
+            <p class="text-sm text-gray-600">
+                Created by: Vladyslav Bieliaiev <br>
+                <a href="https://instagram.com/mmacvv" target="_blank" class="text-blue-500 hover:underline">My Instagram</a>
+            </p>
+            <button id="close-info-modal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
+        </div>
+    </div>
+
+    <!-- Your JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>

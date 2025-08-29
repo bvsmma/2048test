@@ -1,0 +1,261 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #faf8ef;
+    background-image: url('https://i.imgur.com/qmJKSRj.jpeg'); /* Your photo link */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    position: relative; /* For absolute positioning of children */
+}
+
+/* Main game window for Tic-Tac-Toe, similar to 2048 */
+.main-game-window {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    max-width: 90%; /* Responsive width */
+    width: 400px; /* Fixed width for desktop */
+    min-height: 500px; /* Adjust as needed */
+    margin: 20px auto;
+}
+
+.game-header {
+    display: flex;
+    flex-direction: column; /* Изменено на вертикальное расположение */
+    align-items: center; /* Центрирование элементов */
+    width: 100%;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.game-title {
+    font-size: 2.5rem; /* Уменьшен размер шрифта для заголовка */
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+    white-space: nowrap; /* Keep title on one line */
+    overflow: hidden; /* Hide overflow if any */
+    text-overflow: ellipsis; /* Add ellipsis if text overflows */
+    max-width: 100%; /* Ограничить ширину, чтобы избежать переполнения */
+    text-align: center; /* Центрировать заголовок */
+}
+
+.score-display-wrapper {
+    margin-top: 5px; /* Уменьшен отступ между заголовком и очками */
+}
+
+.score-container {
+    background-color: #eee4da;
+    border-radius: 6px;
+    padding: 8px 15px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #776e65;
+    min-width: 80px; /* Ensure consistent width */
+    transition: all 0.2s ease-in-out; /* Smooth transition for highlight */
+}
+
+.score-label {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #6a6a6a;
+}
+
+.game-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 360px; /* Max width for the grid */
+    padding-bottom: 100%; /* Maintain aspect ratio (1:1 for the grid) */
+    background-color: #bbada0;
+    border-radius: 6px;
+    overflow: hidden; /* Hide anything outside the grid bounds */
+}
+
+.tic-tac-toe-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 5px; /* Gap between cells */
+    padding: 5px; /* Padding inside the grid container */
+    box-sizing: border-box; /* Include padding in width/height */
+}
+
+.cell {
+    background-color: rgba(238, 228, 218, 0.35); /* Lighter background for empty cells */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem; /* Large font for X/O */
+    font-weight: 700;
+    color: #776e65;
+    border-radius: 3px;
+    cursor: pointer;
+    user-select: none; /* Prevent text selection */
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.cell.x {
+    color: #f67280; /* Reddish for X */
+}
+
+.cell.o {
+    color: #4CAF50; /* Greenish for O */
+}
+
+.cell:hover {
+    background-color: rgba(238, 228, 218, 0.6);
+    transform: scale(1.02);
+}
+
+.cell.occupied:hover {
+    cursor: not-allowed;
+    transform: scale(1); /* No scale on occupied cells */
+}
+
+/* Game message styling */
+#game-message {
+    z-index: 20; /* Ensure it's above the grid */
+}
+
+#game-message p {
+    color: #f9f6f2;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#game-message button {
+    margin-top: 20px;
+}
+
+/* Fixed buttons styles */
+.fixed {
+    position: fixed;
+}
+
+/* Hidden state for menu buttons */
+.button-hidden {
+    transform: translateX(calc(100% + 10px)); /* Push off-screen to the right */
+    opacity: 0;
+    pointer-events: none; /* Disable interaction when hidden */
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+/* Common slide-out menu styles (can be reused from 2048's style.css if applicable) */
+.profile-menu, .settings-menu, .achievements-menu {
+    transition: transform 0.3s ease-in-out;
+    z-index: 50; /* Ensure menus are above game elements */
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.profile-menu.open, .settings-menu.open, .achievements-menu.open {
+    transform: translateX(0);
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 640px) {
+    .main-game-window {
+        padding: 15px;
+        width: 95%;
+        min-height: auto; /* Allow height to adjust */
+    }
+
+    .game-title {
+        font-size: 2rem; /* Еще меньше шрифт для мобильных устройств */
+    }
+
+    .score-container {
+        padding: 6px 10px;
+        font-size: 1rem;
+        min-width: 60px;
+    }
+
+    .score-label {
+        font-size: 0.7rem;
+    }
+
+    .cell {
+        font-size: 3rem;
+    }
+
+    .profile-menu, .settings-menu, .achievements-menu {
+        width: 80%; /* Wider on small screens */
+    }
+}
+
+/* Styling for buttons in menus */
+.settings-menu button,
+.settings-menu a {
+    justify-content: flex-start; /* Align icon and text to the left */
+}
+
+/* Volume slider styling */
+.volume-control input[type="range"] {
+    margin-top: 0px; /* Убирает отрицательный margin-top */
+    height: 8px; /* Соответствует высоте трека */
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #6366f1; /* Indigo-500 */
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+    margin-top: -6px; /* Корректировка вертикального выравнивания для большого пальца */
+}
+
+.volume-control input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #6366f1; /* Indigo-500 */
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.volume-control input[type="range"]::-webkit-slider-runnable-track {
+    background: #4B5563; /* Dark gray for contrast */
+    border-radius: 5px;
+    height: 8px;
+}
+
+.volume-control input[type="range"]::-moz-range-track {
+    background: #4B5563; /* Dark gray for contrast */
+    border-radius: 5px;
+    height: 8px;
+}
+
+/* Styles for information modal */
+#info-modal .bg-gray-800 {
+    padding: 24px; /* Увеличенный отступ */
+    color: #e2e8f0; /* Более светлый текст для контраста */
+}
+
+#info-modal p {
+    color: #cbd5e1; /* Еще светлее для основного текста */
+}
+
+#info-modal a {
+    color: #93c5fd; /* Светло-голубой для ссылок */
+}

@@ -10,7 +10,7 @@ const closeInfoModalButton = document.getElementById('close-info-modal');
 const undoButton = document.getElementById('undo-button');
 const toggleSoundButton = document.getElementById('toggle-sound-button');
 const volumeSlider = document.getElementById('volume-slider');
-const resetButtonMain = document.getElementById('reset-button-main'); // Reset Game button in settings menu
+const resetButtonMain = document.getElementById('reset-button-main'); // New Game button in settings menu
 
 // Elements for settings menu
 const settingsButton = document.getElementById('settings-button');
@@ -47,7 +47,7 @@ let gameVolume = 1.0;
 // Profile data (NEW)
 const profile = {
     playerName: 'Player',
-    unlockedIcons: [] // Stores class names of Font Awesome icons, e.g., ['fas fa-star', 'fas fa-trophy']
+    unlockedIcons: [] // No longer used for display, but kept for potential future use
 };
 
 // Sound effects (using Tone.js for simplicity and no external URLs)
@@ -80,7 +80,7 @@ function getTilePosition(r, c) {
     }
 
     console.error(`Grid cell element not found for position (${r}, ${c}). This should not happen.`);
-    return { left: 0, top: 0 }; // Fallback
+    return { left: 0, top: 0 }; // Default return
 }
 
 
@@ -539,12 +539,12 @@ function hasPossibleMoves() {
 function checkGameState() {
     for (let r = 0; r < gridSize; r++) {
         for (let c = 0; c < gridSize; c++) {
-            if (board[r][c] === 2048) {
+            if (board[r][c] === 2048 && !gameWon) { // Check !gameWon to only trigger once
                 gameWon = true;
                 gameOver = true;
-                displayGameMessage('You win!');
-                saveGameState(); // Save state on win
+                displayGameMessage('You Win!');
                 checkAchievements(); // Check achievements on win
+                saveGameState(); // Save state on win
                 return;
             }
         }
@@ -618,12 +618,12 @@ function checkAchievements() {
             achievement.unlocked = true;
             newAchievementUnlocked = true;
             
-            // Unlock corresponding profile icon (if defined) (NEW)
-            if (achievement.iconClass && !profile.unlockedIcons.includes(achievement.iconClass)) {
-                profile.unlockedIcons.push(achievement.iconClass);
-                saveProfile(); // Save profile when a new icon is unlocked
-                updateProfileView();
-            }
+            // Removed: Unlocking corresponding profile icon
+            // if (achievement.iconClass && !profile.unlockedIcons.includes(achievement.iconClass)) {
+            //     profile.unlockedIcons.push(achievement.iconClass);
+            //     saveProfile(); // Save profile when a new icon is unlocked
+            //     updateProfileView();
+            // }
         }
     }
 
@@ -693,16 +693,8 @@ function updateProfileView() {
     
     unlockedIconsList.innerHTML = ''; // Clear current list
 
-    if (profile.unlockedIcons.length === 0) {
-        unlockedIconsList.innerHTML = '<p class="text-gray-400 text-center col-span-3">No icons unlocked yet. Play more!</p>';
-    } else {
-        profile.unlockedIcons.forEach(iconClass => {
-            const iconElement = document.createElement('div');
-            iconElement.classList.add('profile-icon-item', 'bg-gray-700', 'p-2', 'rounded-md', 'flex', 'items-center', 'justify-center', 'text-2xl', 'text-blue-300', 'shadow-md');
-            iconElement.innerHTML = `<i class="${iconClass}"></i>`;
-            unlockedIconsList.appendChild(iconElement);
-        });
-    }
+    // Changed: always show "Coming Soon" message
+    unlockedIconsList.innerHTML = '<p class="text-gray-400 text-center col-span-3">Coming Soon...</p>';
 }
 // --- End Profile Functions ---
 
