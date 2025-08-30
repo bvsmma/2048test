@@ -27,11 +27,9 @@
     <!-- The content-container now takes up the full viewport height -->
     <div class="content-container flex flex-col items-center p-4 min-h-screen">
         <header class="text-center">
-            <!-- ИЗМЕНЕНО: Добавлен класс text-white для белого цвета -->
             <h1 class="text-5xl md:text-7xl font-black uppercase tracking-wider title-shadow text-white">
                 Game Hub
             </h1>
-            <!-- ИЗМЕНЕНО: Класс text-gray-300 заменен на text-white для белого цвета -->
             <p class="mt-4 max-w-2xl text-lg md:text-xl subtitle-shadow text-white">
                 Welcome to my collection of simple and fun browser games. Select a game below to get started!
             </p>
@@ -39,7 +37,6 @@
 
         <!-- Auth Status and Button -->
         <div class="flex items-center gap-4 mt-6">
-            <!-- ИЗМЕНЕНО: Класс text-gray-300 заменен на text-white и убран текст по умолчанию -->
             <span id="auth-status" class="text-white text-lg">Signed out</span>
             <button id="auth-button" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
                 Sign In / Register
@@ -200,8 +197,6 @@
 
 
     <script>
-        console.log("--- Starting main script execution ---");
-
         try {
             const firebaseConfig = {
               apiKey: "AIzaSyDYKHgJbQasNpBL0vGrjCz80CjrnqSbTyI",
@@ -214,22 +209,13 @@
             };
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-            console.log("Firebase config loaded:");
-            console.log("App ID:", appId);
-
             if (typeof firebase !== 'undefined' && firebase.apps.length === 0) {
                 firebase.initializeApp(firebaseConfig);
-                console.log("Firebase app initialized.");
-            } else if (typeof firebase === 'undefined') {
-                console.error("Firebase global object is not defined.");
-            } else {
-                console.log("Firebase app already initialized.");
             }
             
             const auth = firebase.auth();
             const db = firebase.firestore();
             const googleProvider = new firebase.auth.GoogleAuthProvider();
-            console.log("Firebase services initialized.");
 
             let currentUser = null; 
 
@@ -251,9 +237,7 @@
                 try {
                     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                     const user = userCredential.user;
-
                     await user.sendEmailVerification();
-                    
                     await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
                         displayName: displayName,
                         email: user.email,
@@ -289,7 +273,6 @@
                 try {
                     const result = await auth.signInWithPopup(googleProvider);
                     const user = result.user;
-
                     const profileCheck = await window.getUserProfile(user.uid);
                     if (!profileCheck.success) {
                         await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
@@ -332,7 +315,6 @@
                 }
             };
 
-            // ИЗМЕНЕНО: Эта функция теперь загружает никнейм из базы данных и отображает его.
             auth.onAuthStateChanged(async (user) => {
                 const authStatusElement = document.getElementById('auth-status');
                 const authButton = document.getElementById('auth-button');
@@ -354,7 +336,6 @@
                 updateUIForAuthStatus();
             });
             
-            // ИЗМЕНЕНО: Эта функция также обновлена для отображения никнейма.
             function updateUIForAuthStatus() {
                 const authButton = document.getElementById('auth-button');
                 const authStatusElement = document.getElementById('auth-status');
@@ -388,6 +369,12 @@
                     signOutButton.classList.add('hidden');
                 }
             }
+
+            // ИСПРАВЛЕНИЕ: Этот блок кода был случайно удален. Он отвечает за анимацию появления страницы.
+            // --- Анимация загрузки страницы ---
+            document.addEventListener('DOMContentLoaded', () => {
+                document.body.classList.add('fade-in');
+            });
 
             // --- Sound Effects ---
             let allSoundEnabled = true;
@@ -536,7 +523,6 @@
                 }
             });
             
-            // ИЗМЕНЕНО: Обновлено для отображения никнейма в приветственном сообщении.
             document.getElementById('google-sign-in-button').addEventListener('click', async () => {
                 const result = await window.signInWithGoogle();
                 if (result.success) {
@@ -581,10 +567,9 @@
             });
 
         } catch (e) {
-            console.error("Critical error in main script block:", e);
             document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Ошибка загрузки страницы: ${e.message}.</div>`;
         }
-        console.log("--- Main script execution finished ---");
     </script>
 </body>
 </html>
+
