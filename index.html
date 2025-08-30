@@ -24,8 +24,18 @@
 
     <div class="background-overlay"></div>
 
-    <!-- The content-container now takes up the full viewport height -->
-    <div class="content-container flex flex-col items-center p-4 min-h-screen">
+    <!-- Floating Account Button (left-top) -->
+    <button id="account-button" class="fixed top-4 left-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200" title="Account">
+        <i class="fas fa-user"></i>
+    </button>
+
+    <!-- Global sound toggle (kept from the original) -->
+    <button id="toggle-all-sound-button" class="fixed top-4 right-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200" title="Toggle Sounds">
+        <i class="fas fa-volume-up" id="all-sound-icon"></i>
+    </button>
+
+    <!-- Content (footer is outside this container so it never overlaps) -->
+    <div class="content-container flex flex-col items-center p-4">
         <header class="text-center">
             <h1 class="text-5xl md:text-7xl font-black uppercase tracking-wider title-shadow text-white">
                 Game Hub
@@ -34,14 +44,6 @@
                 Welcome to my collection of simple and fun browser games. Select a game below to get started!
             </p>
         </header>
-
-        <!-- Auth Status and Button -->
-        <div class="flex items-center gap-4 mt-6">
-            <span id="auth-status" class="text-white text-lg">Signed out</span>
-            <button id="auth-button" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
-                Sign In / Register
-            </button>
-        </div>
 
         <!-- Search Bar -->
         <div class="search-bar mt-8 w-full max-w-md flex items-center justify-center gap-2">
@@ -55,7 +57,7 @@
         <main class="game-library mt-12 w-full max-w-screen-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4 flex-grow px-4">
             <!-- Game Card: 2048 -->
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
-                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">2048</div>
                     <p class="game-card-description text-xs text-gray-400">
                         Join numbers to get 2048 tile.
@@ -68,7 +70,7 @@
 
             <!-- Game Card: Tic-Tac-Toe -->
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="ticTacToe">
-                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">Tic-Tac-Toe</div>
                     <p class="game-card-description text-xs text-gray-400">
                         Classic game vs friend or AI.
@@ -86,7 +88,7 @@
 
             <!-- Game Card: Hangman -->
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="hangman">
-                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">Hangman</div>
                     <p class="game-card-description text-xs text-gray-400">
                         Guess letters, save the figure!
@@ -96,9 +98,10 @@
                     </a>
                 </div>
             </div>
+
             <!-- Adding more dummy game cards -->
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame1">
-                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 1</div>
                     <p class="game-card-description text-xs text-gray-400">
                         Placeholder for exciting game!
@@ -109,7 +112,7 @@
                 </div>
             </div>
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame2">
-                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 2</div>
                     <p class="game-card-description text-xs text-gray-400">
                         More fun with this upcoming game!
@@ -120,7 +123,7 @@
                 </div>
             </div>
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame3">
-                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 3</div>
                     <p class="game-card-description text-xs text-gray-400">
                         Another awesome game is on its way!
@@ -133,16 +136,13 @@
         </main>
     </div>
 
-    <footer class="w-full p-4 text-center text-gray-400 text-sm">
+    <!-- Footer OUTSIDE content so it never overlaps -->
+    <footer class="w-full p-4 text-center text-gray-400 text-sm relative z-10">
         <p>
             Created by: Vladyslav Bieliaiev |
             <a href="https://instagram.com/mmacvv" target="_blank" class="text-blue-400 hover:underline">My Instagram</a>
         </p>
     </footer>
-
-    <button id="toggle-all-sound-button" class="fixed top-4 right-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200">
-        <i class="fas fa-volume-up" id="all-sound-icon"></i>
-    </button>
 
     <!-- Modals -->
     <div id="game-info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
@@ -168,10 +168,10 @@
             <button id="toggle-auth-mode" class="mt-4 text-blue-400 hover:underline text-sm" data-click-sound="buttonClick">
                 Don't have an account? Register
             </button>
-            <button id="google-sign-in-button" class="mt-4 flex items-center justify-center gap-2 w-full px-6 py-3 text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out">
-            <i class="fab fa-google"></i> Sign In with Google
+            <!-- Google sign-in is visually disabled; JS click is prevented -->
+            <button id="google-sign-in-button" class="mt-4 flex items-center justify-center gap-2 w-full px-6 py-3 text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out" aria-disabled="true">
+                <i class="fab fa-google"></i> Sign In with Google
             </button>
-
             <button id="close-auth-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
@@ -181,9 +181,9 @@
             <h2 class="text-2xl font-bold mb-4 text-white">My Profile</h2>
             <p class="mb-2">Hello, <span id="profile-display-name" class="font-bold text-blue-400">Guest</span>!</p>
             <p class="mb-4">Email: <span id="profile-email" class="text-gray-400">Not signed in</span></p>
-            <p class="mb-4" id="email-verification-status">Email Verified: <span class="font-bold text-yellow-400">No</span></p>
+            <p class="mb-4" id="email-verification-status">Email Verified: <span class="font-bold text-gray-400">N/A</span></p>
             <button id="send-verification-email-button" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 text-sm mt-2 hidden" data-click-sound="buttonClick">Send Verification Email</button>
-            <button id="profile-sign-out-button" class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4" data-click-sound="buttonClick">Sign Out</button>
+            <button id="profile-sign-out-button" class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4 hidden" data-click-sound="buttonClick">Sign Out</button>
             <button id="close-profile-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
@@ -275,6 +275,7 @@
             };
 
             window.signInWithGoogle = async () => {
+                // Function kept for future enabling. Currently unused (button is disabled).
                 try {
                     const result = await auth.signInWithPopup(googleProvider);
                     const user = result.user;
@@ -320,32 +321,34 @@
                 }
             };
 
+            function setAccountButtonState(signedIn, displayName) {
+                const accountButton = document.getElementById('account-button');
+                if (!accountButton) return;
+                if (signedIn) {
+                    accountButton.title = displayName ? `Profile: ${displayName}` : "My Profile";
+                    accountButton.classList.add('ring-2', 'ring-indigo-500');
+                } else {
+                    accountButton.title = "Sign In / Register";
+                    accountButton.classList.remove('ring-2', 'ring-indigo-500');
+                }
+            }
+
             auth.onAuthStateChanged(async (user) => {
-                const authStatusElement = document.getElementById('auth-status');
-                const authButton = document.getElementById('auth-button');
-                
                 if (user) {
                     window.currentUser = user;
                     const profileResult = await window.getUserProfile(user.uid);
                     const displayName = (profileResult.success && profileResult.profile.displayName)
                         ? profileResult.profile.displayName
                         : (user.displayName || user.email);
-
-                    authStatusElement.textContent = `Signed in as: ${displayName}`;
-                    authButton.textContent = "My Profile";
-                    authButton.onclick = () => openProfileModal();
+                    setAccountButtonState(true, displayName);
                 } else {
                     window.currentUser = null;
-                    authStatusElement.textContent = "Signed out";
-                    authButton.textContent = "Sign In / Register";
-                    authButton.onclick = () => openAuthModal('signIn');
+                    setAccountButtonState(false);
                 }
                 updateUIForAuthStatus();
             });
             
             function updateUIForAuthStatus() {
-                const authButton = document.getElementById('auth-button');
-                const authStatusElement = document.getElementById('auth-status');
                 const profileDisplayNameElement = document.getElementById('profile-display-name');
                 const profileEmailElement = document.getElementById('profile-email');
                 const signOutButton = document.getElementById('profile-sign-out-button');
@@ -353,8 +356,6 @@
                 const sendVerificationEmailButton = document.getElementById('send-verification-email-button');
 
                 if (window.currentUser) {
-                    authButton.textContent = "My Profile";
-                    authButton.onclick = openProfileModal;
                     profileEmailElement.textContent = window.currentUser.email;
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
                     sendVerificationEmailButton.classList.toggle('hidden', window.currentUser.emailVerified);
@@ -363,14 +364,10 @@
                         const displayName = (result.success && result.profile.displayName)
                             ? result.profile.displayName
                             : (window.currentUser.displayName || window.currentUser.email);
-                        authStatusElement.textContent = `Signed in as: ${displayName}`;
                         profileDisplayNameElement.textContent = displayName;
                     });
                     signOutButton.classList.remove('hidden');
                 } else {
-                    authButton.textContent = "Sign In / Register";
-                    authButton.onclick = () => openAuthModal('signIn');
-                    authStatusElement.textContent = "Signed out";
                     profileDisplayNameElement.textContent = "Guest";
                     profileEmailElement.textContent = "Not signed in";
                     emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold text-gray-400">N/A</span>`;
@@ -379,7 +376,7 @@
                 }
             }
 
-            // Анимация появления страницы
+            // Page fade-in animation
             document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.add('fade-in');
             });
@@ -534,19 +531,12 @@
                 }
             });
             
-            document.getElementById('google-sign-in-button').addEventListener('click', async () => {
-                const result = await window.signInWithGoogle();
-                if (result.success) {
-                    authModal.classList.add('hidden');
-                    const profileResult = await window.getUserProfile(result.user.uid);
-                    const displayName = (profileResult.success && profileResult.profile.displayName)
-                        ? profileResult.profile.displayName
-                        : (result.user.displayName || result.user.email);
-                    openNotificationModal("Google Sign-In", `Welcome, ${displayName}!`);
-                } else {
-                    document.getElementById('auth-error-message').textContent = result.error;
-                    document.getElementById('auth-error-message').classList.remove('hidden');
-                }
+            // Google button is disabled; prevent clicks but allow hover tooltip
+            document.getElementById('google-sign-in-button').addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // Optional: show a small notification
+                openNotificationModal("Coming Soon", "Google Sign-In will be available soon.");
             });
 
             document.getElementById('forgot-password-button').addEventListener('click', async () => {
@@ -577,6 +567,15 @@
             document.getElementById('send-verification-email-button').addEventListener('click', async () => {
                 const result = await window.sendVerificationEmail();
                 openNotificationModal(result.success ? "Verification Sent" : "Error", result.message || result.error);
+            });
+
+            // Account button opens the right modal depending on auth state
+            document.getElementById('account-button').addEventListener('click', () => {
+                if (window.currentUser) {
+                    openProfileModal();
+                } else {
+                    openAuthModal('signIn');
+                }
             });
 
         } catch (e) {
