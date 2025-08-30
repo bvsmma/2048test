@@ -64,6 +64,8 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     transition: all 0.3s ease;
     padding: 1rem;
     color: #E2E8F0;
+    aspect-ratio: 16 / 10; /* Maintain proportions as the card grows */
+    justify-content: center; /* Vertically center content */
 }
 
 .game-card:hover {
@@ -93,31 +95,46 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
 
 /* --- LAYOUT FIX FOR GAME LIBRARY --- */
 .game-library {
+    display: grid;
+    gap: 1.5rem; /* Control gap here */
     padding-bottom: 2rem;
-    width: 100%; /* Default width */
-    max-width: 1800px; /* Max width for ultra-wide screens */
+    width: 100%;
+    max-width: 1800px;
+    grid-template-columns: 1fr; /* Mobile-first: 1 column */
 }
 
 /* Responsive grid columns */
-@media (min-width: 640px) { /* sm breakpoint */
+@media (min-width: 768px) { /* md breakpoint for tablets */
     .game-library {
         grid-template-columns: repeat(2, 1fr);
-    }
-}
-@media (min-width: 1024px) { /* lg breakpoint */
-    .game-library {
-        grid-template-columns: repeat(3, 1fr);
         width: 95%;
+        margin: 0 auto;
     }
 }
-@media (min-width: 1536px) { /* 2xl breakpoint */
+@media (min-width: 1280px) { /* xl breakpoint for desktops */
     .game-library {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr); /* 3 columns as requested */
+        width: 90%;
+        gap: 2rem; /* Increase gap on larger screens */
     }
 }
-@media (min-width: 1920px) { /* Larger screens */
-    .game-library {
-        grid-template-columns: repeat(5, 1fr);
+
+/* --- Card Content Scaling --- */
+@media (min-width: 1280px) {
+    .game-card-title {
+        font-size: 1.5rem; /* Increase title font size */
+    }
+    .game-card-description {
+        font-size: 1rem; /* Increase description font size */
+    }
+    .game-card a.play-button, 
+    .game-card a.play-button-small, 
+    .game-card .coming-soon-button {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+    }
+    .game-card .flex.gap-2 {
+        gap: 0.75rem;
     }
 }
 
@@ -221,28 +238,11 @@ footer, footer a {
     right: 1rem;
 }
 
-/* --- Card Height for Larger Screens --- */
-@media (min-width: 1024px) {
-  .game-card {
-    height: 12rem;
-  }
-}
-@media (min-width: 1280px) {
-   .game-card {
-    height: 13rem;
-  }
-}
-@media (min-width: 1536px) {
-  .game-card {
-    height: 14rem;
-  }
-}
-
 /* Mobile optimizations */
 @media (max-width: 639px) {
   .game-card {
     min-height: 144px;
-    height: auto;
+    aspect-ratio: initial; /* Disable aspect ratio for smallest screens */
     padding: 0.75rem;
   }
   #account-button, #toggle-all-sound-button {
@@ -255,3 +255,4 @@ footer, footer a {
     padding: 0.5rem;
   }
 }
+
