@@ -21,354 +21,572 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body class="bg-gray-900 text-white">
+
     <div class="background-overlay"></div>
-    
-    <div id="app-content" class="relative z-10 flex flex-col min-h-screen">
-        <!-- Header -->
-        <header class="p-5 flex justify-between items-center bg-transparent">
-            <h1 class="text-3xl font-black tracking-tighter text-slate-100">ИГРОВОЙ ХАБ</h1>
-            <div>
-                <button id="account-button" class="account-button">
-                    <i class="fas fa-user-circle text-2xl"></i>
-                    <span id="account-button-text">Аккаунт</span>
-                </button>
-            </div>
+
+    <!-- Floating Account Button (left-top) -->
+    <button id="account-button" class="fixed top-4 left-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200" title="Account">
+        <i class="fas fa-user"></i>
+    </button>
+
+    <!-- Global sound toggle (kept from the original) -->
+    <button id="toggle-all-sound-button" class="fixed top-4 right-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200" title="Toggle Sounds">
+        <i class="fas fa-volume-up" id="all-sound-icon"></i>
+    </button>
+
+    <!-- Content (footer is outside this container so it never overlaps) -->
+    <div class="content-container flex flex-col items-center p-4">
+        <header class="text-center">
+            <h1 class="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-wider title-shadow text-white">
+                Game Hub
+            </h1>
+            <p class="mt-4 max-w-2xl text-base sm:text-lg md:text-xl subtitle-shadow text-white">
+                Welcome to my collection of simple and fun browser games. Select a game below to get started!
+            </p>
         </header>
 
-        <!-- Main Content -->
-        <main class="flex-grow p-5">
-            <div id="game-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                <!-- Game Card 1: Tic Tac Toe -->
-                <div class="game-card rounded-2xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 m-4 flex flex-col">
-                    <img class="w-full h-56 object-cover" src="https://i.imgur.com/kH10r0P.png" alt="Tic Tac Toe Game">
-                    <div class="p-8 flex flex-col flex-grow">
-                        <h3 class="font-bold text-2xl mb-3 text-slate-100">Крестики-нолики</h3>
-                        <p class="text-slate-300 text-lg flex-grow">
-                            Классическая игра в крестики-нолики. Сыграйте против друга на одном устройстве.
-                        </p>
-                        <div class="mt-4">
-                            <button onclick="navigateToGame('tic-tac-toe/index.html')" class="play-button w-full">
-                                Играть
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <!-- Search Bar -->
+        <div class="search-bar mt-8 w-full max-w-md flex items-center justify-center gap-2">
+            <input type="text" id="game-search" placeholder="Search for games..." class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+            <button id="search-button" class="px-4 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
 
-                <!-- Game Card 2: Snake -->
-                <div class="game-card rounded-2xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 m-4 flex flex-col">
-                    <img class="w-full h-56 object-cover" src="https://i.imgur.com/3d0y0sT.png" alt="Snake Game">
-                    <div class="p-8 flex flex-col flex-grow">
-                        <h3 class="font-bold text-2xl mb-3 text-slate-100">Змейка</h3>
-                        <p class="text-slate-300 text-lg flex-grow">
-                            Управляйте змеей, ешьте еду и становитесь длиннее. Избегайте столкновений со стенами и собственным хвостом!
-                        </p>
-                        <div class="mt-4">
-                            <button onclick="navigateToGame('snake/index.html')" class="play-button w-full">
-                                Играть
-                            </button>
-                        </div>
-                    </div>
+        <!-- Main content area for game cards. Layout classes removed, now controlled by home.css -->
+        <main class="game-library mt-12 w-full py-4 flex-grow px-4">
+            <!-- Game Card: 2048 -->
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
+                <div class="game-card-content h-full text-center">
+                    <div class="game-card-title text-xl">2048</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Join numbers to get 2048 tile.
+                    </p>
+                    <a href="game.html" class="play-button px-3 py-1 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 text-sm transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                        Play Now
+                    </a>
                 </div>
-                
-                <!-- Game Card 3: Pong -->
-                <div class="game-card rounded-2xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 m-4 flex flex-col">
-                    <img class="w-full h-56 object-cover" src="https://i.imgur.com/O6zB8eY.png" alt="Pong Game">
-                    <div class="p-8 flex flex-col flex-grow">
-                        <h3 class="font-bold text-2xl mb-3 text-slate-100">Понг</h3>
-                        <p class="text-slate-300 text-lg flex-grow">
-                            Аркадная классика. Перемещайте свою платформу, чтобы отбивать мяч и набирать очки против оппонента.
-                        </p>
-                        <div class="mt-4">
-                            <button onclick="navigateToGame('pong/index.html')" class="play-button w-full">
-                                Играть
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            </div>
 
-                <!-- Game Card 4: Memory Game -->
-                <div class="game-card rounded-2xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 m-4 flex flex-col">
-                    <img class="w-full h-56 object-cover" src="https://i.imgur.com/r6d1vL8.png" alt="Memory Game">
-                    <div class="p-8 flex flex-col flex-grow">
-                        <h3 class="font-bold text-2xl mb-3 text-slate-100">Игра на память</h3>
-                        <p class="text-slate-300 text-lg flex-grow">
-                            Проверьте свою память, находя совпадающие пары карточек. Очистите поле как можно быстрее!
-                        </p>
-                        <div class="mt-4">
-                            <button onclick="navigateToGame('memory-game/index.html')" class="play-button w-full">
-                                Играть
-                            </button>
-                        </div>
+            <!-- Game Card: Tic-Tac-Toe -->
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="ticTacToe">
+                <div class="game-card-content h-full text-center">
+                    <div class="game-card-title text-xl">Tic-Tac-Toe</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Classic game vs friend or AI.
+                    </p>
+                    <div class="flex justify-center gap-2 w-full">
+                        <a href="tic_tac_toe.html" class="play-button-small px-3 py-1 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 text-xs transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                            Vs Friend
+                        </a>
+                        <a href="tic_tac_toe_ai.html" class="play-button-small px-3 py-1 bg-purple-600 text-white font-bold rounded-lg shadow-lg hover:bg-purple-700 text-xs transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                            Vs AI
+                        </a>
                     </div>
                 </div>
+            </div>
 
-                <!-- Add more game cards here if needed -->
+            <!-- Game Card: Hangman -->
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="hangman">
+                <div class="game-card-content h-full text-center">
+                    <div class="game-card-title text-xl">Hangman</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Guess letters, save the figure!
+                    </p>
+                    <a href="hangman.html" class="play-button px-3 py-1 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 text-sm transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                        Play Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Adding more dummy game cards -->
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame1">
+                <div class="game-card-content h-full text-center">
+                    <div class="game-card-title text-xl">New Game 1</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Placeholder for exciting game!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame2">
+                <div class="game-card-content h-full text-center">
+                    <div class="game-card-title text-xl">New Game 2</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        More fun with this upcoming game!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame3">
+                <div class="game-card-content h-full text-center">
+                    <div class="game-card-title text-xl">New Game 3</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Another awesome game is on its way!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
             </div>
         </main>
-
-        <!-- Footer -->
-        <footer class="p-5 text-center text-slate-400 bg-transparent">
-            <p>&copy; 2024 Игровой Хаб. Все права защищены.</p>
-        </footer>
     </div>
 
-    <!-- Modals (Auth, Profile, Notification) -->
-    <!-- Authentication Modal -->
-    <div id="auth-modal" class="modal-container fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-        <div class="rounded-lg p-8 shadow-2xl w-full max-w-md relative">
-            <button class="close-modal-button" aria-label="Close authentication modal">&times;</button>
-            <div id="auth-content"></div>
-        </div>
-    </div>
-    
-    <!-- Profile Modal -->
-    <div id="profile-modal" class="modal-container fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-        <div class="rounded-lg p-8 shadow-2xl w-full max-w-md relative text-center">
-            <button class="close-modal-button" aria-label="Close profile modal">&times;</button>
-            <h2 class="text-3xl font-bold mb-4">Профиль</h2>
-            <p id="profile-email" class="mb-2"></p>
-            <p id="profile-email-verified" class="mb-4"></p>
-            <button id="send-verification-email-button" class="auth-button-secondary w-full mb-4 hidden">Отправить письмо для подтверждения</button>
-            <button id="profile-sign-out-button" class="auth-button w-full">Выйти</button>
+    <!-- Footer OUTSIDE content so it never overlaps -->
+    <footer class="w-full p-4 text-center text-gray-400 text-sm relative z-10">
+        <p>
+            Created by: Vladyslav Bieliaiev |
+            <a href="https://instagram.com/mmacvv" target="_blank" class="text-blue-400 hover:underline">My Instagram</a>
+        </p>
+    </footer>
+
+    <!-- Modals -->
+    <div id="game-info-modal" class="hidden modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative">
+            <h2 id="modal-game-title" class="text-3xl font-bold mb-4 text-white">Game Title</h2>
+            <p id="modal-game-description" class="mb-4 text-lg">Detailed description of the game.</p>
+            <p id="modal-game-rules" class="mb-4">Rules: These are the rules for the game.</p>
+            <button id="close-game-info-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
 
-    <!-- Notification Modal -->
-    <div id="notification-modal" class="modal-container fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-        <div class="rounded-lg p-8 shadow-2xl w-full max-w-md relative">
-            <button class="close-modal-button" aria-label="Close notification modal">&times;</button>
-            <h2 id="notification-title" class="text-2xl font-bold mb-4"></h2>
-            <p id="notification-message"></p>
+    <div id="auth-modal" class="hidden modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+            <h2 id="auth-modal-title" class="text-2xl font-bold mb-4 text-white">Sign In</h2>
+            <form id="auth-form" class="flex flex-col gap-4">
+                <input type="email" id="auth-email" placeholder="Email" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" id="auth-password" placeholder="Password" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="auth-display-name" placeholder="Display Name (for registration)" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 hidden">
+                <p id="auth-error-message" class="text-red-400 text-sm mt-2 hidden"></p>
+                <button type="submit" id="auth-submit-button" class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">Sign In</button>
+            </form>
+            <button id="forgot-password-button" class="mt-2 text-sm text-blue-400 hover:underline" data-click-sound="buttonClick">Forgot Password?</button>
+            <button id="toggle-auth-mode" class="mt-4 text-blue-400 hover:underline text-sm" data-click-sound="buttonClick">
+                Don't have an account? Register
+            </button>
+            <!-- Google sign-in is visually disabled; JS click is prevented -->
+            <button id="google-sign-in-button" class="mt-4 flex items-center justify-center gap-2 w-full px-6 py-3 text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out" aria-disabled="true">
+                <i class="fab fa-google"></i> Sign In with Google
+            </button>
+            <button id="close-auth-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
-    
-    <script src="firebase-config.js"></script>
+
+    <div id="profile-modal" class="hidden modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+            <h2 class="text-2xl font-bold mb-4 text-white">My Profile</h2>
+            <p class="mb-2">Hello, <span id="profile-display-name" class="font-bold text-blue-400">Guest</span>!</p>
+            <p class="mb-4">Email: <span id="profile-email" class="text-gray-400">Not signed in</span></p>
+            <p class="mb-4" id="email-verification-status">Email Verified: <span class="font-bold text-gray-400">N/A</span></p>
+            <button id="send-verification-email-button" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 text-sm mt-2 hidden" data-click-sound="buttonClick">Send Verification Email</button>
+            <button id="profile-sign-out-button" class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4 hidden" data-click-sound="buttonClick">Sign Out</button>
+            <button id="close-profile-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
+        </div>
+    </div>
+
+    <div id="notification-modal" class="hidden modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
+            <h3 id="notification-title" class="text-xl font-bold mb-3 text-white">Notification</h3>
+            <p id="notification-message" class="mb-4">Message goes here.</p>
+            <button id="close-notification-modal" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">OK</button>
+        </div>
+    </div>
+
+
     <script>
-        // --- SOUNDS ---
-        const navigationSound = new Tone.Player("https://assets.codepen.io/219293/ui-click.wav").toDestination();
-        const modalOpenSound = new Tone.Player("https://assets.codepen.io/219293/ui-open.wav").toDestination();
-        const modalCloseSound = new Tone.Player("https://assets.codepen.io/219293/ui-close.wav").toDestination();
-        
-        // --- PAGE NAVIGATION ---
-        function navigateToGame(url) {
-            navigationSound.start();
-            document.body.classList.add('fade-out');
-            setTimeout(() => {
-                window.location.href = url;
-            }, 500);
-        }
-
-        window.addEventListener('load', () => {
-            document.body.classList.add('fade-in');
-        });
-        
-        // --- MODAL HANDLING ---
-        const authModal = document.getElementById('auth-modal');
-        const profileModal = document.getElementById('profile-modal');
-        const notificationModal = document.getElementById('notification-modal');
-
-        function openModal(modal) {
-            modalOpenSound.start();
-            modal.classList.add('modal-visible');
-        }
-
-        function closeModal(modal) {
-            modalCloseSound.start();
-            modal.classList.remove('modal-visible');
-        }
-
-        // Close modals with Escape key or by clicking the background
-        [authModal, profileModal, notificationModal].forEach(modal => {
-            modal.addEventListener('click', (event) => {
-                if (event.target === modal) closeModal(modal);
-            });
-            modal.querySelector('.close-modal-button').addEventListener('click', () => closeModal(modal));
-        });
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                [authModal, profileModal, notificationModal].forEach(closeModal);
-            }
-        });
-
-        function openNotificationModal(title, message) {
-            document.getElementById('notification-title').textContent = title;
-            document.getElementById('notification-message').textContent = message;
-            openModal(notificationModal);
-        }
-
-        // --- AUTH UI LOGIC ---
-        const authContent = document.getElementById('auth-content');
-
-        const signInForm = `
-            <h2 class="text-3xl font-bold mb-6 text-center">Вход</h2>
-            <p id="auth-error-message" class="text-red-400 mb-4 text-center hidden"></p>
-            <input id="email-input" type="email" placeholder="Email" class="auth-input">
-            <input id="password-input" type="password" placeholder="Пароль" class="auth-input">
-            <button id="sign-in-button" class="auth-button w-full mb-4">Войти</button>
-            <button id="google-sign-in-button" class="auth-button-secondary w-full mb-4">
-                <i class="fab fa-google mr-2"></i> Войти с Google
-            </button>
-            <p class="text-center text-slate-400">Нет аккаунта? <a href="#" id="show-sign-up" class="font-semibold text-indigo-400 hover:underline">Создать</a></p>
-        `;
-
-        const signUpForm = `
-            <h2 class="text-3xl font-bold mb-6 text-center">Регистрация</h2>
-            <p id="auth-error-message" class="text-red-400 mb-4 text-center hidden"></p>
-            <input id="email-input" type="email" placeholder="Email" class="auth-input">
-            <input id="password-input" type="password" placeholder="Пароль" class="auth-input">
-            <button id="sign-up-button" class="auth-button w-full mb-4">Создать аккаунт</button>
-            <button id="google-sign-in-button" class="auth-button-secondary w-full mb-4">
-                <i class="fab fa-google mr-2"></i> Войти с Google
-            </button>
-            <p class="text-center text-slate-400">Уже есть аккаунт? <a href="#" id="show-sign-in" class="font-semibold text-indigo-400 hover:underline">Войти</a></p>
-        `;
-
-        function openAuthModal(formType) {
-            authContent.innerHTML = formType === 'signIn' ? signInForm : signUpForm;
-            openModal(authModal);
-            attachAuthListeners();
-        }
-        
-        function openProfileModal() {
-            const user = window.currentUser;
-            if (!user) return;
-            document.getElementById('profile-email').textContent = user.email;
-            const verifiedStatus = document.getElementById('profile-email-verified');
-            const sendVerificationBtn = document.getElementById('send-verification-email-button');
-            
-            if (user.emailVerified) {
-                verifiedStatus.textContent = 'Email подтвержден';
-                verifiedStatus.className = 'text-green-400 mb-4';
-                sendVerificationBtn.classList.add('hidden');
-            } else {
-                verifiedStatus.textContent = 'Email не подтвержден';
-                verifiedStatus.className = 'text-yellow-400 mb-4';
-                sendVerificationBtn.classList.remove('hidden');
-            }
-            openModal(profileModal);
-        }
-
-        function updateAccountButton(user) {
-            const buttonText = document.getElementById('account-button-text');
-            if (user) {
-                buttonText.textContent = user.email.split('@')[0];
-            } else {
-                buttonText.textContent = 'Аккаунт';
-            }
-        }
-        
-        // --- MAIN SCRIPT EXECUTION ---
         try {
-            // Check for firebase config, if not present, show error
-            if (typeof firebaseConfig === 'undefined') {
-                throw new Error("Конфигурация Firebase не найдена. Пожалуйста, убедитесь, что firebase-config.js загружен правильно.");
-            }
+            const firebaseConfig = {
+              apiKey: "AIzaSyDYKHgJbQasNpBL0vGrjCz80CjrnqSbTyI",
+              authDomain: "game-hub-a99b7.firebaseapp.com",
+              projectId: "game-hub-a99b7",
+              storageBucket: "game-hub-a99b7.firebasestorage.app",
+              messagingSenderId: "328776863852",
+              appId: "1:328776863852:web:1adcbbf755fa9854dfc849",
+              measurementId: "G-GMTYE5CHRM"
+            };
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-            // Initialize Firebase
-            if (!firebase.apps.length) {
+            if (typeof firebase !== 'undefined' && firebase.apps.length === 0) {
                 firebase.initializeApp(firebaseConfig);
             }
-            window.auth = firebase.auth();
-            window.firestore = firebase.firestore();
-            window.googleProvider = new firebase.auth.GoogleAuthProvider();
-            window.currentUser = null;
             
-            // Auth state listener
-            window.auth.onAuthStateChanged(user => {
-                window.currentUser = user;
-                updateAccountButton(user);
-            });
-            
-            // --- AUTH FUNCTIONS (now globally accessible) ---
-            window.signUpUser = async (email, password) => {
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+            let currentUser = null; 
+
+            window.firebaseApp = firebase.app();
+            window.firebaseAuth = auth;
+            window.firebaseDb = db;
+            window.currentUser = currentUser;
+
+            window.signIn = async (email, password) => {
                 try {
-                    const userCredential = await window.auth.createUserWithEmailAndPassword(email, password);
-                    await userCredential.user.sendEmailVerification();
-                    return { success: true, message: "Письмо для подтверждения отправлено на ваш email." };
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    return { success: true, user: userCredential.user };
                 } catch (error) {
-                    return { error: error.message };
+                    return { success: false, error: error.message };
                 }
             };
 
-            window.signInUser = async (email, password) => {
+            window.signUp = async (email, password, displayName) => {
                 try {
-                    await window.auth.signInWithEmailAndPassword(email, password);
-                    return { success: true };
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+
+                    // Save nickname in Firebase Auth so user.displayName is set
+                    await user.updateProfile({ displayName: displayName });
+
+                    await user.sendEmailVerification();
+                    await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
+                        displayName: displayName,
+                        email: user.email,
+                        emailVerified: user.emailVerified,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    return { success: true, user: user };
                 } catch (error) {
-                    return { error: error.message };
-                }
-            };
-            
-            window.signInWithGoogle = async () => {
-                try {
-                    await window.auth.signInWithPopup(window.googleProvider);
-                    return { success: true };
-                } catch (error) {
-                    return { error: error.message };
+                    return { success: false, error: error.message };
                 }
             };
 
             window.signOutUser = async () => {
                 try {
-                    await window.auth.signOut();
+                    await auth.signOut();
+                    window.currentUser = null;
                     return { success: true };
                 } catch (error) {
-                    return { error: error.message };
+                    return { success: false, error: error.message };
+                }
+            };
+
+            window.sendPasswordReset = async (email) => {
+                try {
+                    await auth.sendPasswordResetEmail(email);
+                    return { success: true, message: `Password reset email sent to ${email}. Check your inbox!` };
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            };
+
+            window.signInWithGoogle = async () => {
+                // Function kept for future enabling. Currently unused (button is disabled).
+                try {
+                    const result = await auth.signInWithPopup(googleProvider);
+                    const user = result.user;
+                    const profileCheck = await window.getUserProfile(user.uid);
+                    if (!profileCheck.success) {
+                        await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
+                            displayName: user.displayName,
+                            email: user.email,
+                            emailVerified: user.emailVerified,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                    return { success: true, user: user };
+                } catch (error) {
+                    return { success: false, error: error.message };
                 }
             };
 
             window.sendVerificationEmail = async () => {
-                const user = window.currentUser;
-                if (user && !user.emailVerified) {
+                if (window.currentUser && !window.currentUser.emailVerified) {
                     try {
-                        await user.sendEmailVerification();
-                        return { success: true, message: "Новое письмо для подтверждения отправлено." };
+                        await window.currentUser.sendEmailVerification();
+                        return { success: true, message: `Verification email sent to ${window.currentUser.email}.` };
                     } catch (error) {
-                        return { error: error.message };
+                        return { success: false, error: error.message };
                     }
+                } else {
+                    return { success: false, error: "No user signed in or email already verified." };
                 }
-                return { error: "Нет пользователя или email уже подтвержден." };
             };
-            
-            // --- EVENT LISTENERS ---
-            // This function needs to be callable to re-attach listeners when modal content changes
-            window.attachAuthListeners = () => {
-                const signInBtn = document.getElementById('sign-in-button');
-                const signUpBtn = document.getElementById('sign-up-button');
-                const googleSignInBtn = document.getElementById('google-sign-in-button');
-                const showSignUpLink = document.getElementById('show-sign-up');
-                const showSignInLink = document.getElementById('show-sign-in');
 
-                const handleAuthAction = async (action) => {
-                    const email = document.getElementById('email-input').value;
-                    const password = document.getElementById('password-input').value;
-                    const result = await action(email, password);
-                    
-                    document.getElementById('auth-error-message').classList.add('hidden');
-                    
-                    if (result.success) {
-                        closeModal(authModal);
-                        if (result.message) {
-                             openNotificationModal("Регистрация успешна", result.message);
-                        }
+
+            window.getUserProfile = async (uid) => {
+                try {
+                    const docSnap = await db.collection("artifacts").doc(appId).collection("users").doc(uid).collection("profile").doc("data").get();
+                    if (docSnap.exists) {
+                        return { success: true, profile: docSnap.data() };
                     } else {
-                        document.getElementById('auth-error-message').textContent = result.error;
-                        document.getElementById('auth-error-message').classList.remove('hidden');
+                        return { success: false, error: "No profile found" };
+                    }
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            };
+
+            function setAccountButtonState(signedIn, displayName) {
+                const accountButton = document.getElementById('account-button');
+                if (!accountButton) return;
+                if (signedIn) {
+                    accountButton.title = displayName ? `Profile: ${displayName}` : "My Profile";
+                    accountButton.classList.add('ring-2', 'ring-indigo-500');
+                } else {
+                    accountButton.title = "Sign In / Register";
+                    accountButton.classList.remove('ring-2', 'ring-indigo-500');
+                }
+            }
+
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    window.currentUser = user;
+                    const profileResult = await window.getUserProfile(user.uid);
+                    const displayName = (profileResult.success && profileResult.profile.displayName)
+                        ? profileResult.profile.displayName
+                        : (user.displayName || user.email);
+                    setAccountButtonState(true, displayName);
+                } else {
+                    window.currentUser = null;
+                    setAccountButtonState(false);
+                }
+                updateUIForAuthStatus();
+            });
+            
+            function updateUIForAuthStatus() {
+                const profileDisplayNameElement = document.getElementById('profile-display-name');
+                const profileEmailElement = document.getElementById('profile-email');
+                const signOutButton = document.getElementById('profile-sign-out-button');
+                const emailVerificationStatus = document.getElementById('email-verification-status');
+                const sendVerificationEmailButton = document.getElementById('send-verification-email-button');
+
+                if (window.currentUser) {
+                    profileEmailElement.textContent = window.currentUser.email;
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
+                    sendVerificationEmailButton.classList.toggle('hidden', window.currentUser.emailVerified);
+
+                    window.getUserProfile(window.currentUser.uid).then(result => {
+                        const displayName = (result.success && result.profile.displayName)
+                            ? result.profile.displayName
+                            : (window.currentUser.displayName || window.currentUser.email);
+                        profileDisplayNameElement.textContent = displayName;
+                    });
+                    signOutButton.classList.remove('hidden');
+                } else {
+                    profileDisplayNameElement.textContent = "Guest";
+                    profileEmailElement.textContent = "Not signed in";
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold text-gray-400">N/A</span>`;
+                    sendVerificationEmailButton.classList.add('hidden');
+                    signOutButton.classList.add('hidden');
+                }
+            }
+            
+            // --- Modal Handling ---
+            const gameInfoModal = document.getElementById('game-info-modal');
+            const authModal = document.getElementById('auth-modal');
+            const profileModal = document.getElementById('profile-modal');
+            const notificationModal = document.getElementById('notification-modal');
+
+            // Hides all modals on initial load to prevent flashes
+            function hideAllModals() {
+                 document.querySelectorAll('.modal-container').forEach(modal => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('modal-visible');
+                });
+            }
+
+            // Opens a modal with animation
+            function openModal(modal) {
+                if (!modal) return;
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.add('modal-visible');
+                }, 10); // Timeout ensures transition is applied
+            }
+
+            // Closes a modal with animation
+            function closeModal(modal) {
+                if (!modal) return;
+                modal.classList.remove('modal-visible');
+                const onTransitionEnd = () => {
+                    modal.classList.add('hidden');
+                    modal.removeEventListener('transitionend', onTransitionEnd);
+                };
+                modal.addEventListener('transitionend', onTransitionEnd);
+            }
+
+            // Page fade-in animation & initial modal state
+            document.addEventListener('DOMContentLoaded', () => {
+                hideAllModals(); 
+                document.body.classList.add('fade-in');
+            });
+
+            // --- Sound Effects ---
+            let allSoundEnabled = true;
+            if (typeof Tone !== 'undefined') {
+                const startAudioContext = () => {
+                    if (Tone.context.state !== 'running') {
+                        Tone.start();
                     }
                 };
+                document.documentElement.addEventListener('click', startAudioContext, { once: true });
+                document.documentElement.addEventListener('keydown', startAudioContext, { once: true });
 
-                if (signInBtn) signInBtn.addEventListener('click', () => handleAuthAction(window.signInUser));
-                if (signUpBtn) signUpBtn.addEventListener('click', () => handleAuthAction(window.signUpUser));
-                if (googleSignInBtn) googleSignInBtn.addEventListener('click', async () => {
-                    const result = await window.signInWithGoogle();
-                    if(result.success) closeModal(authModal);
+                const cardHoverSynth = new Tone.PolySynth(Tone.Synth, { volume: -15, oscillator: { type: "sine" }, envelope: { attack: 0.001, decay: 0.03, sustain: 0.01, release: 0.03, releaseCurve: "exponential" } }).toDestination();
+                const buttonClickSynth = new Tone.PolySynth(Tone.Synth, { volume: -15, oscillator: { type: "sine" }, envelope: { attack: 0.001, decay: 0.03, sustain: 0.01, release: 0.03, releaseCurve: "exponential" } }).toDestination();
+
+                function playSound(synth, note, duration) {
+                    if (allSoundEnabled && Tone.context.state === 'running') {
+                        synth.triggerAttackRelease(note, duration);
+                    }
+                }
+
+                document.querySelectorAll('.game-card').forEach(card => {
+                    card.addEventListener('mouseenter', () => playSound(cardHoverSynth, "G4", "64n"));
+                    card.addEventListener('click', (event) => {
+                        if (event.target.closest('a')) {
+                            playSound(buttonClickSynth, "C5", "32n");
+                            return;
+                        }
+                        playSound(buttonClickSynth, "C5", "32n");
+                        openGameInfoModal(card.dataset.gameId);
+                    });
                 });
 
-                if (showSignUpLink) showSignUpLink.addEventListener('click', (e) => { e.preventDefault(); openAuthModal('signUp'); });
-                if (showSignInLink) showSignInLink.addEventListener('click', (e) => { e.preventDefault(); openAuthModal('signIn'); });
+                document.querySelectorAll('button, a.play-button, a.play-button-small, a.coming-soon-button').forEach(el => {
+                    el.addEventListener('click', () => playSound(buttonClickSynth, "C5", "32n"));
+                });
+
+                document.getElementById('toggle-all-sound-button').addEventListener('click', () => {
+                    allSoundEnabled = !allSoundEnabled;
+                    const icon = document.getElementById('all-sound-icon');
+                    if (allSoundEnabled) {
+                        Tone.Destination.volume.value = 0;
+                        icon.className = 'fas fa-volume-up';
+                    } else {
+                        Tone.Destination.volume.value = -Infinity;
+                        icon.className = 'fas fa-volume-mute';
+                    }
+                });
+            }
+
+            // --- Game Info Modal ---
+            const gameDetails = {
+                "2048": { title: "2048", description: "Merge identical tiles to reach the 2048 tile!", rules: "Use arrow keys or swipe to move tiles." },
+                "ticTacToe": { title: "Tic-Tac-Toe", description: "A classic strategy game for two players.", rules: "First player to get three in a row wins." },
+                "hangman": { title: "Hangman", description: "Guess the hidden word one letter at a time.", rules: "You lose if the hangman is complete." },
+                "newGame1": { title: "New Game 1", description: "This is a placeholder for an exciting game to come!", rules: "Rules will be revealed soon!" },
+                "newGame2": { title: "New Game 2", description: "Get ready for more fun with this upcoming game!", rules: "Rules will be revealed soon!" },
+                "newGame3": { title: "New Game 3", description: "Another awesome game is on its way!", rules: "Rules will be revealed soon!" }
+            };
+            function openGameInfoModal(gameId) {
+                const details = gameDetails[gameId];
+                if (details) {
+                    document.getElementById('modal-game-title').textContent = details.title;
+                    document.getElementById('modal-game-description').textContent = details.description;
+                    document.getElementById('modal-game-rules').textContent = "Rules: " + details.rules;
+                    openModal(gameInfoModal);
+                }
+            }
+            document.getElementById('close-game-info-modal').addEventListener('click', () => closeModal(gameInfoModal));
+            gameInfoModal.addEventListener('click', (e) => e.target === gameInfoModal && closeModal(gameInfoModal));
+
+            // --- Search ---
+            const gameSearchInput = document.getElementById('game-search');
+            const allGameCards = document.querySelectorAll('.game-card');
+            function filterGames() {
+                const searchTerm = gameSearchInput.value.toLowerCase();
+                allGameCards.forEach(card => {
+                    const title = card.querySelector('.game-card-title').textContent.toLowerCase();
+                    const desc = card.querySelector('.game-card-description').textContent.toLowerCase();
+                    card.style.display = (title.includes(searchTerm) || desc.includes(searchTerm)) ? '' : 'none';
+                });
+            }
+            gameSearchInput.addEventListener('input', filterGames);
+            document.getElementById('search-button').addEventListener('click', filterGames);
+
+            // --- Auth Modals ---
+            let isSignInMode = true;
+
+            window.openAuthModal = (mode = 'signIn') => {
+                isSignInMode = (mode === 'signIn');
+                document.getElementById('auth-modal-title').textContent = isSignInMode ? "Sign In" : "Register";
+                document.getElementById('auth-submit-button').textContent = isSignInMode ? "Sign In" : "Register";
+                document.getElementById('toggle-auth-mode').textContent = isSignInMode ? "Don't have an account? Register" : "Already have an account? Sign In";
+                document.getElementById('auth-display-name').classList.toggle('hidden', isSignInMode);
+                document.getElementById('forgot-password-button').classList.toggle('hidden', !isSignInMode);
+                document.getElementById('auth-error-message').classList.add('hidden');
+                openModal(authModal);
+            };
+
+            window.openProfileModal = async () => {
+                if (window.currentUser) {
+                    await window.currentUser.reload();
+                    window.currentUser = auth.currentUser;
+                    updateUIForAuthStatus();
+                    openModal(profileModal);
+                } else {
+                    openAuthModal('signIn');
+                }
             };
             
-            // Attach event listeners for profile modal buttons
+            function openNotificationModal(title, message) {
+                document.getElementById('notification-title').textContent = title;
+                document.getElementById('notification-message').textContent = message;
+                openModal(notificationModal);
+            }
+
+            document.getElementById('close-auth-modal').addEventListener('click', () => closeModal(authModal));
+            document.getElementById('close-profile-modal').addEventListener('click', () => closeModal(profileModal));
+            document.getElementById('close-notification-modal').addEventListener('click', () => closeModal(notificationModal));
+            authModal.addEventListener('click', (e) => e.target === authModal && closeModal(authModal));
+            profileModal.addEventListener('click', (e) => e.target === profileModal && closeModal(profileModal));
+            notificationModal.addEventListener('click', (e) => e.target === notificationModal && closeModal(notificationModal));
+
+            document.getElementById('toggle-auth-mode').addEventListener('click', () => openAuthModal(isSignInMode ? 'register' : 'signIn'));
+
+            document.getElementById('auth-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('auth-email').value;
+                const password = document.getElementById('auth-password').value;
+                const displayName = document.getElementById('auth-display-name').value;
+                const errorMessageEl = document.getElementById('auth-error-message');
+                
+                const result = isSignInMode ? await window.signIn(email, password) : await window.signUp(email, password, displayName);
+
+                if (result.success) {
+                    closeModal(authModal);
+                    const profileResult = await window.getUserProfile(result.user.uid);
+                    const welcomeName = (profileResult.success && profileResult.profile.displayName)
+                        ? profileResult.profile.displayName
+                        : (result.user.displayName || result.user.email);
+                    openNotificationModal(isSignInMode ? "Sign In Successful" : "Registration Successful!", `Welcome, ${welcomeName}!`);
+                } else {
+                    errorMessageEl.textContent = result.error;
+                    errorMessageEl.classList.remove('hidden');
+                }
+            });
+            
+            // Google button is disabled; prevent clicks but allow hover tooltip
+            document.getElementById('google-sign-in-button').addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // Optional: show a small notification
+                openNotificationModal("Coming Soon", "Google Sign-In will be available soon.");
+            });
+
+            document.getElementById('forgot-password-button').addEventListener('click', async () => {
+                const email = document.getElementById('auth-email').value;
+                if (!email) {
+                    document.getElementById('auth-error-message').textContent = "Please enter your email.";
+                    document.getElementById('auth-error-message').classList.remove('hidden');
+                    return;
+                }
+                const result = await window.sendPasswordReset(email);
+                if (result.success) {
+                    openNotificationModal("Password Reset", result.message);
+                    closeModal(authModal);
+                } else {
+                    document.getElementById('auth-error-message').textContent = result.error;
+                    document.getElementById('auth-error-message').classList.remove('hidden');
+                }
+            });
+            
             document.getElementById('profile-sign-out-button').addEventListener('click', async () => {
                 const result = await window.signOutUser();
                 if (result.success) {
