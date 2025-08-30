@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Hub</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Styles for the homepage -->
     <link rel="stylesheet" href="home.css">
+    <!-- Tone.js for sound effects, loaded globally for all pages -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <!-- Firebase SDKs (UPDATED: Using standard scripts for GitHub Pages compatibility) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -18,14 +24,17 @@
 
     <div class="background-overlay"></div>
 
+    <!-- Floating Account Button (left-top) -->
     <button id="account-button" class="fixed top-4 left-4 glass-effect w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:ring-2 hover:ring-indigo-500 transition-all duration-200" title="Account">
         <i class="fas fa-user"></i>
     </button>
 
+    <!-- Global sound toggle -->
     <button id="toggle-all-sound-button" class="fixed top-4 right-4 glass-effect w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:ring-2 hover:ring-indigo-500 transition-all duration-200" title="Toggle Sounds">
         <i class="fas fa-volume-up" id="all-sound-icon"></i>
     </button>
 
+    <!-- Content (footer is outside this container so it never overlaps) -->
     <div class="content-container flex flex-col items-center p-4">
         <header class="text-center">
             <h1 class="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-wider title-shadow text-white">
@@ -36,6 +45,7 @@
             </p>
         </header>
 
+        <!-- Search Bar -->
         <div class="search-bar mt-8 w-full max-w-md flex items-center justify-center gap-2">
             <input type="text" id="game-search" placeholder="Search for games..." class="w-full p-3 rounded-lg glass-effect text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
             <button id="search-button" class="px-4 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
@@ -43,8 +53,10 @@
             </button>
         </div>
 
-        <main class="game-library mt-12 w-full max-w-screen-xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 py-4 flex-grow px-4">
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
+        <!-- Main content area for game cards -->
+        <main class="game-library mt-12 w-full max-w-screen-2xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 py-4 flex-grow px-4">
+            <!-- Game Card: 2048 -->
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">2048</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -56,7 +68,8 @@
                 </div>
             </div>
 
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="ticTacToe">
+            <!-- Game Card: Tic-Tac-Toe -->
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="ticTacToe">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">Tic-Tac-Toe</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -73,7 +86,8 @@
                 </div>
             </div>
 
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="hangman">
+            <!-- Game Card: Hangman -->
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="hangman">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">Hangman</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -85,7 +99,8 @@
                 </div>
             </div>
 
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame1">
+            <!-- Adding more dummy game cards -->
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame1">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 1</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -96,7 +111,7 @@
                     </a>
                 </div>
             </div>
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame2">
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame2">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 2</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -107,7 +122,7 @@
                     </a>
                 </div>
             </div>
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame3">
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame3">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 3</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -121,6 +136,7 @@
         </main>
     </div>
 
+    <!-- Footer OUTSIDE content so it never overlaps -->
     <footer class="w-full p-4 text-center text-gray-400 text-sm relative z-10">
         <p>
             Created by: Vladyslav Bieliaiev |
@@ -128,6 +144,7 @@
         </p>
     </footer>
 
+    <!-- Modals -->
     <div id="game-info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
         <div class="glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative">
             <h2 id="modal-game-title" class="text-3xl font-bold mb-4 text-white">Game Title</h2>
@@ -151,6 +168,7 @@
             <button id="toggle-auth-mode" class="mt-4 text-blue-400 hover:underline text-sm" data-click-sound="buttonClick">
                 Don't have an account? Register
             </button>
+            <!-- Google sign-in is visually disabled; JS click is prevented -->
             <button id="google-sign-in-button" class="mt-4 flex items-center justify-center gap-2 w-full px-6 py-3 text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out" aria-disabled="true">
                 <i class="fab fa-google"></i> Sign In with Google
             </button>
