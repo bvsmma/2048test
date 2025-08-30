@@ -217,3 +217,26 @@ footer, footer a {
 .modal-close-button:hover {
     color: #e5e7eb;
 }
+
+/* Modal Animations */
+/* The parent container handles the backdrop fade and pointer events */
+.modal-container {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    pointer-events: none;
+}
+/* When the modal is active, make it visible */
+.modal-container.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}
+/* The modal content itself handles the scale and fade effect */
+.modal-content {
+    transform: scale(0.95);
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+/* When the parent is active, animate the content into view */
+.modal-container.is-active .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
