@@ -84,6 +84,13 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     height: 100%;
 }
 
+/* FIX: Prevents text wrapping inside game card buttons, which caused height issues */
+.game-card a.play-button,
+.game-card a.play-button-small,
+.game-card a.coming-soon-button {
+    white-space: nowrap;
+}
+
 .game-card-title {
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     font-weight: 700;
@@ -152,10 +159,20 @@ footer, footer a {
     opacity: 1;
 }
 
+/* FIX: Ensures modals are scrollable on small screens and don't overflow */
+#game-info-modal > div,
+#auth-modal > div,
+#profile-modal > div,
+#notification-modal > div {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
 /* Mobile optimizations */
 @media (max-width: 640px) {
   .game-card {
-    height: 200px;
+    min-height: 144px; /* FIX: Changed from fixed height to min-height for flexibility */
+    height: auto;
     padding: 0.75rem;
   }
   #account-button, #toggle-all-sound-button {
