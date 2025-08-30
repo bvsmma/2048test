@@ -15,6 +15,7 @@ body {
     background-color: #0d1117;
     display: flex;
     flex-direction: column;
+    min-height: 100vh; /* растягиваем */
     position: relative;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
@@ -43,7 +44,7 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     100% { background-position: 0% 50%; }
 }
 
-.content-wrapper, .content-container {
+.content-container {
     position: relative; 
     z-index: 1; 
     background-color: transparent;
@@ -53,11 +54,10 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     padding: 1rem; 
     flex-grow: 1; 
     overflow: visible; 
-    padding-bottom: 5rem; /* больше места для футера */
 }
 
 .game-card {
-    background-color: rgba(31, 41, 55, 0.35);
+    background-color: transparent; /* убрали заливку */
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.15); 
@@ -71,7 +71,6 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
 }
 
 .game-card:hover { 
-    background-color: rgba(31,41,55,0.5);
     border-color: rgba(99,102,241,0.9); 
     transform: translateY(-5px); 
 }
@@ -81,7 +80,7 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem; /* больше пространства между заголовком, описанием и кнопкой */
+    gap: 0.75rem; /* больше пространства */
     height: 100%;
 }
 
@@ -109,14 +108,18 @@ header h1, header p, #auth-status {
     text-shadow: 0 1px 5px rgba(0,0,0,0.4);
 }
 
+/* Футер всегда внизу */
+footer {
+    margin-top: auto; 
+    text-align: center;
+    padding: 1rem;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
 footer, footer a {
     color: #ffffff !important;
     text-shadow: 0 2px 6px rgba(0,0,0,0.8);
-}
-footer { 
-    flex-shrink: 0; 
-    position: relative;
-    z-index: 1;
 }
 
 /* Неактивная кнопка Google */
