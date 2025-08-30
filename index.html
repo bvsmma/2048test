@@ -25,12 +25,12 @@
     <div class="background-overlay"></div>
 
     <!-- Floating Account Button (left-top) -->
-    <button id="account-button" class="fixed top-4 left-4 glass-effect w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:ring-2 hover:ring-indigo-500 transition-all duration-200" title="Account">
+    <button id="account-button" class="fixed top-4 left-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200" title="Account">
         <i class="fas fa-user"></i>
     </button>
 
-    <!-- Global sound toggle -->
-    <button id="toggle-all-sound-button" class="fixed top-4 right-4 glass-effect w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:ring-2 hover:ring-indigo-500 transition-all duration-200" title="Toggle Sounds">
+    <!-- Global sound toggle (kept from the original) -->
+    <button id="toggle-all-sound-button" class="fixed top-4 right-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200" title="Toggle Sounds">
         <i class="fas fa-volume-up" id="all-sound-icon"></i>
     </button>
 
@@ -47,16 +47,16 @@
 
         <!-- Search Bar -->
         <div class="search-bar mt-8 w-full max-w-md flex items-center justify-center gap-2">
-            <input type="text" id="game-search" placeholder="Search for games..." class="w-full p-3 rounded-lg glass-effect text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+            <input type="text" id="game-search" placeholder="Search for games..." class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
             <button id="search-button" class="px-4 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
                 <i class="fas fa-search"></i>
             </button>
         </div>
 
         <!-- Main content area for game cards -->
-        <main class="game-library mt-12 w-full max-w-screen-2xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 py-4 flex-grow px-4">
+        <main class="game-library mt-12 w-full max-w-screen-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4 flex-grow px-4">
             <!-- Game Card: 2048 -->
-            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">2048</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -69,7 +69,7 @@
             </div>
 
             <!-- Game Card: Tic-Tac-Toe -->
-            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="ticTacToe">
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="ticTacToe">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">Tic-Tac-Toe</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -87,7 +87,7 @@
             </div>
 
             <!-- Game Card: Hangman -->
-            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="hangman">
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="hangman">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">Hangman</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -100,7 +100,7 @@
             </div>
 
             <!-- Adding more dummy game cards -->
-            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame1">
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame1">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 1</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -111,7 +111,7 @@
                     </a>
                 </div>
             </div>
-            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame2">
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame2">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 2</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -122,7 +122,7 @@
                     </a>
                 </div>
             </div>
-            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame3">
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame3">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 3</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -145,24 +145,22 @@
     </footer>
 
     <!-- Modals -->
-    <!-- Removed 'hidden' class from here, now controlled by JS and CSS 'is-active' class -->
-    <div id="game-info-modal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="modal-content glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative">
+    <div id="game-info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative">
             <h2 id="modal-game-title" class="text-3xl font-bold mb-4 text-white">Game Title</h2>
             <p id="modal-game-description" class="mb-4 text-lg">Detailed description of the game.</p>
             <p id="modal-game-rules" class="mb-4">Rules: These are the rules for the game.</p>
-            <!-- Corrected close button styling -->
-            <button id="close-game-info-modal" class="modal-close-button" data-click-sound="buttonClick">&times;</button>
+            <button id="close-game-info-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
 
-    <div id="auth-modal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="modal-content glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+    <div id="auth-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
             <h2 id="auth-modal-title" class="text-2xl font-bold mb-4 text-white">Sign In</h2>
             <form id="auth-form" class="flex flex-col gap-4">
-                <input type="email" id="auth-email" placeholder="Email" class="p-3 rounded-lg glass-effect text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="password" id="auth-password" placeholder="Password" class="p-3 rounded-lg glass-effect text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="text" id="auth-display-name" placeholder="Display Name (for registration)" class="p-3 rounded-lg glass-effect text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 hidden">
+                <input type="email" id="auth-email" placeholder="Email" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" id="auth-password" placeholder="Password" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="auth-display-name" placeholder="Display Name (for registration)" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 hidden">
                 <p id="auth-error-message" class="text-red-400 text-sm mt-2 hidden"></p>
                 <button type="submit" id="auth-submit-button" class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">Sign In</button>
             </form>
@@ -174,31 +172,27 @@
             <button id="google-sign-in-button" class="mt-4 flex items-center justify-center gap-2 w-full px-6 py-3 text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out" aria-disabled="true">
                 <i class="fab fa-google"></i> Sign In with Google
             </button>
-            <!-- Corrected close button styling -->
-            <button id="close-auth-modal" class="modal-close-button" data-click-sound="buttonClick">&times;</button>
+            <button id="close-auth-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
 
-    <div id="profile-modal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="modal-content glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+    <div id="profile-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
             <h2 class="text-2xl font-bold mb-4 text-white">My Profile</h2>
             <p class="mb-2">Hello, <span id="profile-display-name" class="font-bold text-blue-400">Guest</span>!</p>
             <p class="mb-4">Email: <span id="profile-email" class="text-gray-400">Not signed in</span></p>
             <p class="mb-4" id="email-verification-status">Email Verified: <span class="font-bold text-gray-400">N/A</span></p>
             <button id="send-verification-email-button" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 text-sm mt-2 hidden" data-click-sound="buttonClick">Send Verification Email</button>
             <button id="profile-sign-out-button" class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4 hidden" data-click-sound="buttonClick">Sign Out</button>
-            <!-- Corrected close button styling -->
-            <button id="close-profile-modal" class="modal-close-button" data-click-sound="buttonClick">&times;</button>
+            <button id="close-profile-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
 
-    <div id="notification-modal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="modal-content glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
+    <div id="notification-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
             <h3 id="notification-title" class="text-xl font-bold mb-3 text-white">Notification</h3>
             <p id="notification-message" class="mb-4">Message goes here.</p>
-            <button id="ok-notification-modal-btn" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">OK</button>
-            <!-- Corrected close button styling with a unique ID -->
-            <button id="close-notification-modal-btn" class="modal-close-button" data-click-sound="buttonClick">&times;</button>
+            <button id="close-notification-modal" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">OK</button>
         </div>
     </div>
 
@@ -382,8 +376,17 @@
                 }
             }
 
+            // --- FIX: Function to hide all modals ---
+            function hideAllModals() {
+                document.getElementById('game-info-modal').classList.add('hidden');
+                document.getElementById('auth-modal').classList.add('hidden');
+                document.getElementById('profile-modal').classList.add('hidden');
+                document.getElementById('notification-modal').classList.add('hidden');
+            }
+
             // Page fade-in animation
             document.addEventListener('DOMContentLoaded', () => {
+                hideAllModals(); // Explicitly hide all modals on page load
                 document.body.classList.add('fade-in');
             });
 
@@ -452,11 +455,11 @@
                     document.getElementById('modal-game-title').textContent = details.title;
                     document.getElementById('modal-game-description').textContent = details.description;
                     document.getElementById('modal-game-rules').textContent = "Rules: " + details.rules;
-                    gameInfoModal.classList.add('is-active');
+                    gameInfoModal.classList.remove('hidden');
                 }
             }
-            document.getElementById('close-game-info-modal').addEventListener('click', () => gameInfoModal.classList.remove('is-active'));
-            gameInfoModal.addEventListener('click', (e) => e.target === gameInfoModal && gameInfoModal.classList.remove('is-active'));
+            document.getElementById('close-game-info-modal').addEventListener('click', () => gameInfoModal.classList.add('hidden'));
+            gameInfoModal.addEventListener('click', (e) => e.target === gameInfoModal && gameInfoModal.classList.add('hidden'));
 
             // --- Search ---
             const gameSearchInput = document.getElementById('game-search');
@@ -486,7 +489,7 @@
                 document.getElementById('auth-display-name').classList.toggle('hidden', isSignInMode);
                 document.getElementById('forgot-password-button').classList.toggle('hidden', !isSignInMode);
                 document.getElementById('auth-error-message').classList.add('hidden');
-                authModal.classList.add('is-active');
+                authModal.classList.remove('hidden');
             };
 
             window.openProfileModal = async () => {
@@ -494,7 +497,7 @@
                     await window.currentUser.reload();
                     window.currentUser = auth.currentUser;
                     updateUIForAuthStatus();
-                    profileModal.classList.add('is-active');
+                    profileModal.classList.remove('hidden');
                 } else {
                     openAuthModal('signIn');
                 }
@@ -503,18 +506,15 @@
             function openNotificationModal(title, message) {
                 document.getElementById('notification-title').textContent = title;
                 document.getElementById('notification-message').textContent = message;
-                notificationModal.classList.add('is-active');
+                notificationModal.classList.remove('hidden');
             }
 
-            document.getElementById('close-auth-modal').addEventListener('click', () => authModal.classList.remove('is-active'));
-            document.getElementById('close-profile-modal').addEventListener('click', () => profileModal.classList.remove('is-active'));
-            document.getElementById('close-game-info-modal').addEventListener('click', () => gameInfoModal.classList.remove('is-active'));
-            document.getElementById('ok-notification-modal-btn').addEventListener('click', () => notificationModal.classList.remove('is-active'));
-            document.getElementById('close-notification-modal-btn').addEventListener('click', () => notificationModal.classList.remove('is-active'));
-
-            authModal.addEventListener('click', (e) => e.target === authModal && authModal.classList.remove('is-active'));
-            profileModal.addEventListener('click', (e) => e.target === profileModal && profileModal.classList.remove('is-active'));
-            notificationModal.addEventListener('click', (e) => e.target === notificationModal && notificationModal.classList.remove('is-active'));
+            document.getElementById('close-auth-modal').addEventListener('click', () => authModal.classList.add('hidden'));
+            document.getElementById('close-profile-modal').addEventListener('click', () => profileModal.classList.add('hidden'));
+            document.getElementById('close-notification-modal').addEventListener('click', () => notificationModal.classList.add('hidden'));
+            authModal.addEventListener('click', (e) => e.target === authModal && authModal.classList.add('hidden'));
+            profileModal.addEventListener('click', (e) => e.target === profileModal && profileModal.classList.add('hidden'));
+            notificationModal.addEventListener('click', (e) => e.target === notificationModal && notificationModal.classList.add('hidden'));
 
             document.getElementById('toggle-auth-mode').addEventListener('click', () => openAuthModal(isSignInMode ? 'register' : 'signIn'));
 
@@ -528,12 +528,12 @@
                 const result = isSignInMode ? await window.signIn(email, password) : await window.signUp(email, password, displayName);
 
                 if (result.success) {
-                    authModal.classList.remove('is-active');
+                    authModal.classList.add('hidden');
                     const profileResult = await window.getUserProfile(result.user.uid);
                     const welcomeName = (profileResult.success && profileResult.profile.displayName)
                         ? profileResult.profile.displayName
                         : (result.user.displayName || result.user.email);
-                    openNotificationModal("Sign In Successful", `Welcome, ${welcomeName}!`);
+                    openNotificationModal(isSignInMode ? "Sign In Successful" : "Registration Successful!", `Welcome, ${welcomeName}!`);
                 } else {
                     errorMessageEl.textContent = result.error;
                     errorMessageEl.classList.remove('hidden');
@@ -558,7 +558,7 @@
                 const result = await window.sendPasswordReset(email);
                 if (result.success) {
                     openNotificationModal("Password Reset", result.message);
-                    authModal.classList.remove('is-active');
+                    authModal.classList.add('hidden');
                 } else {
                     document.getElementById('auth-error-message').textContent = result.error;
                     document.getElementById('auth-error-message').classList.remove('hidden');
@@ -568,7 +568,7 @@
             document.getElementById('profile-sign-out-button').addEventListener('click', async () => {
                 const result = await window.signOutUser();
                 if (result.success) {
-                    profileModal.classList.remove('is-active');
+                    profileModal.classList.add('hidden');
                     openNotificationModal("Signed Out", "You have been signed out.");
                 }
             });
