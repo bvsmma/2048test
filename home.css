@@ -99,22 +99,28 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     font-size: 1rem; /* Increased font size */
 }
 
-/* Significantly increased button styles for better visibility */
+/* Drastically increased button styles */
 .play-button {
-    padding: 2.5rem 5rem; /* Increased button padding */
-    font-size: 1.75rem; /* Increased font size */
+    padding: 3.5rem 7rem;
+    font-size: 2rem;
     font-weight: bold;
+    border-radius: 9999px; /* Make them pill-shaped */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Add a deep shadow */
 }
 
 .play-button-small {
-    padding: 2rem 4rem; /* Increased padding for small buttons */
-    font-size: 1.5rem; /* Increased font size */
+    padding: 2.5rem 5rem;
+    font-size: 1.75rem;
     font-weight: bold;
+    border-radius: 9999px; /* Make them pill-shaped */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Add a deep shadow */
 }
 
 .coming-soon-button {
-    padding: 2.5rem 5rem;
-    font-size: 1.75rem;
+    padding: 3.5rem 7rem;
+    font-size: 2rem;
+    border-radius: 9999px; /* Make them pill-shaped */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Add a deep shadow */
 }
 
 .game-library {
