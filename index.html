@@ -52,7 +52,7 @@
         </div>
 
         <!-- Main content area for game cards -->
-        <main class="game-library mt-12 w-full max-w-screen-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4 overflow-y-auto flex-grow px-4">
+        <main class="game-library mt-12 w-full max-w-screen-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4 flex-grow px-4">
             <!-- Game Card: 2048 -->
             <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
                 <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
@@ -234,26 +234,25 @@
             };
 
             window.signUp = async (email, password, displayName) => {
-    try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
 
-        // 🔹 Сохраняем ник в Firebase Auth
-        await user.updateProfile({ displayName: displayName });
+                    // Save nickname in Firebase Auth so user.displayName is set
+                    await user.updateProfile({ displayName: displayName });
 
-        await user.sendEmailVerification();
-        await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
-            displayName: displayName,
-            email: user.email,
-            emailVerified: user.emailVerified,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        return { success: true, user: user };
-    } catch (error) {
-        return { success: false, error: error.message };
-    }
-};
-
+                    await user.sendEmailVerification();
+                    await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
+                        displayName: displayName,
+                        email: user.email,
+                        emailVerified: user.emailVerified,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    return { success: true, user: user };
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            };
 
             window.signOutUser = async () => {
                 try {
@@ -327,7 +326,9 @@
                 if (user) {
                     window.currentUser = user;
                     const profileResult = await window.getUserProfile(user.uid);
-                    const displayName = (profileResult.success && profileResult.profile.displayName) ? profileResult.profile.displayName : user.email;
+                    const displayName = (profileResult.success && profileResult.profile.displayName)
+                        ? profileResult.profile.displayName
+                        : (user.displayName || user.email);
 
                     authStatusElement.textContent = `Signed in as: ${displayName}`;
                     authButton.textContent = "My Profile";
@@ -358,7 +359,9 @@
                     sendVerificationEmailButton.classList.toggle('hidden', window.currentUser.emailVerified);
 
                     window.getUserProfile(window.currentUser.uid).then(result => {
-                        const displayName = (result.success && result.profile.displayName) ? result.profile.displayName : window.currentUser.email;
+                        const displayName = (result.success && result.profile.displayName)
+                            ? result.profile.displayName
+                            : (window.currentUser.displayName || window.currentUser.email);
                         authStatusElement.textContent = `Signed in as: ${displayName}`;
                         profileDisplayNameElement.textContent = displayName;
                     });
@@ -375,8 +378,7 @@
                 }
             }
 
-            // ИСПРАВЛЕНИЕ: Этот блок кода был случайно удален. Он отвечает за анимацию появления страницы.
-            // --- Анимация загрузки страницы ---
+            // Анимация появления страницы
             document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.add('fade-in');
             });
@@ -520,7 +522,10 @@
 
                 if (result.success) {
                     authModal.classList.add('hidden');
-                    const welcomeName = result.user.displayName || displayName || result.user.email;
+                    const profileResult = await window.getUserProfile(result.user.uid);
+                    const welcomeName = (profileResult.success && profileResult.profile.displayName)
+                        ? profileResult.profile.displayName
+                        : (result.user.displayName || result.user.email);
                     openNotificationModal(isSignInMode ? "Sign In Successful" : "Registration Successful!", `Welcome, ${welcomeName}!`);
                 } else {
                     errorMessageEl.textContent = result.error;
@@ -533,7 +538,9 @@
                 if (result.success) {
                     authModal.classList.add('hidden');
                     const profileResult = await window.getUserProfile(result.user.uid);
-                    const displayName = (profileResult.success && profileResult.profile.displayName) ? profileResult.profile.displayName : result.user.email;
+                    const displayName = (profileResult.success && profileResult.profile.displayName)
+                        ? profileResult.profile.displayName
+                        : (result.user.displayName || result.user.email);
                     openNotificationModal("Google Sign-In", `Welcome, ${displayName}!`);
                 } else {
                     document.getElementById('auth-error-message').textContent = result.error;
@@ -577,5 +584,3 @@
     </script>
 </body>
 </html>
-
-
