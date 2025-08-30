@@ -200,3 +200,20 @@ footer, footer a {
         grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 }
+/* New modal close button styles */
+.modal-close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #9ca3af;
+    transition: color 0.2s;
+    line-height: 1; /* Ensures perfect centering */
+    padding: 0.25rem; /* Makes the click target larger */
+}
+
+.modal-close-button:hover {
+    color: #e5e7eb;
+}
