@@ -234,21 +234,26 @@
             };
 
             window.signUp = async (email, password, displayName) => {
-                try {
-                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                    const user = userCredential.user;
-                    await user.sendEmailVerification();
-                    await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
-                        displayName: displayName,
-                        email: user.email,
-                        emailVerified: user.emailVerified,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    return { success: true, user: user };
-                } catch (error) {
-                    return { success: false, error: error.message };
-                }
-            };
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // 🔹 Сохраняем ник в Firebase Auth
+        await user.updateProfile({ displayName: displayName });
+
+        await user.sendEmailVerification();
+        await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
+            displayName: displayName,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return { success: true, user: user };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+};
+
 
             window.signOutUser = async () => {
                 try {
@@ -572,4 +577,5 @@
     </script>
 </body>
 </html>
+
 
