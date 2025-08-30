@@ -56,23 +56,18 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     overflow: visible;
 }
 
-/* Updated glass effect for all relevant elements */
-.glass-effect, .game-card, #auth-modal > div, #profile-modal > div, #notification-modal > div, #game-info-modal > div {
-    background-color: rgba(255, 255, 255, 0.08); /* More transparent and lighter */
-    backdrop-filter: blur(30px) saturate(180%); /* Increased blur and saturation for a better effect */
-    -webkit-backdrop-filter: blur(30px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    border-radius: 1rem;
-}
-
 .game-card {
+    background-color: transparent;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     display: flex;
     flex-direction: column;
     text-align: center;
     transition: all 0.3s ease;
-    min-height: 200px; /* Increased minimum height */
-    padding: 1.5rem; /* Increased padding */
+    padding: 1rem;
 }
 
 .game-card:hover {
@@ -85,42 +80,13 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem; /* Increased gap */
+    gap: 0.75rem;
     height: 100%;
 }
 
 .game-card-title {
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     font-weight: 700;
-    font-size: 1.75rem; /* Increased font size */
-}
-
-.game-card-description {
-    font-size: 1rem; /* Increased font size */
-}
-
-/* Drastically increased button styles */
-.play-button {
-    padding: 3.5rem 7rem;
-    font-size: 2rem;
-    font-weight: bold;
-    border-radius: 9999px; /* Make them pill-shaped */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Add a deep shadow */
-}
-
-.play-button-small {
-    padding: 2.5rem 5rem;
-    font-size: 1.75rem;
-    font-weight: bold;
-    border-radius: 9999px; /* Make them pill-shaped */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Add a deep shadow */
-}
-
-.coming-soon-button {
-    padding: 3.5rem 7rem;
-    font-size: 2rem;
-    border-radius: 9999px; /* Make them pill-shaped */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Add a deep shadow */
 }
 
 .game-library {
@@ -201,62 +167,4 @@ footer, footer a {
     font-size: 0.75rem;
     padding: 0.5rem;
   }
-}
-
-/* New responsive grid for larger screens */
-@media (min-width: 1024px) {
-    .game-library {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-@media (min-width: 1280px) {
-    .game-library {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-}
-@media (min-width: 1536px) {
-    .game-library {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-}
-/* New modal close button styles */
-.modal-close-button {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    cursor: pointer;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #9ca3af;
-    transition: color 0.2s;
-    line-height: 1; /* Ensures perfect centering */
-    padding: 0.25rem; /* Makes the click target larger */
-}
-
-.modal-close-button:hover {
-    color: #e5e7eb;
-}
-
-/* Modal Animations */
-/* The parent container handles the backdrop fade and pointer events */
-.modal-container {
-    opacity: 0;
-    transition: opacity 0.3s ease-out;
-    pointer-events: none;
-}
-/* When the modal is active, make it visible */
-.modal-container.is-active {
-    opacity: 1;
-    pointer-events: auto;
-}
-/* The modal content itself handles the scale and fade effect */
-.modal-content {
-    /* Removed opacity from transition to fix backdrop-filter */
-    transform: scale(0.95);
-    transition: transform 0.3s ease-out;
-}
-/* When the parent is active, animate the content into view */
-.modal-container.is-active .modal-content {
-    /* Removed opacity: 1 to fix backdrop-filter issue */
-    transform: scale(1);
 }
