@@ -53,10 +53,10 @@
             </button>
         </div>
 
-        <!-- Main content area for game cards. CONFLICTING CLASSES REMOVED HERE. -->
-        <main class="game-library mt-12 w-full grid grid-cols-1 gap-6 py-4 flex-grow px-4">
+        <!-- Main content area for game cards. Layout classes removed, now controlled by home.css -->
+        <main class="game-library mt-12 w-full py-4 flex-grow px-4">
             <!-- Game Card: 2048 -->
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">2048</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -69,7 +69,7 @@
             </div>
 
             <!-- Game Card: Tic-Tac-Toe -->
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="ticTacToe">
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="ticTacToe">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">Tic-Tac-Toe</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -87,7 +87,7 @@
             </div>
 
             <!-- Game Card: Hangman -->
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="hangman">
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="hangman">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">Hangman</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -100,7 +100,7 @@
             </div>
 
             <!-- Adding more dummy game cards -->
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame1">
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame1">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 1</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -111,7 +111,7 @@
                     </a>
                 </div>
             </div>
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame2">
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame2">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 2</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -122,7 +122,7 @@
                     </a>
                 </div>
             </div>
-            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame3">
+            <div class="game-card flex-shrink-0 w-full transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame3">
                 <div class="game-card-content h-full text-center">
                     <div class="game-card-title text-xl">New Game 3</div>
                     <p class="game-card-description text-xs text-gray-400">
@@ -615,3 +615,4 @@
     </script>
 </body>
 </html>
+
