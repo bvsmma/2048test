@@ -2,17 +2,17 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow-y: auto; /* теперь скролл всей страницы */
+    overflow-y: auto; /* теперь скролл только у всей страницы */
 }
 
 body {
     font-family: 'Inter', sans-serif;
-    background-image: url('https://i.imgur.com/qmJKSRj.jpeg'); /* Your photo link */
+    background-image: url('https://i.imgur.com/qmJKSRj.jpeg'); /* Твой фон */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-color: #0d1117; /* Fallback dark background */
+    background-color: #0d1117;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -29,7 +29,6 @@ body.fade-in {
     to { opacity: 1; }
 }
 
-/* Fade-out effect for page transitions */
 body.fade-out {
     animation: fadeOut 0.5s ease-out forwards;
     overflow: hidden;
@@ -39,7 +38,7 @@ body.fade-out {
     to { opacity: 0; }
 }
 
-/* Subtle dynamic background overlay */
+/* Анимированный градиент поверх фона */
 .background-overlay {
     position: fixed;
     top: 0;
@@ -53,15 +52,15 @@ body.fade-out {
     opacity: 0.6;
     pointer-events: none;
 }
-
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-/* Контент теперь просто занимает место и скроллится вместе со страницей */
-.content-wrapper {
+/* Контент — без своего скролла */
+.content-wrapper,
+.content-container {
     position: relative;
     z-index: 1;
     background-color: transparent;
@@ -70,11 +69,11 @@ body.fade-out {
     align-items: center;
     padding: 1rem;
     flex-grow: 1;
-    overflow: visible; /* убрали локальный скролл */
+    overflow: visible; /* убрали скролл */
     padding-bottom: 2rem;
 }
 
-/* Game cards */
+/* Карточки игр */
 .game-card {
     background-color: rgba(31, 41, 55, 0.5);
     backdrop-filter: blur(12px);
@@ -92,21 +91,23 @@ body.fade-out {
     border-color: rgba(99, 102, 241, 0.9);
     transform: translateY(-5px);
 }
-
 .game-card-title {
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
+/* Библиотека игр — тоже без своего скролла */
 .game-library {
-    overflow-y: visible;
+    overflow: visible !important;
     width: 100%;
     padding-bottom: 1rem;
 }
 
-/* Текст теперь всегда читаемый */
-header h1, header p {
-    color: #fff;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+/* Белый текст с тенью для читаемости */
+header h1,
+header p,
+#auth-status {
+    color: #ffffff !important;
+    text-shadow: 0 3px 8px rgba(0, 0, 0, 0.9) !important;
 }
 
 .title-shadow {
@@ -116,8 +117,7 @@ header h1, header p {
     text-shadow: 0 2px 15px rgba(0, 0, 0, 0.6);
 }
 
-/* Контрастнее статус и профиль */
-#auth-status,
+/* Контрастные статусы и профиль */
 #profile-display-name,
 #profile-email,
 #email-verification-status span {
