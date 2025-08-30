@@ -193,8 +193,8 @@ footer, footer a {
 
 /* FIX: Better positioning for all modal close buttons */
 .modal-container [id^="close-"] {
-    top: 0.75rem;
-    right: 0.75rem;
+    top: 1rem;
+    right: 1rem;
 }
 
 
@@ -210,7 +210,7 @@ footer, footer a {
 
 @media (min-width: 1280px) { /* Corresponds to Tailwind's 'xl' breakpoint */
   .game-library {
-    max-width: 1152px;
+    max-width: 1280px;
   }
    .game-card {
     height: 13rem; /* Further increase card height */
@@ -219,7 +219,7 @@ footer, footer a {
 
 @media (min-width: 1536px) { /* Corresponds to Tailwind's '2xl' breakpoint */
   .game-library {
-    max-width: 1280px; /* Make library wider */
+    max-width: 1400px; /* Make library wider */
   }
   .game-card {
     height: 14rem; /* Make cards taller */
@@ -244,4 +244,3 @@ footer, footer a {
     padding: 0.5rem;
   }
 }
-
