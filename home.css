@@ -57,7 +57,7 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
 }
 
 .game-card {
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.08); /* Frosted Glass Base */
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -68,6 +68,7 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     text-align: center;
     transition: all 0.3s ease;
     padding: 1rem;
+    color: #E2E8F0; /* Ensure text is visible on blurred background */
 }
 
 .game-card:hover {
@@ -98,8 +99,13 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
 
 .game-library {
     overflow: visible !important;
-    width: 100%;
+    width: 100%; /* Default to 100% width */
+    max-width: 1400px; /* Limit max width for ultra-wide screens */
     padding-bottom: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+    gap: 1.5rem; /* Gap between cards */
+    justify-content: center; /* Center items in the grid */
 }
 
 header h1, header p {
@@ -175,6 +181,12 @@ footer, footer a {
     transform: scale(0.95);
     opacity: 0;
     transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+    background-color: rgba(255, 255, 255, 0.08); /* Frosted Glass for Modals */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    color: #E2E8F0; /* Ensure text is visible */
 }
 
 .modal-container.modal-visible > div {
@@ -201,7 +213,8 @@ footer, footer a {
 /* --- Layout improvements for larger screens --- */
 @media (min-width: 1024px) { /* Corresponds to Tailwind's 'lg' breakpoint */
   .game-library {
-    max-width: 1024px;
+    width: 90%; /* Take up more width */
+    grid-template-columns: repeat(3, 1fr); /* 3 columns on large screens */
   }
   .game-card {
     height: 12rem; /* Increase card height */
@@ -210,7 +223,8 @@ footer, footer a {
 
 @media (min-width: 1280px) { /* Corresponds to Tailwind's 'xl' breakpoint */
   .game-library {
-    max-width: 1280px;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns on extra large screens */
+    width: 85%; /* Even wider */
   }
    .game-card {
     height: 13rem; /* Further increase card height */
@@ -219,7 +233,8 @@ footer, footer a {
 
 @media (min-width: 1536px) { /* Corresponds to Tailwind's '2xl' breakpoint */
   .game-library {
-    max-width: 1400px; /* Make library wider */
+    grid-template-columns: repeat(5, 1fr); /* 5 columns on 2xl screens */
+    width: 80%; /* Maintain reasonable width for ultra-wides */
   }
   .game-card {
     height: 14rem; /* Make cards taller */
@@ -242,5 +257,8 @@ footer, footer a {
   footer {
     font-size: 0.75rem;
     padding: 0.5rem;
+  }
+  .game-library {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust for smaller screens */
   }
 }
