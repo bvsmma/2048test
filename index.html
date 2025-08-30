@@ -150,7 +150,8 @@
             <h2 id="modal-game-title" class="text-3xl font-bold mb-4 text-white">Game Title</h2>
             <p id="modal-game-description" class="mb-4 text-lg">Detailed description of the game.</p>
             <p id="modal-game-rules" class="mb-4">Rules: These are the rules for the game.</p>
-            <button id="close-game-info-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
+            <!-- Corrected close button styling -->
+            <button id="close-game-info-modal" class="modal-close-button" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
 
@@ -172,7 +173,8 @@
             <button id="google-sign-in-button" class="mt-4 flex items-center justify-center gap-2 w-full px-6 py-3 text-white font-bold rounded-lg shadow-lg transition-all duration-300 ease-in-out" aria-disabled="true">
                 <i class="fab fa-google"></i> Sign In with Google
             </button>
-            <button id="close-auth-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
+            <!-- Corrected close button styling -->
+            <button id="close-auth-modal" class="modal-close-button" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
 
@@ -184,7 +186,8 @@
             <p class="mb-4" id="email-verification-status">Email Verified: <span class="font-bold text-gray-400">N/A</span></p>
             <button id="send-verification-email-button" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 text-sm mt-2 hidden" data-click-sound="buttonClick">Send Verification Email</button>
             <button id="profile-sign-out-button" class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4 hidden" data-click-sound="buttonClick">Sign Out</button>
-            <button id="close-profile-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
+            <!-- Corrected close button styling -->
+            <button id="close-profile-modal" class="modal-close-button" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
 
@@ -192,7 +195,9 @@
         <div class="glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
             <h3 id="notification-title" class="text-xl font-bold mb-3 text-white">Notification</h3>
             <p id="notification-message" class="mb-4">Message goes here.</p>
-            <button id="close-notification-modal" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">OK</button>
+            <button id="ok-notification-modal-btn" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">OK</button>
+            <!-- Corrected close button styling with a unique ID -->
+            <button id="close-notification-modal-btn" class="modal-close-button" data-click-sound="buttonClick">&times;</button>
         </div>
     </div>
 
@@ -502,7 +507,10 @@
 
             document.getElementById('close-auth-modal').addEventListener('click', () => authModal.classList.add('hidden'));
             document.getElementById('close-profile-modal').addEventListener('click', () => profileModal.classList.add('hidden'));
-            document.getElementById('close-notification-modal').addEventListener('click', () => notificationModal.classList.add('hidden'));
+            document.getElementById('close-game-info-modal').addEventListener('click', () => gameInfoModal.classList.add('hidden'));
+            document.getElementById('ok-notification-modal-btn').addEventListener('click', () => notificationModal.classList.add('hidden'));
+            document.getElementById('close-notification-modal-btn').addEventListener('click', () => notificationModal.classList.add('hidden'));
+
             authModal.addEventListener('click', (e) => e.target === authModal && authModal.classList.add('hidden'));
             profileModal.addEventListener('click', (e) => e.target === profileModal && profileModal.classList.add('hidden'));
             notificationModal.addEventListener('click', (e) => e.target === notificationModal && notificationModal.classList.add('hidden'));
