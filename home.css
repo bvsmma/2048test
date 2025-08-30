@@ -64,8 +64,13 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     transition: all 0.3s ease;
     padding: 1rem;
     color: #E2E8F0;
-    aspect-ratio: 16 / 10; /* Maintain proportions as the card grows */
-    justify-content: center; /* Vertically center content */
+    aspect-ratio: 16 / 10;
+    justify-content: center;
+    background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05) 80%);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .game-card:hover {
@@ -78,63 +83,52 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 1rem; /* увеличил отступы */
     height: 100%;
+    transform: scale(1.2); /* увеличил содержимое */
 }
 
+/* кнопки */
 .game-card a.play-button,
 .game-card a.play-button-small,
 .game-card a.coming-soon-button {
     white-space: nowrap;
+    font-size: 1.1rem;
+    padding: 0.8rem 1.4rem;
 }
 
 .game-card-title {
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    font-weight: 700;
+    font-weight: 800;
+    font-size: 1.6rem; /* крупнее */
 }
 
-/* --- LAYOUT FIX FOR GAME LIBRARY --- */
+.game-card-description {
+    font-size: 1.1rem;
+}
+
+/* --- GRID --- */
 .game-library {
     display: grid;
-    gap: 1.5rem; /* Control gap here */
+    gap: 1.5rem;
     padding-bottom: 2rem;
     width: 100%;
     max-width: 1800px;
-    grid-template-columns: 1fr; /* Mobile-first: 1 column */
+    grid-template-columns: 1fr;
 }
 
-/* Responsive grid columns */
-@media (min-width: 768px) { /* md breakpoint for tablets */
+@media (min-width: 768px) {
     .game-library {
         grid-template-columns: repeat(2, 1fr);
         width: 95%;
         margin: 0 auto;
     }
 }
-@media (min-width: 1280px) { /* xl breakpoint for desktops */
-    .game-library {
-        grid-template-columns: repeat(3, 1fr); /* 3 columns as requested */
-        width: 90%;
-        gap: 2rem; /* Increase gap on larger screens */
-    }
-}
-
-/* --- Card Content Scaling --- */
 @media (min-width: 1280px) {
-    .game-card-title {
-        font-size: 1.5rem; /* Increase title font size */
-    }
-    .game-card-description {
-        font-size: 1rem; /* Increase description font size */
-    }
-    .game-card a.play-button, 
-    .game-card a.play-button-small, 
-    .game-card .coming-soon-button {
-        padding: 0.6rem 1.2rem;
-        font-size: 1rem;
-    }
-    .game-card .flex.gap-2 {
-        gap: 0.75rem;
+    .game-library {
+        grid-template-columns: repeat(3, 1fr);
+        width: 90%;
+        gap: 2rem;
     }
 }
 
@@ -208,22 +202,17 @@ footer, footer a {
     opacity: 0;
     transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
     color: #E2E8F0;
+    background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05) 80%);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .modal-container.modal-visible > div {
     transform: scale(1);
     opacity: 1;
 }
-
-/* --- FROSTED GLASS EFFECT --- */
-.game-card, .modal-container > div {
-    background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05) 80%);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
 
 #game-info-modal > div,
 #auth-modal > div,
@@ -238,12 +227,14 @@ footer, footer a {
     right: 1rem;
 }
 
-/* Mobile optimizations */
 @media (max-width: 639px) {
   .game-card {
     min-height: 144px;
-    aspect-ratio: initial; /* Disable aspect ratio for smallest screens */
+    aspect-ratio: initial;
     padding: 0.75rem;
+  }
+  .game-card-content {
+    transform: scale(1.05);
   }
   #account-button, #toggle-all-sound-button {
     width: 2.5rem;
@@ -255,4 +246,3 @@ footer, footer a {
     padding: 0.5rem;
   }
 }
-
