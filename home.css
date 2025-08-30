@@ -15,7 +15,7 @@ body {
     background-color: #0d1117;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensure footer sticks to bottom */
+    min-height: 100vh;
     position: relative;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
@@ -52,12 +52,12 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     flex-direction: column;
     align-items: center;
     padding: 1rem;
-    flex: 1; /* Take remaining height so footer goes to bottom */
+    flex: 1;
     overflow: visible;
 }
 
 .game-card {
-    background-color: transparent; /* remove fill, keep only blur */
+    background-color: transparent;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -80,7 +80,7 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem; /* more spacing between title, text and buttons */
+    gap: 0.75rem;
     height: 100%;
 }
 
@@ -108,7 +108,7 @@ header h1, header p {
     text-shadow: 0 1px 5px rgba(0,0,0,0.4);
 }
 
-/* Footer always at the bottom, separate from content */
+/* Footer always at the bottom */
 footer {
     text-align: center;
     padding: 1rem;
@@ -121,14 +121,14 @@ footer, footer a {
     text-shadow: 0 2px 6px rgba(0,0,0,0.8);
 }
 
-/* Account floating button */
+/* Floating Account button */
 #account-button {
     cursor: pointer;
 }
 
-/* Make the Google sign-in button grey and inactive with hover "Coming Soon" */
+/* Google sign-in disabled */
 #google-sign-in-button {
-    background-color: #4b5563 !important; /* gray */
+    background-color: #4b5563 !important;
     cursor: not-allowed !important;
     opacity: 0.7;
     user-select: none;
@@ -150,4 +150,21 @@ footer, footer a {
 
 #google-sign-in-button:hover::after {
     opacity: 1;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .game-card {
+    height: 200px;
+    padding: 0.75rem;
+  }
+  #account-button, #toggle-all-sound-button {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+  footer {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
 }
