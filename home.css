@@ -3,6 +3,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-y: auto;
+    overflow-x: hidden; /* Убираем горизонтальный скролл */
 }
 
 body {
@@ -83,28 +84,28 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem; /* увеличил отступы */
+    gap: 1rem;
     height: 100%;
-    transform: scale(1.2); /* увеличил содержимое */
+    width: 100%;
+    font-size: 1.2rem; /* увеличен общий базовый размер */
 }
 
-/* кнопки */
 .game-card a.play-button,
 .game-card a.play-button-small,
 .game-card a.coming-soon-button {
     white-space: nowrap;
-    font-size: 1.1rem;
-    padding: 0.8rem 1.4rem;
+    font-size: 1.2rem;
+    padding: 1rem 1.6rem;
 }
 
 .game-card-title {
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     font-weight: 800;
-    font-size: 1.6rem; /* крупнее */
+    font-size: 1.8rem; /* крупнее */
 }
 
 .game-card-description {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }
 
 /* --- GRID --- */
@@ -234,7 +235,7 @@ footer, footer a {
     padding: 0.75rem;
   }
   .game-card-content {
-    transform: scale(1.05);
+    font-size: 1rem; /* поменьше на мобилках */
   }
   #account-button, #toggle-all-sound-button {
     width: 2.5rem;
