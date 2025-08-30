@@ -159,7 +159,30 @@ footer, footer a {
     opacity: 1;
 }
 
-/* FIX: Ensures modals are scrollable on small screens and don't overflow */
+/* --- Modal Animations --- */
+.modal-container {
+    opacity: 0;
+    pointer-events: none; /* Prevent interaction when hidden */
+    transition: opacity 0.2s ease-in-out;
+}
+
+.modal-container.modal-visible {
+    opacity: 1;
+    pointer-events: auto; /* Allow interaction when visible */
+}
+
+.modal-container > div {
+    transform: scale(0.95);
+    opacity: 0;
+    transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.modal-container.modal-visible > div {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Ensures modals are scrollable on small screens and don't overflow */
 #game-info-modal > div,
 #auth-modal > div,
 #profile-modal > div,
@@ -168,10 +191,28 @@ footer, footer a {
     overflow-y: auto;
 }
 
+/* --- Layout improvements for larger screens --- */
+@media (min-width: 1024px) { /* Corresponds to Tailwind's 'lg' breakpoint */
+  .game-library {
+    max-width: 1024px; /* Increase container width */
+  }
+
+  .game-card {
+    height: 11rem; /* Increase card height from 9rem (h-36) */
+  }
+}
+
+@media (min-width: 1280px) { /* Corresponds to Tailwind's 'xl' breakpoint */
+  .game-library {
+    max-width: 1152px; /* Further increase container width */
+  }
+}
+
+
 /* Mobile optimizations */
 @media (max-width: 640px) {
   .game-card {
-    min-height: 144px; /* FIX: Changed from fixed height to min-height for flexibility */
+    min-height: 144px;
     height: auto;
     padding: 0.75rem;
   }
