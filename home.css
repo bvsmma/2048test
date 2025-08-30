@@ -247,3 +247,14 @@ footer, footer a {
     padding: 0.5rem;
   }
 }
+/* --- Анимации для модальных окон --- */
+.modal-container > div {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modal-container.modal-visible > div {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
