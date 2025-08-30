@@ -57,18 +57,13 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
 }
 
 .game-card {
-    background-color: rgba(255, 255, 255, 0.08); /* Frosted Glass Base */
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 1rem;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     display: flex;
     flex-direction: column;
     text-align: center;
     transition: all 0.3s ease;
     padding: 1rem;
-    color: #E2E8F0; /* Ensure text is visible on blurred background */
+    color: #E2E8F0;
 }
 
 .game-card:hover {
@@ -85,7 +80,6 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     height: 100%;
 }
 
-/* FIX: Prevents text wrapping inside game card buttons, which caused height issues */
 .game-card a.play-button,
 .game-card a.play-button-small,
 .game-card a.coming-soon-button {
@@ -97,15 +91,34 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
     font-weight: 700;
 }
 
+/* --- LAYOUT FIX FOR GAME LIBRARY --- */
 .game-library {
-    overflow: visible !important;
-    width: 100%; /* Default to 100% width */
-    max-width: 1400px; /* Limit max width for ultra-wide screens */
     padding-bottom: 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
-    gap: 1.5rem; /* Gap between cards */
-    justify-content: center; /* Center items in the grid */
+    width: 100%; /* Default width */
+    max-width: 1800px; /* Max width for ultra-wide screens */
+}
+
+/* Responsive grid columns */
+@media (min-width: 640px) { /* sm breakpoint */
+    .game-library {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (min-width: 1024px) { /* lg breakpoint */
+    .game-library {
+        grid-template-columns: repeat(3, 1fr);
+        width: 95%;
+    }
+}
+@media (min-width: 1536px) { /* 2xl breakpoint */
+    .game-library {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media (min-width: 1920px) { /* Larger screens */
+    .game-library {
+        grid-template-columns: repeat(5, 1fr);
+    }
 }
 
 header h1, header p {
@@ -121,7 +134,6 @@ header h1, header p {
     text-shadow: 0 1px 5px rgba(0,0,0,0.4);
 }
 
-/* Footer always at the bottom */
 footer {
     text-align: center;
     padding: 1rem;
@@ -134,12 +146,10 @@ footer, footer a {
     text-shadow: 0 2px 6px rgba(0,0,0,0.8);
 }
 
-/* Floating Account button */
 #account-button {
     cursor: pointer;
 }
 
-/* Google sign-in disabled */
 #google-sign-in-button {
     background-color: #4b5563 !important;
     cursor: not-allowed !important;
@@ -165,28 +175,22 @@ footer, footer a {
     opacity: 1;
 }
 
-/* --- Modal Animations --- */
 .modal-container {
     opacity: 0;
-    pointer-events: none; /* Prevent interaction when hidden */
+    pointer-events: none;
     transition: opacity 0.2s ease-in-out;
 }
 
 .modal-container.modal-visible {
     opacity: 1;
-    pointer-events: auto; /* Allow interaction when visible */
+    pointer-events: auto;
 }
 
 .modal-container > div {
     transform: scale(0.95);
     opacity: 0;
     transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
-    background-color: rgba(255, 255, 255, 0.08); /* Frosted Glass for Modals */
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    color: #E2E8F0; /* Ensure text is visible */
+    color: #E2E8F0;
 }
 
 .modal-container.modal-visible > div {
@@ -194,7 +198,16 @@ footer, footer a {
     opacity: 1;
 }
 
-/* Ensures modals are scrollable on small screens and don't overflow */
+/* --- FROSTED GLASS EFFECT --- */
+.game-card, .modal-container > div {
+    background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05) 80%);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+
 #game-info-modal > div,
 #auth-modal > div,
 #profile-modal > div,
@@ -203,47 +216,30 @@ footer, footer a {
     overflow-y: auto;
 }
 
-/* FIX: Better positioning for all modal close buttons */
 .modal-container [id^="close-"] {
     top: 1rem;
     right: 1rem;
 }
 
-
-/* --- Layout improvements for larger screens --- */
-@media (min-width: 1024px) { /* Corresponds to Tailwind's 'lg' breakpoint */
-  .game-library {
-    width: 90%; /* Take up more width */
-    grid-template-columns: repeat(3, 1fr); /* 3 columns on large screens */
-  }
+/* --- Card Height for Larger Screens --- */
+@media (min-width: 1024px) {
   .game-card {
-    height: 12rem; /* Increase card height */
+    height: 12rem;
   }
 }
-
-@media (min-width: 1280px) { /* Corresponds to Tailwind's 'xl' breakpoint */
-  .game-library {
-    grid-template-columns: repeat(4, 1fr); /* 4 columns on extra large screens */
-    width: 85%; /* Even wider */
-  }
+@media (min-width: 1280px) {
    .game-card {
-    height: 13rem; /* Further increase card height */
+    height: 13rem;
   }
 }
-
-@media (min-width: 1536px) { /* Corresponds to Tailwind's '2xl' breakpoint */
-  .game-library {
-    grid-template-columns: repeat(5, 1fr); /* 5 columns on 2xl screens */
-    width: 80%; /* Maintain reasonable width for ultra-wides */
-  }
+@media (min-width: 1536px) {
   .game-card {
-    height: 14rem; /* Make cards taller */
+    height: 14rem;
   }
 }
-
 
 /* Mobile optimizations */
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .game-card {
     min-height: 144px;
     height: auto;
@@ -257,8 +253,5 @@ footer, footer a {
   footer {
     font-size: 0.75rem;
     padding: 0.5rem;
-  }
-  .game-library {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust for smaller screens */
   }
 }
