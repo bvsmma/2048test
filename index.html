@@ -145,7 +145,7 @@
     </footer>
 
     <!-- Modals -->
-    <div id="game-info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+    <div id="game-info-modal" class="hidden modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
         <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative">
             <h2 id="modal-game-title" class="text-3xl font-bold mb-4 text-white">Game Title</h2>
             <p id="modal-game-description" class="mb-4 text-lg">Detailed description of the game.</p>
@@ -154,7 +154,7 @@
         </div>
     </div>
 
-    <div id="auth-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+    <div id="auth-modal" class="hidden modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
         <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
             <h2 id="auth-modal-title" class="text-2xl font-bold mb-4 text-white">Sign In</h2>
             <form id="auth-form" class="flex flex-col gap-4">
@@ -176,7 +176,7 @@
         </div>
     </div>
 
-    <div id="profile-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+    <div id="profile-modal" class="hidden modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
         <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
             <h2 class="text-2xl font-bold mb-4 text-white">My Profile</h2>
             <p class="mb-2">Hello, <span id="profile-display-name" class="font-bold text-blue-400">Guest</span>!</p>
@@ -188,7 +188,7 @@
         </div>
     </div>
 
-    <div id="notification-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+    <div id="notification-modal" class="hidden modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
         <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
             <h3 id="notification-title" class="text-xl font-bold mb-3 text-white">Notification</h3>
             <p id="notification-message" class="mb-4">Message goes here.</p>
@@ -375,18 +375,44 @@
                     signOutButton.classList.add('hidden');
                 }
             }
+            
+            // --- Modal Handling ---
+            const gameInfoModal = document.getElementById('game-info-modal');
+            const authModal = document.getElementById('auth-modal');
+            const profileModal = document.getElementById('profile-modal');
+            const notificationModal = document.getElementById('notification-modal');
 
-            // --- FIX: Function to hide all modals ---
+            // Hides all modals on initial load to prevent flashes
             function hideAllModals() {
-                document.getElementById('game-info-modal').classList.add('hidden');
-                document.getElementById('auth-modal').classList.add('hidden');
-                document.getElementById('profile-modal').classList.add('hidden');
-                document.getElementById('notification-modal').classList.add('hidden');
+                 document.querySelectorAll('.modal-container').forEach(modal => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('modal-visible');
+                });
             }
 
-            // Page fade-in animation
+            // Opens a modal with animation
+            function openModal(modal) {
+                if (!modal) return;
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.add('modal-visible');
+                }, 10); // Timeout ensures transition is applied
+            }
+
+            // Closes a modal with animation
+            function closeModal(modal) {
+                if (!modal) return;
+                modal.classList.remove('modal-visible');
+                const onTransitionEnd = () => {
+                    modal.classList.add('hidden');
+                    modal.removeEventListener('transitionend', onTransitionEnd);
+                };
+                modal.addEventListener('transitionend', onTransitionEnd);
+            }
+
+            // Page fade-in animation & initial modal state
             document.addEventListener('DOMContentLoaded', () => {
-                hideAllModals(); // Explicitly hide all modals on page load
+                hideAllModals(); 
                 document.body.classList.add('fade-in');
             });
 
@@ -440,7 +466,6 @@
             }
 
             // --- Game Info Modal ---
-            const gameInfoModal = document.getElementById('game-info-modal');
             const gameDetails = {
                 "2048": { title: "2048", description: "Merge identical tiles to reach the 2048 tile!", rules: "Use arrow keys or swipe to move tiles." },
                 "ticTacToe": { title: "Tic-Tac-Toe", description: "A classic strategy game for two players.", rules: "First player to get three in a row wins." },
@@ -455,11 +480,11 @@
                     document.getElementById('modal-game-title').textContent = details.title;
                     document.getElementById('modal-game-description').textContent = details.description;
                     document.getElementById('modal-game-rules').textContent = "Rules: " + details.rules;
-                    gameInfoModal.classList.remove('hidden');
+                    openModal(gameInfoModal);
                 }
             }
-            document.getElementById('close-game-info-modal').addEventListener('click', () => gameInfoModal.classList.add('hidden'));
-            gameInfoModal.addEventListener('click', (e) => e.target === gameInfoModal && gameInfoModal.classList.add('hidden'));
+            document.getElementById('close-game-info-modal').addEventListener('click', () => closeModal(gameInfoModal));
+            gameInfoModal.addEventListener('click', (e) => e.target === gameInfoModal && closeModal(gameInfoModal));
 
             // --- Search ---
             const gameSearchInput = document.getElementById('game-search');
@@ -476,9 +501,6 @@
             document.getElementById('search-button').addEventListener('click', filterGames);
 
             // --- Auth Modals ---
-            const authModal = document.getElementById('auth-modal');
-            const profileModal = document.getElementById('profile-modal');
-            const notificationModal = document.getElementById('notification-modal');
             let isSignInMode = true;
 
             window.openAuthModal = (mode = 'signIn') => {
@@ -489,7 +511,7 @@
                 document.getElementById('auth-display-name').classList.toggle('hidden', isSignInMode);
                 document.getElementById('forgot-password-button').classList.toggle('hidden', !isSignInMode);
                 document.getElementById('auth-error-message').classList.add('hidden');
-                authModal.classList.remove('hidden');
+                openModal(authModal);
             };
 
             window.openProfileModal = async () => {
@@ -497,7 +519,7 @@
                     await window.currentUser.reload();
                     window.currentUser = auth.currentUser;
                     updateUIForAuthStatus();
-                    profileModal.classList.remove('hidden');
+                    openModal(profileModal);
                 } else {
                     openAuthModal('signIn');
                 }
@@ -506,15 +528,15 @@
             function openNotificationModal(title, message) {
                 document.getElementById('notification-title').textContent = title;
                 document.getElementById('notification-message').textContent = message;
-                notificationModal.classList.remove('hidden');
+                openModal(notificationModal);
             }
 
-            document.getElementById('close-auth-modal').addEventListener('click', () => authModal.classList.add('hidden'));
-            document.getElementById('close-profile-modal').addEventListener('click', () => profileModal.classList.add('hidden'));
-            document.getElementById('close-notification-modal').addEventListener('click', () => notificationModal.classList.add('hidden'));
-            authModal.addEventListener('click', (e) => e.target === authModal && authModal.classList.add('hidden'));
-            profileModal.addEventListener('click', (e) => e.target === profileModal && profileModal.classList.add('hidden'));
-            notificationModal.addEventListener('click', (e) => e.target === notificationModal && notificationModal.classList.add('hidden'));
+            document.getElementById('close-auth-modal').addEventListener('click', () => closeModal(authModal));
+            document.getElementById('close-profile-modal').addEventListener('click', () => closeModal(profileModal));
+            document.getElementById('close-notification-modal').addEventListener('click', () => closeModal(notificationModal));
+            authModal.addEventListener('click', (e) => e.target === authModal && closeModal(authModal));
+            profileModal.addEventListener('click', (e) => e.target === profileModal && closeModal(profileModal));
+            notificationModal.addEventListener('click', (e) => e.target === notificationModal && closeModal(notificationModal));
 
             document.getElementById('toggle-auth-mode').addEventListener('click', () => openAuthModal(isSignInMode ? 'register' : 'signIn'));
 
@@ -528,7 +550,7 @@
                 const result = isSignInMode ? await window.signIn(email, password) : await window.signUp(email, password, displayName);
 
                 if (result.success) {
-                    authModal.classList.add('hidden');
+                    closeModal(authModal);
                     const profileResult = await window.getUserProfile(result.user.uid);
                     const welcomeName = (profileResult.success && profileResult.profile.displayName)
                         ? profileResult.profile.displayName
@@ -558,7 +580,7 @@
                 const result = await window.sendPasswordReset(email);
                 if (result.success) {
                     openNotificationModal("Password Reset", result.message);
-                    authModal.classList.add('hidden');
+                    closeModal(authModal);
                 } else {
                     document.getElementById('auth-error-message').textContent = result.error;
                     document.getElementById('auth-error-message').classList.remove('hidden');
@@ -568,7 +590,7 @@
             document.getElementById('profile-sign-out-button').addEventListener('click', async () => {
                 const result = await window.signOutUser();
                 if (result.success) {
-                    profileModal.classList.add('hidden');
+                    closeModal(profileModal);
                     openNotificationModal("Signed Out", "You have been signed out.");
                 }
             });
@@ -593,3 +615,4 @@
     </script>
 </body>
 </html>
+
