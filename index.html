@@ -1,16 +1,586 @@
-<!-- index.html полный, см. предыдущую версию; сюда нужно вставить исправления welcomeName -->
-// исправление welcomeName
-const result = isSignInMode ? await window.signIn(email, password) : await window.signUp(email, password, displayName);
-if (result.success) {
-    authModal.classList.add('hidden');
-    await result.user.reload();
-    const updatedUser = auth.currentUser;
-    const profileResult = await window.getUserProfile(updatedUser.uid);
-    const welcomeName = (profileResult.success && profileResult.profile.displayName)
-        ? profileResult.profile.displayName
-        : (updatedUser.displayName || updatedUser.email);
-    openNotificationModal(isSignInMode ? "Sign In Successful" : "Registration Successful!", `Welcome, ${welcomeName}!`);
-} else {
-    errorMessageEl.textContent = result.error;
-    errorMessageEl.classList.remove('hidden');
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Styles for the homepage -->
+    <link rel="stylesheet" href="home.css">
+    <!-- Tone.js for sound effects, loaded globally for all pages -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Firebase SDKs (UPDATED: Using standard scripts for GitHub Pages compatibility) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <div class="background-overlay"></div>
+
+    <!-- The content-container now takes up the full viewport height -->
+    <div class="content-container flex flex-col items-center p-4 min-h-screen">
+        <header class="text-center">
+            <h1 class="text-5xl md:text-7xl font-black uppercase tracking-wider title-shadow text-white">
+                Game Hub
+            </h1>
+            <p class="mt-4 max-w-2xl text-lg md:text-xl subtitle-shadow text-white">
+                Welcome to my collection of simple and fun browser games. Select a game below to get started!
+            </p>
+        </header>
+
+        <!-- Auth Status and Button -->
+        <div class="flex items-center gap-4 mt-6">
+            <span id="auth-status" class="text-white text-lg">Signed out</span>
+            <button id="auth-button" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                Sign In / Register
+            </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-bar mt-8 w-full max-w-md flex items-center justify-center gap-2">
+            <input type="text" id="game-search" placeholder="Search for games..." class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+            <button id="search-button" class="px-4 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        <!-- Main content area for game cards -->
+        <main class="game-library mt-12 w-full max-w-screen-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-4 flex-grow px-4">
+            <!-- Game Card: 2048 -->
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="2048">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                    <div class="game-card-title text-xl">2048</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Join numbers to get 2048 tile.
+                    </p>
+                    <a href="game.html" class="play-button px-3 py-1 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 text-sm transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                        Play Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Game Card: Tic-Tac-Toe -->
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="ticTacToe">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                    <div class="game-card-title text-xl">Tic-Tac-Toe</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Classic game vs friend or AI.
+                    </p>
+                    <div class="flex justify-center gap-2 w-full">
+                        <a href="tic_tac_toe.html" class="play-button-small px-3 py-1 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 text-xs transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                            Vs Friend
+                        </a>
+                        <a href="tic_tac_toe_ai.html" class="play-button-small px-3 py-1 bg-purple-600 text-white font-bold rounded-lg shadow-lg hover:bg-purple-700 text-xs transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                            Vs AI
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Card: Hangman -->
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="hangman">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                    <div class="game-card-title text-xl">Hangman</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Guess letters, save the figure!
+                    </p>
+                    <a href="hangman.html" class="play-button px-3 py-1 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 text-sm transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                        Play Now
+                    </a>
+                </div>
+            </div>
+            <!-- Adding more dummy game cards -->
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame1">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                    <div class="game-card-title text-xl">New Game 1</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Placeholder for exciting game!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame2">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                    <div class="game-card-title text-xl">New Game 2</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        More fun with this upcoming game!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
+            <div class="game-card flex-shrink-0 w-full h-36 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl" data-hover-sound="cardHover" data-game-id="newGame3">
+                <div class="game-card-content flex flex-col justify-center items-center h-full text-center">
+                    <div class="game-card-title text-xl">New Game 3</div>
+                    <p class="game-card-description text-xs text-gray-400">
+                        Another awesome game is on its way!
+                    </p>
+                    <a href="#" class="coming-soon-button px-3 py-1 bg-gray-500 text-white font-bold rounded-lg shadow-lg text-sm" data-click-sound="buttonClick">
+                        Coming Soon
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="w-full p-4 text-center text-gray-400 text-sm">
+        <p>
+            Created by: Vladyslav Bieliaiev |
+            <a href="https://instagram.com/mmacvv" target="_blank" class="text-blue-400 hover:underline">My Instagram</a>
+        </p>
+    </footer>
+
+    <button id="toggle-all-sound-button" class="fixed top-4 right-4 bg-gray-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl z-30 hover:bg-gray-800 transition-colors duration-200">
+        <i class="fas fa-volume-up" id="all-sound-icon"></i>
+    </button>
+
+    <!-- Modals -->
+    <div id="game-info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative">
+            <h2 id="modal-game-title" class="text-3xl font-bold mb-4 text-white">Game Title</h2>
+            <p id="modal-game-description" class="mb-4 text-lg">Detailed description of the game.</p>
+            <p id="modal-game-rules" class="mb-4">Rules: These are the rules for the game.</p>
+            <button id="close-game-info-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+            <h2 id="auth-modal-title" class="text-2xl font-bold mb-4 text-white">Sign In</h2>
+            <form id="auth-form" class="flex flex-col gap-4">
+                <input type="email" id="auth-email" placeholder="Email" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" id="auth-password" placeholder="Password" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="auth-display-name" placeholder="Display Name (for registration)" class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 hidden">
+                <p id="auth-error-message" class="text-red-400 text-sm mt-2 hidden"></p>
+                <button type="submit" id="auth-submit-button" class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">Sign In</button>
+            </form>
+            <button id="forgot-password-button" class="mt-2 text-sm text-blue-400 hover:underline" data-click-sound="buttonClick">Forgot Password?</button>
+            <button id="toggle-auth-mode" class="mt-4 text-blue-400 hover:underline text-sm" data-click-sound="buttonClick">
+                Don't have an account? Register
+            </button>
+            <button id="google-sign-in-button" class="mt-4 flex items-center justify-center gap-2 w-full px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">
+                <i class="fab fa-google"></i> Sign In with Google
+            </button>
+            <button id="close-auth-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+            <h2 class="text-2xl font-bold mb-4 text-white">My Profile</h2>
+            <p class="mb-2">Hello, <span id="profile-display-name" class="font-bold text-blue-400">Guest</span>!</p>
+            <p class="mb-4">Email: <span id="profile-email" class="text-gray-400">Not signed in</span></p>
+            <p class="mb-4" id="email-verification-status">Email Verified: <span class="font-bold text-yellow-400">No</span></p>
+            <button id="send-verification-email-button" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 text-sm mt-2 hidden" data-click-sound="buttonClick">Send Verification Email</button>
+            <button id="profile-sign-out-button" class="px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-300 ease-in-out transform hover:scale-105 mt-4" data-click-sound="buttonClick">Sign Out</button>
+            <button id="close-profile-modal" class="absolute top-2 right-2 text-gray-400 hover:text-white text-2xl font-bold" data-click-sound="buttonClick">&times;</button>
+        </div>
+    </div>
+
+    <div id="notification-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
+            <h3 id="notification-title" class="text-xl font-bold mb-3 text-white">Notification</h3>
+            <p id="notification-message" class="mb-4">Message goes here.</p>
+            <button id="close-notification-modal" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">OK</button>
+        </div>
+    </div>
+
+
+    <script>
+        try {
+            const firebaseConfig = {
+              apiKey: "AIzaSyDYKHgJbQasNpBL0vGrjCz80CjrnqSbTyI",
+              authDomain: "game-hub-a99b7.firebaseapp.com",
+              projectId: "game-hub-a99b7",
+              storageBucket: "game-hub-a99b7.firebasestorage.app",
+              messagingSenderId: "328776863852",
+              appId: "1:328776863852:web:1adcbbf755fa9854dfc849",
+              measurementId: "G-GMTYE5CHRM"
+            };
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+            if (typeof firebase !== 'undefined' && firebase.apps.length === 0) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+            let currentUser = null; 
+
+            window.firebaseApp = firebase.app();
+            window.firebaseAuth = auth;
+            window.firebaseDb = db;
+            window.currentUser = currentUser;
+
+            window.signIn = async (email, password) => {
+                try {
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    return { success: true, user: userCredential.user };
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            };
+
+            window.signUp = async (email, password, displayName) => {
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+
+                    // Save nickname in Firebase Auth so user.displayName is set
+                    await user.updateProfile({ displayName: displayName });
+
+                    await user.sendEmailVerification();
+                    await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
+                        displayName: displayName,
+                        email: user.email,
+                        emailVerified: user.emailVerified,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    return { success: true, user: user };
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            };
+
+            window.signOutUser = async () => {
+                try {
+                    await auth.signOut();
+                    window.currentUser = null;
+                    return { success: true };
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            };
+
+            window.sendPasswordReset = async (email) => {
+                try {
+                    await auth.sendPasswordResetEmail(email);
+                    return { success: true, message: `Password reset email sent to ${email}. Check your inbox!` };
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            };
+
+            window.signInWithGoogle = async () => {
+                try {
+                    const result = await auth.signInWithPopup(googleProvider);
+                    const user = result.user;
+                    const profileCheck = await window.getUserProfile(user.uid);
+                    if (!profileCheck.success) {
+                        await db.collection("artifacts").doc(appId).collection("users").doc(user.uid).collection("profile").doc("data").set({
+                            displayName: user.displayName,
+                            email: user.email,
+                            emailVerified: user.emailVerified,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                    return { success: true, user: user };
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            };
+
+            window.sendVerificationEmail = async () => {
+                if (window.currentUser && !window.currentUser.emailVerified) {
+                    try {
+                        await window.currentUser.sendEmailVerification();
+                        return { success: true, message: `Verification email sent to ${window.currentUser.email}.` };
+                    } catch (error) {
+                        return { success: false, error: error.message };
+                    }
+                } else {
+                    return { success: false, error: "No user signed in or email already verified." };
+                }
+            };
+
+
+            window.getUserProfile = async (uid) => {
+                try {
+                    const docSnap = await db.collection("artifacts").doc(appId).collection("users").doc(uid).collection("profile").doc("data").get();
+                    if (docSnap.exists) {
+                        return { success: true, profile: docSnap.data() };
+                    } else {
+                        return { success: false, error: "No profile found" };
+                    }
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            };
+
+            auth.onAuthStateChanged(async (user) => {
+                const authStatusElement = document.getElementById('auth-status');
+                const authButton = document.getElementById('auth-button');
+                
+                if (user) {
+                    window.currentUser = user;
+                    const profileResult = await window.getUserProfile(user.uid);
+                    const displayName = (profileResult.success && profileResult.profile.displayName)
+                        ? profileResult.profile.displayName
+                        : (user.displayName || user.email);
+
+                    authStatusElement.textContent = `Signed in as: ${displayName}`;
+                    authButton.textContent = "My Profile";
+                    authButton.onclick = () => openProfileModal();
+                } else {
+                    window.currentUser = null;
+                    authStatusElement.textContent = "Signed out";
+                    authButton.textContent = "Sign In / Register";
+                    authButton.onclick = () => openAuthModal('signIn');
+                }
+                updateUIForAuthStatus();
+            });
+            
+            function updateUIForAuthStatus() {
+                const authButton = document.getElementById('auth-button');
+                const authStatusElement = document.getElementById('auth-status');
+                const profileDisplayNameElement = document.getElementById('profile-display-name');
+                const profileEmailElement = document.getElementById('profile-email');
+                const signOutButton = document.getElementById('profile-sign-out-button');
+                const emailVerificationStatus = document.getElementById('email-verification-status');
+                const sendVerificationEmailButton = document.getElementById('send-verification-email-button');
+
+                if (window.currentUser) {
+                    authButton.textContent = "My Profile";
+                    authButton.onclick = openProfileModal;
+                    profileEmailElement.textContent = window.currentUser.email;
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold ${window.currentUser.emailVerified ? 'text-green-400' : 'text-yellow-400'}">${window.currentUser.emailVerified ? 'Yes' : 'No'}</span>`;
+                    sendVerificationEmailButton.classList.toggle('hidden', window.currentUser.emailVerified);
+
+                    window.getUserProfile(window.currentUser.uid).then(result => {
+                        const displayName = (result.success && result.profile.displayName)
+                            ? result.profile.displayName
+                            : (window.currentUser.displayName || window.currentUser.email);
+                        authStatusElement.textContent = `Signed in as: ${displayName}`;
+                        profileDisplayNameElement.textContent = displayName;
+                    });
+                    signOutButton.classList.remove('hidden');
+                } else {
+                    authButton.textContent = "Sign In / Register";
+                    authButton.onclick = () => openAuthModal('signIn');
+                    authStatusElement.textContent = "Signed out";
+                    profileDisplayNameElement.textContent = "Guest";
+                    profileEmailElement.textContent = "Not signed in";
+                    emailVerificationStatus.innerHTML = `Email Verified: <span class="font-bold text-gray-400">N/A</span>`;
+                    sendVerificationEmailButton.classList.add('hidden');
+                    signOutButton.classList.add('hidden');
+                }
+            }
+
+            // Анимация появления страницы
+            document.addEventListener('DOMContentLoaded', () => {
+                document.body.classList.add('fade-in');
+            });
+
+            // --- Sound Effects ---
+            let allSoundEnabled = true;
+            if (typeof Tone !== 'undefined') {
+                const startAudioContext = () => {
+                    if (Tone.context.state !== 'running') {
+                        Tone.start();
+                    }
+                };
+                document.documentElement.addEventListener('click', startAudioContext, { once: true });
+                document.documentElement.addEventListener('keydown', startAudioContext, { once: true });
+
+                const cardHoverSynth = new Tone.PolySynth(Tone.Synth, { volume: -15, oscillator: { type: "sine" }, envelope: { attack: 0.001, decay: 0.03, sustain: 0.01, release: 0.03, releaseCurve: "exponential" } }).toDestination();
+                const buttonClickSynth = new Tone.PolySynth(Tone.Synth, { volume: -15, oscillator: { type: "sine" }, envelope: { attack: 0.001, decay: 0.03, sustain: 0.01, release: 0.03, releaseCurve: "exponential" } }).toDestination();
+
+                function playSound(synth, note, duration) {
+                    if (allSoundEnabled && Tone.context.state === 'running') {
+                        synth.triggerAttackRelease(note, duration);
+                    }
+                }
+
+                document.querySelectorAll('.game-card').forEach(card => {
+                    card.addEventListener('mouseenter', () => playSound(cardHoverSynth, "G4", "64n"));
+                    card.addEventListener('click', (event) => {
+                        if (event.target.closest('a')) {
+                            playSound(buttonClickSynth, "C5", "32n");
+                            return;
+                        }
+                        playSound(buttonClickSynth, "C5", "32n");
+                        openGameInfoModal(card.dataset.gameId);
+                    });
+                });
+
+                document.querySelectorAll('button, a.play-button, a.play-button-small, a.coming-soon-button').forEach(el => {
+                    el.addEventListener('click', () => playSound(buttonClickSynth, "C5", "32n"));
+                });
+
+                document.getElementById('toggle-all-sound-button').addEventListener('click', () => {
+                    allSoundEnabled = !allSoundEnabled;
+                    const icon = document.getElementById('all-sound-icon');
+                    if (allSoundEnabled) {
+                        Tone.Destination.volume.value = 0;
+                        icon.className = 'fas fa-volume-up';
+                    } else {
+                        Tone.Destination.volume.value = -Infinity;
+                        icon.className = 'fas fa-volume-mute';
+                    }
+                });
+            }
+
+            // --- Game Info Modal ---
+            const gameInfoModal = document.getElementById('game-info-modal');
+            const gameDetails = {
+                "2048": { title: "2048", description: "Merge identical tiles to reach the 2048 tile!", rules: "Use arrow keys or swipe to move tiles." },
+                "ticTacToe": { title: "Tic-Tac-Toe", description: "A classic strategy game for two players.", rules: "First player to get three in a row wins." },
+                "hangman": { title: "Hangman", description: "Guess the hidden word one letter at a time.", rules: "You lose if the hangman is complete." },
+                "newGame1": { title: "New Game 1", description: "This is a placeholder for an exciting game to come!", rules: "Rules will be revealed soon!" },
+                "newGame2": { title: "New Game 2", description: "Get ready for more fun with this upcoming game!", rules: "Rules will be revealed soon!" },
+                "newGame3": { title: "New Game 3", description: "Another awesome game is on its way!", rules: "Rules will be revealed soon!" }
+            };
+            function openGameInfoModal(gameId) {
+                const details = gameDetails[gameId];
+                if (details) {
+                    document.getElementById('modal-game-title').textContent = details.title;
+                    document.getElementById('modal-game-description').textContent = details.description;
+                    document.getElementById('modal-game-rules').textContent = "Rules: " + details.rules;
+                    gameInfoModal.classList.remove('hidden');
+                }
+            }
+            document.getElementById('close-game-info-modal').addEventListener('click', () => gameInfoModal.classList.add('hidden'));
+            gameInfoModal.addEventListener('click', (e) => e.target === gameInfoModal && gameInfoModal.classList.add('hidden'));
+
+            // --- Search ---
+            const gameSearchInput = document.getElementById('game-search');
+            const allGameCards = document.querySelectorAll('.game-card');
+            function filterGames() {
+                const searchTerm = gameSearchInput.value.toLowerCase();
+                allGameCards.forEach(card => {
+                    const title = card.querySelector('.game-card-title').textContent.toLowerCase();
+                    const desc = card.querySelector('.game-card-description').textContent.toLowerCase();
+                    card.style.display = (title.includes(searchTerm) || desc.includes(searchTerm)) ? '' : 'none';
+                });
+            }
+            gameSearchInput.addEventListener('input', filterGames);
+            document.getElementById('search-button').addEventListener('click', filterGames);
+
+            // --- Auth Modals ---
+            const authModal = document.getElementById('auth-modal');
+            const profileModal = document.getElementById('profile-modal');
+            const notificationModal = document.getElementById('notification-modal');
+            let isSignInMode = true;
+
+            window.openAuthModal = (mode = 'signIn') => {
+                isSignInMode = (mode === 'signIn');
+                document.getElementById('auth-modal-title').textContent = isSignInMode ? "Sign In" : "Register";
+                document.getElementById('auth-submit-button').textContent = isSignInMode ? "Sign In" : "Register";
+                document.getElementById('toggle-auth-mode').textContent = isSignInMode ? "Don't have an account? Register" : "Already have an account? Sign In";
+                document.getElementById('auth-display-name').classList.toggle('hidden', isSignInMode);
+                document.getElementById('forgot-password-button').classList.toggle('hidden', !isSignInMode);
+                document.getElementById('auth-error-message').classList.add('hidden');
+                authModal.classList.remove('hidden');
+            };
+
+            window.openProfileModal = async () => {
+                if (window.currentUser) {
+                    await window.currentUser.reload();
+                    window.currentUser = auth.currentUser;
+                    updateUIForAuthStatus();
+                    profileModal.classList.remove('hidden');
+                } else {
+                    openAuthModal('signIn');
+                }
+            };
+            
+            function openNotificationModal(title, message) {
+                document.getElementById('notification-title').textContent = title;
+                document.getElementById('notification-message').textContent = message;
+                notificationModal.classList.remove('hidden');
+            }
+
+            document.getElementById('close-auth-modal').addEventListener('click', () => authModal.classList.add('hidden'));
+            document.getElementById('close-profile-modal').addEventListener('click', () => profileModal.classList.add('hidden'));
+            document.getElementById('close-notification-modal').addEventListener('click', () => notificationModal.classList.add('hidden'));
+            authModal.addEventListener('click', (e) => e.target === authModal && authModal.classList.add('hidden'));
+            profileModal.addEventListener('click', (e) => e.target === profileModal && profileModal.classList.add('hidden'));
+            notificationModal.addEventListener('click', (e) => e.target === notificationModal && notificationModal.classList.add('hidden'));
+
+            document.getElementById('toggle-auth-mode').addEventListener('click', () => openAuthModal(isSignInMode ? 'register' : 'signIn'));
+
+            document.getElementById('auth-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('auth-email').value;
+                const password = document.getElementById('auth-password').value;
+                const displayName = document.getElementById('auth-display-name').value;
+                const errorMessageEl = document.getElementById('auth-error-message');
+                
+                const result = isSignInMode ? await window.signIn(email, password) : await window.signUp(email, password, displayName);
+
+                if (result.success) {
+                    authModal.classList.add('hidden');
+                    const profileResult = await window.getUserProfile(result.user.uid);
+                    const welcomeName = (profileResult.success && profileResult.profile.displayName)
+                        ? profileResult.profile.displayName
+                        : (result.user.displayName || result.user.email);
+                    openNotificationModal(isSignInMode ? "Sign In Successful" : "Registration Successful!", `Welcome, ${welcomeName}!`);
+                } else {
+                    errorMessageEl.textContent = result.error;
+                    errorMessageEl.classList.remove('hidden');
+                }
+            });
+            
+            document.getElementById('google-sign-in-button').addEventListener('click', async () => {
+                const result = await window.signInWithGoogle();
+                if (result.success) {
+                    authModal.classList.add('hidden');
+                    const profileResult = await window.getUserProfile(result.user.uid);
+                    const displayName = (profileResult.success && profileResult.profile.displayName)
+                        ? profileResult.profile.displayName
+                        : (result.user.displayName || result.user.email);
+                    openNotificationModal("Google Sign-In", `Welcome, ${displayName}!`);
+                } else {
+                    document.getElementById('auth-error-message').textContent = result.error;
+                    document.getElementById('auth-error-message').classList.remove('hidden');
+                }
+            });
+
+            document.getElementById('forgot-password-button').addEventListener('click', async () => {
+                const email = document.getElementById('auth-email').value;
+                if (!email) {
+                    document.getElementById('auth-error-message').textContent = "Please enter your email.";
+                    document.getElementById('auth-error-message').classList.remove('hidden');
+                    return;
+                }
+                const result = await window.sendPasswordReset(email);
+                if (result.success) {
+                    openNotificationModal("Password Reset", result.message);
+                    authModal.classList.add('hidden');
+                } else {
+                    document.getElementById('auth-error-message').textContent = result.error;
+                    document.getElementById('auth-error-message').classList.remove('hidden');
+                }
+            });
+            
+            document.getElementById('profile-sign-out-button').addEventListener('click', async () => {
+                const result = await window.signOutUser();
+                if (result.success) {
+                    profileModal.classList.add('hidden');
+                    openNotificationModal("Signed Out", "You have been signed out.");
+                }
+            });
+
+            document.getElementById('send-verification-email-button').addEventListener('click', async () => {
+                const result = await window.sendVerificationEmail();
+                openNotificationModal(result.success ? "Verification Sent" : "Error", result.message || result.error);
+            });
+
+        } catch (e) {
+            document.body.innerHTML = `<div style="color: red; padding: 20px; font-size: 24px;">Ошибка загрузки страницы: ${e.message}.</div>`;
+        }
+    </script>
+</body>
+</html>
