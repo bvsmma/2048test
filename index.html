@@ -145,8 +145,9 @@
     </footer>
 
     <!-- Modals -->
-    <div id="game-info-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative">
+    <!-- Removed 'hidden' class from here, now controlled by JS and CSS 'is-active' class -->
+    <div id="game-info-modal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="modal-content glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-lg w-full relative">
             <h2 id="modal-game-title" class="text-3xl font-bold mb-4 text-white">Game Title</h2>
             <p id="modal-game-description" class="mb-4 text-lg">Detailed description of the game.</p>
             <p id="modal-game-rules" class="mb-4">Rules: These are the rules for the game.</p>
@@ -155,8 +156,8 @@
         </div>
     </div>
 
-    <div id="auth-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+    <div id="auth-modal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="modal-content glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
             <h2 id="auth-modal-title" class="text-2xl font-bold mb-4 text-white">Sign In</h2>
             <form id="auth-form" class="flex flex-col gap-4">
                 <input type="email" id="auth-email" placeholder="Email" class="p-3 rounded-lg glass-effect text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -178,8 +179,8 @@
         </div>
     </div>
 
-    <div id="profile-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
+    <div id="profile-modal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="modal-content glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-sm w-full relative">
             <h2 class="text-2xl font-bold mb-4 text-white">My Profile</h2>
             <p class="mb-2">Hello, <span id="profile-display-name" class="font-bold text-blue-400">Guest</span>!</p>
             <p class="mb-4">Email: <span id="profile-email" class="text-gray-400">Not signed in</span></p>
@@ -191,8 +192,8 @@
         </div>
     </div>
 
-    <div id="notification-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
+    <div id="notification-modal" class="modal-container fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div class="modal-content glass-effect text-gray-300 p-6 rounded-lg shadow-xl max-w-xs w-full relative text-center">
             <h3 id="notification-title" class="text-xl font-bold mb-3 text-white">Notification</h3>
             <p id="notification-message" class="mb-4">Message goes here.</p>
             <button id="ok-notification-modal-btn" class="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105" data-click-sound="buttonClick">OK</button>
@@ -451,11 +452,11 @@
                     document.getElementById('modal-game-title').textContent = details.title;
                     document.getElementById('modal-game-description').textContent = details.description;
                     document.getElementById('modal-game-rules').textContent = "Rules: " + details.rules;
-                    gameInfoModal.classList.remove('hidden');
+                    gameInfoModal.classList.add('is-active');
                 }
             }
-            document.getElementById('close-game-info-modal').addEventListener('click', () => gameInfoModal.classList.add('hidden'));
-            gameInfoModal.addEventListener('click', (e) => e.target === gameInfoModal && gameInfoModal.classList.add('hidden'));
+            document.getElementById('close-game-info-modal').addEventListener('click', () => gameInfoModal.classList.remove('is-active'));
+            gameInfoModal.addEventListener('click', (e) => e.target === gameInfoModal && gameInfoModal.classList.remove('is-active'));
 
             // --- Search ---
             const gameSearchInput = document.getElementById('game-search');
@@ -485,7 +486,7 @@
                 document.getElementById('auth-display-name').classList.toggle('hidden', isSignInMode);
                 document.getElementById('forgot-password-button').classList.toggle('hidden', !isSignInMode);
                 document.getElementById('auth-error-message').classList.add('hidden');
-                authModal.classList.remove('hidden');
+                authModal.classList.add('is-active');
             };
 
             window.openProfileModal = async () => {
@@ -493,7 +494,7 @@
                     await window.currentUser.reload();
                     window.currentUser = auth.currentUser;
                     updateUIForAuthStatus();
-                    profileModal.classList.remove('hidden');
+                    profileModal.classList.add('is-active');
                 } else {
                     openAuthModal('signIn');
                 }
@@ -502,18 +503,18 @@
             function openNotificationModal(title, message) {
                 document.getElementById('notification-title').textContent = title;
                 document.getElementById('notification-message').textContent = message;
-                notificationModal.classList.remove('hidden');
+                notificationModal.classList.add('is-active');
             }
 
-            document.getElementById('close-auth-modal').addEventListener('click', () => authModal.classList.add('hidden'));
-            document.getElementById('close-profile-modal').addEventListener('click', () => profileModal.classList.add('hidden'));
-            document.getElementById('close-game-info-modal').addEventListener('click', () => gameInfoModal.classList.add('hidden'));
-            document.getElementById('ok-notification-modal-btn').addEventListener('click', () => notificationModal.classList.add('hidden'));
-            document.getElementById('close-notification-modal-btn').addEventListener('click', () => notificationModal.classList.add('hidden'));
+            document.getElementById('close-auth-modal').addEventListener('click', () => authModal.classList.remove('is-active'));
+            document.getElementById('close-profile-modal').addEventListener('click', () => profileModal.classList.remove('is-active'));
+            document.getElementById('close-game-info-modal').addEventListener('click', () => gameInfoModal.classList.remove('is-active'));
+            document.getElementById('ok-notification-modal-btn').addEventListener('click', () => notificationModal.classList.remove('is-active'));
+            document.getElementById('close-notification-modal-btn').addEventListener('click', () => notificationModal.classList.remove('is-active'));
 
-            authModal.addEventListener('click', (e) => e.target === authModal && authModal.classList.add('hidden'));
-            profileModal.addEventListener('click', (e) => e.target === profileModal && profileModal.classList.add('hidden'));
-            notificationModal.addEventListener('click', (e) => e.target === notificationModal && notificationModal.classList.add('hidden'));
+            authModal.addEventListener('click', (e) => e.target === authModal && authModal.classList.remove('is-active'));
+            profileModal.addEventListener('click', (e) => e.target === profileModal && profileModal.classList.remove('is-active'));
+            notificationModal.addEventListener('click', (e) => e.target === notificationModal && notificationModal.classList.remove('is-active'));
 
             document.getElementById('toggle-auth-mode').addEventListener('click', () => openAuthModal(isSignInMode ? 'register' : 'signIn'));
 
@@ -527,12 +528,12 @@
                 const result = isSignInMode ? await window.signIn(email, password) : await window.signUp(email, password, displayName);
 
                 if (result.success) {
-                    authModal.classList.add('hidden');
+                    authModal.classList.remove('is-active');
                     const profileResult = await window.getUserProfile(result.user.uid);
                     const welcomeName = (profileResult.success && profileResult.profile.displayName)
                         ? profileResult.profile.displayName
                         : (result.user.displayName || result.user.email);
-                    openNotificationModal(isSignInMode ? "Sign In Successful" : "Registration Successful!", `Welcome, ${welcomeName}!`);
+                    openNotificationModal("Sign In Successful", `Welcome, ${welcomeName}!`);
                 } else {
                     errorMessageEl.textContent = result.error;
                     errorMessageEl.classList.remove('hidden');
@@ -557,7 +558,7 @@
                 const result = await window.sendPasswordReset(email);
                 if (result.success) {
                     openNotificationModal("Password Reset", result.message);
-                    authModal.classList.add('hidden');
+                    authModal.classList.remove('is-active');
                 } else {
                     document.getElementById('auth-error-message').textContent = result.error;
                     document.getElementById('auth-error-message').classList.remove('hidden');
@@ -567,7 +568,7 @@
             document.getElementById('profile-sign-out-button').addEventListener('click', async () => {
                 const result = await window.signOutUser();
                 if (result.success) {
-                    profileModal.classList.add('hidden');
+                    profileModal.classList.remove('is-active');
                     openNotificationModal("Signed Out", "You have been signed out.");
                 }
             });
