@@ -58,9 +58,9 @@ body.fade-out { animation: fadeOut 0.5s ease-out forwards; overflow: hidden; }
 
 /* Updated glass effect for all relevant elements */
 .glass-effect, .game-card, #auth-modal > div, #profile-modal > div, #notification-modal > div, #game-info-modal > div {
-    background-color: rgba(31, 41, 55, 0.4);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 0.08); /* More transparent and lighter */
+    backdrop-filter: blur(30px) saturate(180%); /* Increased blur and saturation for a better effect */
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     border-radius: 1rem;
